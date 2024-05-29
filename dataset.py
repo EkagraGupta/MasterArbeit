@@ -1,10 +1,7 @@
 import torch
 from torchvision import datasets, transforms
 
-def load_dataset(batch_size: int):
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.TrivialAugmentWide()])
-    
+def load_dataset(batch_size: int, transform):
     trainset = datasets.CIFAR10(root='./data/train',
                                  train=True,
                                  download=True,
