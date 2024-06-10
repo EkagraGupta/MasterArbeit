@@ -31,10 +31,13 @@ if __name__ == '__main__':
     batchSize = 1
     originalTransform = transforms.Compose([transforms.Resize((224, 224)),
                                                 transforms.ToTensor()])
-    augmentedTransform = transforms.Compose([transforms.Resize((224, 224)),
-                                                transforms.ToTensor(),
-                                                transforms.Lambda(lambda x: x.mul(255).byte()),
-                                                transforms.RandomCrop(100)])
+    augmentedTransform = transforms.Compose([
+                                transforms.Resize((224, 224)),
+                                                transforms.RandomCrop(100),
+                                                transforms.TrivialAugmentWide(),
+                                                #transforms.Lambda(lambda x: x.mul(255).byte()),
+                                                transforms.ToTensor()
+                                                ])
 
     _, originalTestloader, _ = load_dataset(batch_size=batchSize, transform=originalTransform)
     _, augmentedTestloader, _ = load_dataset(batch_size=batchSize, transform=augmentedTransform)
