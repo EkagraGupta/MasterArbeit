@@ -28,13 +28,13 @@ def display_sample(original_loader, augmented_loader):
     plt.show()
 
 if __name__ == '__main__':
-    batchSize = 5
+    batchSize = 1
     originalTransform = transforms.Compose([transforms.Resize((224, 224)),
                                                 transforms.ToTensor()])
     augmentedTransform = transforms.Compose([transforms.Resize((224, 224)),
                                                 transforms.ToTensor(),
                                                 transforms.Lambda(lambda x: x.mul(255).byte()),
-                                                transforms.TrivialAugmentWide()])
+                                                transforms.RandomCrop(100)])
 
     _, originalTestloader, _ = load_dataset(batch_size=batchSize, transform=originalTransform)
     _, augmentedTestloader, _ = load_dataset(batch_size=batchSize, transform=augmentedTransform)
