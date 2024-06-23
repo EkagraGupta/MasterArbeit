@@ -11,7 +11,7 @@ def load_dataset(batch_size: int, transform):
     )
 
     trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=batch_size, shuffle=True
+        trainset, batch_size=batch_size, shuffle=False
     )
     testloader = torch.utils.data.DataLoader(
         testset, batch_size=batch_size, shuffle=False
