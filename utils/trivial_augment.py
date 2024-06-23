@@ -97,7 +97,7 @@ def _apply_op(
         pass
     else:
         raise ValueError(f"The provided operator {op_name} is not recognized.")
-    return img
+    return op_name, img
 
 
 class AutoAugmentPolicy(Enum):
