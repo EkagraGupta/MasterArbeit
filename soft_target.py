@@ -207,4 +207,4 @@ if __name__ == "__main__":
     )
     original_pil_image.save(original_image_path)
 
-    print(soft_one_hot)
+    print(f'Softened Label Tensor: {soft_one_hot}\nUpdated New Loss: {loss}')
