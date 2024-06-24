@@ -1,8 +1,9 @@
+import numpy as np
+
 import torch
 from torch.nn import functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
-import numpy as np
 
 from dataset import load_dataset
 
@@ -159,49 +160,51 @@ class SoftCrop:
         new_image = bg[:, left:right, top:bottom]  # crop image
         new_label = label + 1 - prob_crop  # max(prob_crop*prob_mix,self.chance)
         # print(new_label)
-        return torch.tensor(new_image), torch.tensor(new_label)
+        return new_image.clone().detach(), new_label.clone().detach()
 
 
 if __name__ == "__main__":
     outputs = torch.tensor(
         [
             [
-                0.01,
-                0.01,
-                0.01,
-                0.01,
-                0.01,
-                0.01,
-                0.99,
-                0.01,
-                0.01,
-                0.01,
+                0.01,  # 0: airplane
+                0.01,  # 1: automobile
+                0.01,  # 2: bird
+                0.01,  # 3: cat
+                0.01,  # 4: deer
+                0.01,  # 5: dog
+                0.99,  # 6: frog
+                0.01,  # 7: horse
+                0.01,  # 8: ship
+                0.01,  # 9: truck
             ],
         ]
     )
-
-    labels = torch.tensor([0])
     reweight = True
     soften_one_hot = True
 
     soft_crop = SoftCrop()
     transform = transforms.Compose([transforms.ToTensor()])
-    trainloader, _, _ = load_dataset(batch_size=1, transform=transform)
+    trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
 
     images, labels = next(iter(trainloader))
+    print(f"\nOriginal Hard label: {labels} -> {classes[labels.item()]}\n")
     cropped_image, new_label = soft_crop(images[0], labels)
     soft_one_hot, loss = soft_target(
         pred=outputs, gold=new_label, reweight=reweight, soften_one_hot=soften_one_hot
     )
 
-    cropped_pil_image = ff.to_pil_image(cropped_image)
+    resize_dim = 1024
+    cropped_pil_image = ff.to_pil_image(cropped_image).resize((resize_dim, resize_dim))
     cropped_image_path = (
         "/home/ekagra/Desktop/Study/MA/code/example/example_augmented_image.png"
     )
     cropped_pil_image.save(cropped_image_path)
 
-    original_pil_image = ff.to_pil_image(images[0])
-    original_image_path = "/home/ekagra/Desktop/Study/MA/code/example/example_image.png"
+    original_pil_image = ff.to_pil_image(images[0]).resize((resize_dim, resize_dim))
+    original_image_path = (
+        "/home/ekagra/Desktop/Study/MA/code/example/example_original_image.png"
+    )
     original_pil_image.save(original_image_path)
 
     print(soft_one_hot)
