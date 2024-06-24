@@ -4,4 +4,4 @@ def get_correction_factor(augmentation_info: dict) -> float:
     for _, value in augmentation_info.items():
         correction_factor += float(value)
         print(correction_factor)
-    return abs(correction_factor) if 1.>abs(correction_factor)>threshold else 0.5
+    return abs(correction_factor) if 1.0 > abs(correction_factor) > threshold else 0.5

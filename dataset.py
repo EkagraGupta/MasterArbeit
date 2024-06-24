@@ -19,3 +19,13 @@ def load_dataset(batch_size: int, transform):
 
     classes = testset.classes
     return trainloader, testloader, classes
+
+
+if __name__ == "__main__":
+    transform = transforms.Compose([transforms.ToTensor()])
+
+    _, testloader, _ = load_dataset(batch_size=1, transform=transform)
+
+    for i, (images, labels) in enumerate(testloader):
+        print(labels)
+        break
