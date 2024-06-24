@@ -49,9 +49,22 @@ def soft_target(
 
 
 if __name__ == "__main__":
-    outputs = torch.tensor([
-        [0.1677, -0.0024, 0.1041, -0.0754, 0.0513, -0.0438, -0.0355, 0.0365, 0.0726, 0.0415],
-    ])
+    outputs = torch.tensor(
+        [
+            [
+                0.1677,
+                -0.0024,
+                0.1041,
+                -0.0754,
+                0.0513,
+                -0.0438,
+                -0.0355,
+                0.0365,
+                0.0726,
+                0.0415,
+            ],
+        ]
+    )
     labels = torch.tensor([0])
     reweight = True
     soften_one_hot = True
