@@ -31,6 +31,6 @@ if __name__ == "__main__":
     for i, (images, labels) in enumerate(testloader):
         print(labels)
         pil_image = F.to_pil_image(images[0])
-        image_path = '/home/ekagra/Desktop/Study/MA/code/example/example_image.png'
+        image_path = "/home/ekagra/Desktop/Study/MA/code/example/example_image.png"
         pil_image.save(image_path)
         break
