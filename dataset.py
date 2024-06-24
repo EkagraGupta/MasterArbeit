@@ -1,5 +1,7 @@
 import torch
 from torchvision import datasets, transforms
+from torchvision.transforms import functional as F
+from PIL import Image
 
 
 def load_dataset(batch_size: int, transform):
@@ -28,4 +30,7 @@ if __name__ == "__main__":
 
     for i, (images, labels) in enumerate(testloader):
         print(labels)
+        pil_image = F.to_pil_image(images[0])
+        image_path = '/home/ekagra/Desktop/Study/MA/code/example/example_image.png'
+        pil_image.save(image_path)
         break

@@ -17,5 +17,4 @@ for i, (images, labels) in enumerate(train_loader):
     augmented_image, augmentation_info = get_augmentation_info(images)
     correction_factor = get_correction_factor(augmentation_info)
     label_dict, label_tensor = get_softlabel_tensor(labels.item(), correction_factor)
-    print(label_tensor)
     # get_images(images, augmented_image)
