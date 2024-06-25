@@ -135,7 +135,7 @@ class SoftCrop:
         bg[:, dim1 : 2 * dim1, dim2 : 2 * dim2] = image  # put image at the center patch
         pil_bg = ff.to_pil_image(bg)
         pil_bg.save("/home/ekagra/Desktop/Study/MA/code/example/example_bg_image.png")
-        
+
         offset1 = self.draw_offset(self.sigma_crop, dim1)
         offset2 = self.draw_offset(self.sigma_crop, dim2)
 
