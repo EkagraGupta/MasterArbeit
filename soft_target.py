@@ -82,7 +82,7 @@ class SoftCrop:
         t_crop=1.0,
         max_p_crop=1.0,
         pow_crop=4.0,
-        bg_crop=1.0,
+        bg_crop=0.01,
         iou=False,
     ):
         self.n_class = n_class
@@ -99,21 +99,21 @@ class SoftCrop:
         # for debugging
         self.flag = True
 
-        print("use soft crop")
-        print(
-            "sigma: ",
-            self.sigma_crop,
-            " T: ",
-            self.t_crop,
-            " Max P: ",
-            self.max_p_crop,
-            "bg: ",
-            self.bg_crop,
-            "power: ",
-            self.pow_crop,
-            "IoU: ",
-            self.iou,
-        )
+        # print("use soft crop")
+        # print(
+        #     "sigma: ",
+        #     self.sigma_crop,
+        #     " T: ",
+        #     self.t_crop,
+        #     " Max P: ",
+        #     self.max_p_crop,
+        #     "bg: ",
+        #     self.bg_crop,
+        #     "power: ",
+        #     self.pow_crop,
+        #     "IoU: ",
+        #     self.iou,
+        # )
 
     def draw_offset(self, sigma=1, limit=24, n=100):
         # draw an integer from gaussian within +/- limit
@@ -133,6 +133,9 @@ class SoftCrop:
             torch.ones((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
         )  # create a 3x by 3x sized noise background
         bg[:, dim1 : 2 * dim1, dim2 : 2 * dim2] = image  # put image at the center patch
+        pil_bg = ff.to_pil_image(bg)
+        pil_bg.save("/home/ekagra/Desktop/Study/MA/code/example/example_bg_image.png")
+        
         offset1 = self.draw_offset(self.sigma_crop, dim1)
         offset2 = self.draw_offset(self.sigma_crop, dim2)
 
@@ -159,7 +162,6 @@ class SoftCrop:
 
         new_image = bg[:, left:right, top:bottom]  # crop image
         new_label = label + 1 - prob_crop  # max(prob_crop*prob_mix,self.chance)
-        # print(new_label)
         return new_image.clone().detach(), new_label.clone().detach()
 
 
@@ -194,7 +196,7 @@ if __name__ == "__main__":
         pred=outputs, gold=new_label, reweight=reweight, soften_one_hot=soften_one_hot
     )
 
-    resize_dim = 1024
+    resize_dim = 512
     cropped_pil_image = ff.to_pil_image(cropped_image).resize((resize_dim, resize_dim))
     cropped_image_path = (
         "/home/ekagra/Desktop/Study/MA/code/example/example_augmented_image.png"
@@ -207,4 +209,4 @@ if __name__ == "__main__":
     )
     original_pil_image.save(original_image_path)
 
-    print(f'Softened Label Tensor: {soft_one_hot}\nUpdated New Loss: {loss}')
+    print(f"Softened Label Tensor: {soft_one_hot}\nUpdated New Loss: {loss}")
