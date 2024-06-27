@@ -175,13 +175,14 @@ if __name__ == "__main__":
                 0.01,  # 3: cat
                 0.01,  # 4: deer
                 0.01,  # 5: dog
-                0.99,  # 6: frog
+                0.91,  # 6: frog
                 0.01,  # 7: horse
                 0.01,  # 8: ship
                 0.01,  # 9: truck
             ],
         ]
     )
+
     reweight = True
     soften_one_hot = True
 
@@ -208,5 +209,5 @@ if __name__ == "__main__":
         "/home/ekagra/Desktop/Study/MA/code/example/example_original_image.png"
     )
     original_pil_image.save(original_image_path)
-
+    print(f"\nNew Label: {new_label}\n")
     print(f"Softened Label Tensor: {soft_one_hot}\nUpdated New Loss: {loss}")
