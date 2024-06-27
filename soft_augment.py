@@ -39,7 +39,7 @@ class SoftAugment:
     def compute_visibility(self, dim1, dim2, tx, ty):
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
-    def __call__(self, image):
+    def __call__(self, image, label):
         dim1, dim2 = image.size(1), image.size(2)
 
         # create background
@@ -58,7 +58,12 @@ class SoftAugment:
         confidence = 1 - (1 - self.chance) * (1 - visibility) ** self.k
 
         cropped_image = bg[:, left:right, top:bottom]
-        return cropped_image, confidence
+
+        one_hot = torch.zeros(self.n_class).float()
+        one_hot[label] = 1.0
+        soft_one_hot = confidence * one_hot + (1 - confidence) / self.n_class
+
+        return cropped_image, soft_one_hot, confidence
 
 
 if __name__ == "__main__":
@@ -68,8 +73,11 @@ if __name__ == "__main__":
     print(f"\nOriginal Hard label: {labels} -> {classes[labels.item()]}\n")
     soft_augment = SoftAugment()
 
-    cropped_image, confidence = soft_augment(images[0])
-    pil_cropped_image = ff.to_pil_image(cropped_image)
-    pil_cropped_image.save(
+    new_image, new_label, confidence = soft_augment(images[0], labels)
+    pil_new_image = ff.to_pil_image(new_image)
+    pil_new_image.save(
         "/home/ekagra/Desktop/Study/MA/code/example/example_augmented_image.png"
     )
+
+    print(f"Soft One Hot: {new_label}\tConfidence: {confidence}\n")
+    print(torch.sum(new_label))
