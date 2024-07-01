@@ -1,5 +1,5 @@
 import torch
-
+import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
 
@@ -39,7 +39,7 @@ class SoftAugment:
     def compute_visibility(self, dim1, dim2, tx, ty):
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
-    def __call__(self, image, label):
+    def __call__(self, image):
         dim1, dim2 = image.size(1), image.size(2)
 
         # create background
@@ -59,11 +59,24 @@ class SoftAugment:
 
         cropped_image = bg[:, left:right, top:bottom]
 
-        one_hot = torch.zeros(self.n_class).float()
-        one_hot[label] = 1.0
-        soft_one_hot = confidence * one_hot + (1 - confidence) / self.n_class
+        return cropped_image, confidence
+    
+def soft_target(pred, label, confidence):
+    label = label.unsqueeze(1)  # Convert label to tensor and add dimension for scattering
+    confidence_tensor = torch.tensor(confidence, device=pred.device).float().expand_as(label)
 
-        return cropped_image, soft_one_hot, confidence
+    log_prob = F.log_softmax(pred, dim=1)
+    n_class = pred.size(1)
+
+    # make soft one-hot target
+    one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
+    one_hot.scatter_(dim=1, index=label, src=confidence_tensor)
+
+    # compute weighted KL loss
+    kl = confidence * F.kl_div(input=log_prob,
+                               target=one_hot,
+                               reduction='none').sum(-1)
+    return kl.mean()
 
 
 if __name__ == "__main__":
@@ -73,11 +86,34 @@ if __name__ == "__main__":
     print(f"\nOriginal Hard label: {labels} -> {classes[labels.item()]}\n")
     soft_augment = SoftAugment()
 
-    new_image, new_label, confidence = soft_augment(images[0], labels)
+    new_image, confidence = soft_augment(images[0])
     pil_new_image = ff.to_pil_image(new_image)
     pil_new_image.save(
         "/home/ekagra/Desktop/Study/MA/code/example/example_augmented_image.png"
     )
 
-    print(f"Soft One Hot: {new_label}\tConfidence: {confidence}\n")
-    print(torch.sum(new_label))
+    print(f"Confidence: {confidence}\n")
+
+
+    outputs = torch.tensor(
+        [
+            [
+                0.01,  # 0: airplane
+                0.01,  # 1: automobile
+                0.01,  # 2: bird
+                0.01,  # 3: cat
+                0.01,  # 4: deer
+                0.01,  # 5: dog
+                0.91,  # 6: frog
+                0.01,  # 7: horse
+                0.01,  # 8: ship
+                0.01,  # 9: truck
+            ],
+        ]
+    )
+    
+    loss_param = soft_target(pred=outputs,
+                             label=labels,
+                             confidence=confidence)
+    
+    print(f'Loss param: {loss_param}')
