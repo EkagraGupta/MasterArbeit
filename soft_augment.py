@@ -10,12 +10,9 @@ class SoftAugment:
     def __init__(
         self,
         n_class=10,
-        sigma_crop=10,
-        t_crop=1.0,
-        max_p_crop=1.0,
-        pow_crop=4.0,
-        bg_crop=0.01,
         k=2,
+        bg_crop=0.01,
+        sigma_crop=10,
     ):
         self.n_class = n_class
         self.chance = 1 / n_class
@@ -23,9 +20,9 @@ class SoftAugment:
 
         # crop parameters
         self.sigma_crop = sigma_crop
-        self.t_crop = t_crop
-        self.max_p_crop = max_p_crop
-        self.pow_crop = pow_crop
+        # self.t_crop = t_crop
+        # self.max_p_crop = max_p_crop
+        # self.pow_crop = pow_crop
         self.bg_crop = bg_crop
 
     def draw_offset(self, sigma=0.3, limit=24, n=100):
@@ -76,6 +73,7 @@ def soft_target(pred, label, confidence):
     # make soft one-hot target
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
     one_hot.scatter_(dim=1, index=label, src=confidence_tensor)
+    print(one_hot)
 
     # compute weighted KL loss
     kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
