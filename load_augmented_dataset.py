@@ -57,6 +57,20 @@ class Cutout(object):
         return img
 
 
+class CustomTransform(torch.utils.data.Dataset):
+    def __init__(self, dataset, custom_transform):
+        self.dataset = dataset
+        self.custom_transform = custom_transform
+
+    def __getitem__(self, index):
+        image, _ = self.dataset[index]
+        image, _ = self.custom_transform(image)
+        return image
+
+    def __len__(self):
+        return len(self.dataset)
+
+
 def get_training_dataloader(
     mean,
     std,
@@ -103,4 +117,16 @@ def get_training_dataloader(
         t.append(Cutout(n_holes=1, length=length_cut, mask=mask_cut))
 
     transform_train = transforms.Compose(t)
-    pass
+
+    training_set = datasets.CIFAR10(
+        root="./data/train", train=True, download=True, transform=transform_train
+    )
+
+    if custom_transform is not None:
+        traning_set = CustomTransform(
+            dataset=training_set, custom_transform=custom_transform
+        )
+
+    train_loader = torch.utils.data.DataLoader(training_set, batch_size, shuffle)
+
+    return train_loader
