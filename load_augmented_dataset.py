@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 from soft_augment import SoftAugment
 
@@ -63,9 +64,9 @@ class CustomTransform(torch.utils.data.Dataset):
         self.custom_transform = custom_transform
 
     def __getitem__(self, index):
-        image, _ = self.dataset[index]
-        image, _ = self.custom_transform(image)
-        return image
+        image, label = self.dataset[index]
+        image, confidence = self.custom_transform(image)
+        return image, label, confidence
 
     def __len__(self):
         return len(self.dataset)
@@ -82,6 +83,8 @@ def get_training_dataloader(
     mask_cut=1,
 ):
     n_classes = 10
+    custom_transform = None
+    confidence = None
     if da == -1:
         print("No data augmentation!")
     elif da == 0:  # original augmentaiton
@@ -104,11 +107,13 @@ def get_training_dataloader(
 
         custom_transform = SoftAugment(n_class=n_classes, k=2)
 
-    if aa == 0:
-        print("Using Random Augmentation!")
+    if aa == -1:
+        print("No Aggressive augmentations applied!\n")
+    elif aa == 0:
+        print("Using Random Augmentation!\n")
         t.append(transforms.RandAugment())
     elif aa == 1:
-        print("Using Trivial Augmentation!")
+        print("Using Trivial Augmentation!\n")
         t.append(transforms.TrivialAugmentWide())
 
     t.extend([transforms.ToTensor(), transforms.Normalize(mean, std)])
@@ -123,10 +128,35 @@ def get_training_dataloader(
     )
 
     if custom_transform is not None:
-        traning_set = CustomTransform(
+        training_set = CustomTransform(
             dataset=training_set, custom_transform=custom_transform
         )
 
     train_loader = torch.utils.data.DataLoader(training_set, batch_size, shuffle)
 
     return train_loader
+
+
+def display_image(image, title=None):
+    image = image / 2 + 0.5  # unnormalize
+    np_image = image.numpy()
+    plt.imshow(np.transpose(np_image, (1, 2, 0)))
+    if title:
+        plt.title(title)
+    plt.show()
+
+
+if __name__ == "__main__":
+    # below from cutout official repo
+    mean = [x / 255.0 for x in [125.3, 123.0, 113.9]]
+    std = [x / 255.0 for x in [63.0, 62.1, 66.7]]
+
+    training_loader = get_training_dataloader(mean=mean, std=std, da=2, aa=-1)
+
+    for img, label, confidence in training_loader:
+        for i in range(len(img)):
+            display_image(
+                img[i],
+                title=f"Label: {label[i].item()}, Confidence: {confidence[i].item():.3f}",
+            )
+        break
