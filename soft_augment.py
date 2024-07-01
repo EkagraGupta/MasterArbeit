@@ -60,10 +60,15 @@ class SoftAugment:
         cropped_image = bg[:, left:right, top:bottom]
 
         return cropped_image, confidence
-    
+
+
 def soft_target(pred, label, confidence):
-    label = label.unsqueeze(1)  # Convert label to tensor and add dimension for scattering
-    confidence_tensor = torch.tensor(confidence, device=pred.device).float().expand_as(label)
+    label = label.unsqueeze(
+        1
+    )  # Convert label to tensor and add dimension for scattering
+    confidence_tensor = (
+        torch.tensor(confidence, device=pred.device).float().expand_as(label)
+    )
 
     log_prob = F.log_softmax(pred, dim=1)
     n_class = pred.size(1)
@@ -73,9 +78,7 @@ def soft_target(pred, label, confidence):
     one_hot.scatter_(dim=1, index=label, src=confidence_tensor)
 
     # compute weighted KL loss
-    kl = confidence * F.kl_div(input=log_prob,
-                               target=one_hot,
-                               reduction='none').sum(-1)
+    kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
     return kl.mean()
 
 
@@ -94,7 +97,6 @@ if __name__ == "__main__":
 
     print(f"Confidence: {confidence}\n")
 
-
     outputs = torch.tensor(
         [
             [
@@ -111,9 +113,7 @@ if __name__ == "__main__":
             ],
         ]
     )
-    
-    loss_param = soft_target(pred=outputs,
-                             label=labels,
-                             confidence=confidence)
-    
-    print(f'Loss param: {loss_param}')
+
+    loss_param = soft_target(pred=outputs, label=labels, confidence=confidence)
+
+    print(f"Loss param: {loss_param}")
