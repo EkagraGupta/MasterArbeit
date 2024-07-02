@@ -3,7 +3,10 @@ import torch.nn.functional as F
 
 
 def conv3x3(in_planes, out_planes, stride=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=True)
+    return nn.Conv2d(
+        in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=True
+    )
+
 
 # def conv_init(m):
 #     classname = m.__class__.__name__
@@ -14,6 +17,7 @@ def conv3x3(in_planes, out_planes, stride=1):
 #         init.constant(m.weight, 1)
 #         init.constant(m.bias, 0)
 
+
 class WideBasic(nn.Module):
     def __init__(self, in_planes, planes, dropout_rate, stride=1):
         super(WideBasic, self).__init__()
@@ -21,7 +25,9 @@ class WideBasic(nn.Module):
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, padding=1, bias=True)
         self.dropout = nn.Dropout(p=dropout_rate)
         self.bn2 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=True)
+        self.conv2 = nn.Conv2d(
+            planes, planes, kernel_size=3, stride=stride, padding=1, bias=True
+        )
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != planes:
@@ -36,6 +42,7 @@ class WideBasic(nn.Module):
 
         return out
 
+
 class Bottleneck(nn.Module):
     expansion = 4
 
@@ -43,19 +50,26 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3,
-                               stride=stride, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(
+            planes, planes, kernel_size=3, stride=stride, padding=1, bias=False
+        )
         self.bn2 = nn.BatchNorm2d(planes)
-        self.conv3 = nn.Conv2d(planes, self.expansion *
-                               planes, kernel_size=1, bias=False)
-        self.bn3 = nn.BatchNorm2d(self.expansion*planes)
+        self.conv3 = nn.Conv2d(
+            planes, self.expansion * planes, kernel_size=1, bias=False
+        )
+        self.bn3 = nn.BatchNorm2d(self.expansion * planes)
 
         self.shortcut = nn.Sequential()
-        if stride != 1 or in_planes != self.expansion*planes:
+        if stride != 1 or in_planes != self.expansion * planes:
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_planes, self.expansion*planes,
-                          kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(self.expansion*planes)
+                nn.Conv2d(
+                    in_planes,
+                    self.expansion * planes,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False,
+                ),
+                nn.BatchNorm2d(self.expansion * planes),
             )
 
     def forward(self, x):
@@ -66,26 +80,37 @@ class Bottleneck(nn.Module):
         out = F.relu(out)
         return out
 
+
 class WideResNet(nn.Module):
-    def __init__(self, depth, widen_factor, dropout_rate=0.3, num_classes=10, factor=1, block=WideBasic):
+    def __init__(
+        self,
+        depth,
+        widen_factor,
+        dropout_rate=0.3,
+        num_classes=10,
+        factor=1,
+        block=WideBasic,
+    ):
         super(WideResNet, self).__init__()
         self.in_planes = 16
 
-        assert ((depth-4)%6 ==0), 'Wide-resnet depth should be 6n+4'
-        n = (int)((depth-4)/6)
+        assert (depth - 4) % 6 == 0, "Wide-resnet depth should be 6n+4"
+        n = (int)((depth - 4) / 6)
         k = widen_factor
 
-        nStages = [16, 16*k, 32*k, 64*k]
+        nStages = [16, 16 * k, 32 * k, 64 * k]
 
-        self.conv1 = conv3x3(3,nStages[0], stride=1)
-        self.layer1 = self._wide_layer(block, nStages[1], n, dropout_rate, stride=factor)
+        self.conv1 = conv3x3(3, nStages[0], stride=1)
+        self.layer1 = self._wide_layer(
+            block, nStages[1], n, dropout_rate, stride=factor
+        )
         self.layer2 = self._wide_layer(block, nStages[2], n, dropout_rate, stride=2)
         self.layer3 = self._wide_layer(block, nStages[3], n, dropout_rate, stride=2)
         self.bn1 = nn.BatchNorm2d(nStages[3], momentum=0.9)
         self.linear = nn.Linear(nStages[3], num_classes)
 
     def _wide_layer(self, block, planes, num_blocks, dropout_rate, stride):
-        strides = [stride] + [1]*(num_blocks-1)
+        strides = [stride] + [1] * (num_blocks - 1)
         layers = []
 
         for stride in strides:
@@ -106,5 +131,13 @@ class WideResNet(nn.Module):
 
         return out
 
+
 def WideResNet_28_4(num_classes, factor=1, block=WideBasic, dropout_rate=0.3):
-    return WideResNet(depth=28, widen_factor=4, dropout_rate=dropout_rate, num_classes=num_classes, factor=factor, block=block)
+    return WideResNet(
+        depth=28,
+        widen_factor=4,
+        dropout_rate=dropout_rate,
+        num_classes=num_classes,
+        factor=factor,
+        block=block,
+    )

@@ -60,9 +60,7 @@ class SoftAugment:
 
 
 def soft_target(pred, label, confidence):
-    label = label.unsqueeze(
-        1
-    )
+    label = label.unsqueeze(1)
 
     log_prob = F.log_softmax(pred, dim=1)
     n_class = pred.size(1)
@@ -71,7 +69,7 @@ def soft_target(pred, label, confidence):
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
     confidence_expanded = confidence.unsqueeze(1).expand_as(one_hot)
     one_hot.scatter_(dim=1, index=label, src=confidence_expanded)
-    print(f'Soft: {one_hot}\tHard: {label.item()}')
+    print(f"Soft: {one_hot}\tHard: {label.item()}")
 
     # compute weighted KL loss
     kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)

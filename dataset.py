@@ -26,8 +26,8 @@ def load_dataset(batch_size: int, transform):
 if __name__ == "__main__":
     transform = transforms.Compose([transforms.ToTensor()])
 
-    _, testloader, _ = load_dataset(batch_size=1, transform=transform)
-
+    _, testloader, classes = load_dataset(batch_size=1, transform=transform)
+    print(classes)
     for i, (images, labels) in enumerate(testloader):
         print(labels)
         pil_image = F.to_pil_image(images[0])

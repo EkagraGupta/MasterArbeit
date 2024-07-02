@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 from soft_augment import SoftAugment
 
+from typing import Optional, List
 
 # official cutout implementation
 class Cutout(object):
@@ -59,11 +60,29 @@ class Cutout(object):
 
 
 class CustomTransform(torch.utils.data.Dataset):
+    """A custom dataset wrapper that applies a user-defined transformation to the images
+    in the dataset.
+    """
     def __init__(self, dataset, custom_transform):
+        """Initializes the CustomTransform class with the given dataset and custom transformation.
+
+        Args:
+            dataset (_type_): The original dataset containing images and labels.
+            custom_transform (_type_): Transformation function to perform SoftCrop operation.
+        """
         self.dataset = dataset
         self.custom_transform = custom_transform
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> tuple:
+        """Retrieves an item from the dataset at the specified index and applies the custom transformation.
+
+        Args:
+            index (int): The index of item to be retrieved.
+
+        Returns:
+            tuple: A tuple containing the transformed image, the original label, and the confidence score.
+                    If custom_transform is None, the original image and a confidence score of 0.0 are returned.
+        """
         image, label = self.dataset[index]
         if self.custom_transform is None:
             print("Soft cropping not applied!")
@@ -73,21 +92,58 @@ class CustomTransform(torch.utils.data.Dataset):
         return image, label, confidence
 
     def __len__(self):
+        """Returns the total number of items in the dataset.
+
+        Returns:
+            int: Length of the dataset.
+        """
         return len(self.dataset)
 
 
 def get_training_dataloader(
-    mean,
-    std,
-    batch_size=1,
-    shuffle=False,
-    da=0,
-    aa=0,
-    length_cut=16,
-    mask_cut=1,
-):
+    num_samples: Optional[int],
+    batch_size: int = 1,
+    shuffle: bool = False,
+    da: int = 0,
+    aa: int = 0,
+    length_cut: int =16,
+    mask_cut: Optional[int] = 1,
+    normalize: bool = True
+) -> torch.utils.data.DataLoader:
+    """Creates and returns a DataLoader for training with specified data augmentations.
+
+    Args:
+        batch_size (int, optional): The number of samples per batch. Defaults to 1.
+        shuffle (bool, optional): Whether to shuffle the dataset. Defaults to False.
+        da (int, optional): Data augmentation mode. Defaults to 0.
+            - -1: No data augmentation.
+            - 0: Standard data augmentation (RandomCrop and RandomHorizontalFlip).
+            - 1: Standard data augmentation with cutout.
+            - 2: RandomHorizontalFlip with SoftCrop data augmentation.
+        aa (int, optional): Aggressive augmentation mode. Defaults to 0.
+            - -1: No aggressive augmentation.
+            - 0: Random augmentation.
+            - 1: Trivial augmentation.
+        length_cut (int, optional): The length for the cutout. Defaults to 16.
+        mask_cut (Optional[int], optional): The mask value for the cutout. Defaults to 1.
+        normalize (bool): Whether to define mean and standard deviation to normalize images.
+        num_samples (int, optional): Number of samples to be included in truncated dataset (for testing).
+
+    Returns:
+        torch.utils.data.DataLoader: Instance for the training dataset.
+    """
     n_classes = 10
     custom_transform = None
+
+    if normalize:
+        # below from cutout official repo
+        mean = [x / 255.0 for x in [125.3, 123.0, 113.9]]
+        std = [x / 255.0 for x in [63.0, 62.1, 66.7]]
+    else:
+        mean = [0.0 for _ in range(3)]
+        std = [1.0 for _ in range(3)]
+
+    # Define data augmentation transformations
     if da == -1:
         print("No data augmentation!")
         t = []
@@ -119,48 +175,63 @@ def get_training_dataloader(
         print("Using Trivial Augmentation!\n")
         t.append(transforms.TrivialAugmentWide())
 
+    # Add standard transformations
     t.extend([transforms.ToTensor(), transforms.Normalize(mean, std)])
 
+    # Add cutout if specified
     if da == 1:
         t.append(Cutout(n_holes=1, length=length_cut, mask=mask_cut))
 
+    # Compose all transformations
     transform_train = transforms.Compose(t)
+
+    # Load CIFAR-10 training dataset with transformations
     training_set = datasets.CIFAR10(
         root="./data/train", train=True, download=True, transform=transform_train
     )
-    # Testset with 500 samples only
-    num_samples = 10
-    training_set, _ = torch.utils.data.random_split(training_set,
-                                                        [num_samples, len(training_set)-num_samples],
-                                                        generator=torch.Generator().manual_seed(42))
-    # if custom_transform is not None:
+
+    if num_samples:
+        # Split dataset to create a smaller subset (for testing)
+        training_set, _ = torch.utils.data.random_split(training_set,
+                                                            [num_samples, len(training_set)-num_samples],
+                                                            generator=torch.Generator().manual_seed(42))
+        print(f'\nTruncated dataset to {len(training_set)} images.\n')
+    
+    # Apply custom transformation (will be ineffective if not specified)
     training_set = CustomTransform(
         dataset=training_set, custom_transform=custom_transform
     )
+
+    # Create DataLoader
     train_loader = torch.utils.data.DataLoader(training_set, batch_size, shuffle)
     return train_loader
 
 
-def display_image(image, title=None):
+def display_image(image: torch.Tensor, title: Optional[str] = None) -> None:
+    """Displays an image tensor
+
+    Args:
+        image (torch.Tensor): The image tensor to display.
+        title (Optional[str], optional): The title of the image. Defaults to None.
+    """
     image = image / 2 + 0.5  # unnormalize
     np_image = image.numpy()
+    np_image = np.clip(np_image, 0, 1)
     plt.imshow(np.transpose(np_image, (1, 2, 0)))
     if title:
         plt.title(title)
+    plt.axis('off')
     plt.show()
 
 
 if __name__ == "__main__":
-    # below from cutout official repo
-    mean = [x / 255.0 for x in [125.3, 123.0, 113.9]]
-    std = [x / 255.0 for x in [63.0, 62.1, 66.7]]
-
-    training_loader = get_training_dataloader(mean=mean, std=std, da=1, aa=1)
+    classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+    training_loader = get_training_dataloader(da=2, aa=1, num_samples=100, shuffle=True)
 
     for img, label, confidence in training_loader:
         for i in range(len(img)):
             display_image(
                 img[i],
-                title=f"Label: {label[i].item()}, Confidence: {confidence[i].item():.3f}",
+                title=f"Label: {label[i].item()} ({classes[label[i].item()]}) - Confidence: {confidence[i].item():.3f}",
             )
         break
