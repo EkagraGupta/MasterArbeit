@@ -10,23 +10,19 @@ net.load_state_dict(torch.load(net_path, map_location=torch.device('cpu')))
 net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
-custom_dataloader = get_dataloader(num_samples=None, train=False, da=-1, aa=-1, normalize=False)
+custom_dataloader = get_dataloader(num_samples=1000, train=False, da=0, aa=2, normalize=False)
 
 # Evaluate the model
-correct = 0
-total = 0
+correct, total = 0, 0
 
 with torch.no_grad():
     net.eval()
     for data in custom_dataloader:
-        images, labels, conf = data
+        images, labels, confidence = data
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-    if total == 0:
-        print('No images found for CIFAR-10 dataset.')
-    else:
-        cifar10_accuracy = 100 * correct / total
-        print(f'Accuracy of the network on the CIFAR-10 test dataset: {cifar10_accuracy:.2f} %')
+    accuracy = correct / total
+    print(f'Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %')
