@@ -3,6 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 from soft_augment import SoftAugment
+from utils.augment_parameters import get_augmentation_info
 
 from typing import Optional, List
 
@@ -65,7 +66,7 @@ class CustomTransform(torch.utils.data.Dataset):
     in the dataset.
     """
 
-    def __init__(self, dataset, custom_transform):
+    def __init__(self, dataset, custom_transform, aggressive_augment: bool = True):
         """Initializes the CustomTransform class with the given dataset and custom transformation.
 
         Args:

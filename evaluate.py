@@ -10,7 +10,7 @@ net.load_state_dict(torch.load(net_path, map_location=torch.device('cpu')))
 net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
-custom_dataloader = get_dataloader(num_samples=1000, train=False, da=0, aa=2, normalize=False)
+custom_dataloader = get_dataloader(num_samples=None, train=False, da=2, aa=1, normalize=False)
 
 # Evaluate the model
 correct, total = 0, 0
