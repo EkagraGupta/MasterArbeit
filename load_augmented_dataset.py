@@ -65,7 +65,11 @@ class CustomTransform(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         image, label = self.dataset[index]
-        image, confidence = self.custom_transform(image)
+        if self.custom_transform is None:
+            print("Soft cropping not applied!")
+            confidence = torch.tensor(0)
+        else:
+            image, confidence = self.custom_transform(image)
         return image, label, confidence
 
     def __len__(self):
@@ -84,9 +88,9 @@ def get_training_dataloader(
 ):
     n_classes = 10
     custom_transform = None
-    confidence = None
     if da == -1:
         print("No data augmentation!")
+        t = []
     elif da == 0:  # original augmentaiton
         print("Standard data augmentation!")
         t = [
@@ -104,7 +108,6 @@ def get_training_dataloader(
         t = [
             transforms.RandomHorizontalFlip(),
         ]
-
         custom_transform = SoftAugment(n_class=n_classes, k=2)
 
     if aa == -1:
@@ -122,18 +125,19 @@ def get_training_dataloader(
         t.append(Cutout(n_holes=1, length=length_cut, mask=mask_cut))
 
     transform_train = transforms.Compose(t)
-
     training_set = datasets.CIFAR10(
         root="./data/train", train=True, download=True, transform=transform_train
     )
-
-    if custom_transform is not None:
-        training_set = CustomTransform(
-            dataset=training_set, custom_transform=custom_transform
-        )
-
+    # Testset with 500 samples only
+    num_samples = 10
+    training_set, _ = torch.utils.data.random_split(training_set,
+                                                        [num_samples, len(training_set)-num_samples],
+                                                        generator=torch.Generator().manual_seed(42))
+    # if custom_transform is not None:
+    training_set = CustomTransform(
+        dataset=training_set, custom_transform=custom_transform
+    )
     train_loader = torch.utils.data.DataLoader(training_set, batch_size, shuffle)
-
     return train_loader
 
 
@@ -151,7 +155,7 @@ if __name__ == "__main__":
     mean = [x / 255.0 for x in [125.3, 123.0, 113.9]]
     std = [x / 255.0 for x in [63.0, 62.1, 66.7]]
 
-    training_loader = get_training_dataloader(mean=mean, std=std, da=2, aa=-1)
+    training_loader = get_training_dataloader(mean=mean, std=std, da=1, aa=1)
 
     for img, label, confidence in training_loader:
         for i in range(len(img)):
