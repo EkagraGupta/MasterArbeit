@@ -6,6 +6,7 @@ from soft_augment import SoftAugment
 
 from typing import Optional, List
 
+
 # official cutout implementation
 class Cutout(object):
     """Randomly mask out one or more patches from an image.
@@ -63,6 +64,7 @@ class CustomTransform(torch.utils.data.Dataset):
     """A custom dataset wrapper that applies a user-defined transformation to the images
     in the dataset.
     """
+
     def __init__(self, dataset, custom_transform):
         """Initializes the CustomTransform class with the given dataset and custom transformation.
 
@@ -85,8 +87,7 @@ class CustomTransform(torch.utils.data.Dataset):
         """
         image, label = self.dataset[index]
         if self.custom_transform is None:
-            print("Soft cropping not applied!")
-            confidence = torch.tensor(0)
+            confidence = 0.
         else:
             image, confidence = self.custom_transform(image)
         return image, label, confidence
@@ -100,15 +101,16 @@ class CustomTransform(torch.utils.data.Dataset):
         return len(self.dataset)
 
 
-def get_training_dataloader(
+def get_dataloader(
     num_samples: Optional[int],
     batch_size: int = 1,
     shuffle: bool = False,
     da: int = 0,
     aa: int = 0,
-    length_cut: int =16,
+    length_cut: int = 16,
     mask_cut: Optional[int] = 1,
-    normalize: bool = True
+    normalize: bool = True,
+    train: bool = True
 ) -> torch.utils.data.DataLoader:
     """Creates and returns a DataLoader for training with specified data augmentations.
 
@@ -128,7 +130,8 @@ def get_training_dataloader(
         mask_cut (Optional[int], optional): The mask value for the cutout. Defaults to 1.
         normalize (bool): Whether to define mean and standard deviation to normalize images.
         num_samples (int, optional): Number of samples to be included in truncated dataset (for testing).
-
+        train (bool): Whether to get training loader or test loader.
+        
     Returns:
         torch.utils.data.DataLoader: Instance for the training dataset.
     """
@@ -183,27 +186,35 @@ def get_training_dataloader(
         t.append(Cutout(n_holes=1, length=length_cut, mask=mask_cut))
 
     # Compose all transformations
-    transform_train = transforms.Compose(t)
+    transform = transforms.Compose(t)
 
-    # Load CIFAR-10 training dataset with transformations
-    training_set = datasets.CIFAR10(
-        root="./data/train", train=True, download=True, transform=transform_train
-    )
+    if train:
+        # Load CIFAR-10 training dataset with transformations
+        data_set = datasets.CIFAR10(
+            root="./data/train", train=True, download=True, transform=transform
+        )
+    else:
+        # Load CIFAR-10 test dataset with transformations
+        data_set = datasets.CIFAR10(
+            root="./data/test", train=False, download=True, transform=transform
+        )
 
     if num_samples:
         # Split dataset to create a smaller subset (for testing)
-        training_set, _ = torch.utils.data.random_split(training_set,
-                                                            [num_samples, len(training_set)-num_samples],
-                                                            generator=torch.Generator().manual_seed(42))
-        print(f'\nTruncated dataset to {len(training_set)} images.\n')
-    
+        data_set, _ = torch.utils.data.random_split(
+            data_set,
+            [num_samples, len(data_set) - num_samples],
+            generator=torch.Generator().manual_seed(42),
+        )
+        print(f"\nTruncated dataset to {len(data_set)} images.\n")
+
     # Apply custom transformation (will be ineffective if not specified)
-    training_set = CustomTransform(
-        dataset=training_set, custom_transform=custom_transform
+    data_set = CustomTransform(
+        dataset=data_set, custom_transform=custom_transform
     )
 
     # Create DataLoader
-    train_loader = torch.utils.data.DataLoader(training_set, batch_size, shuffle)
+    train_loader = torch.utils.data.DataLoader(data_set, batch_size, shuffle)
     return train_loader
 
 
@@ -220,13 +231,24 @@ def display_image(image: torch.Tensor, title: Optional[str] = None) -> None:
     plt.imshow(np.transpose(np_image, (1, 2, 0)))
     if title:
         plt.title(title)
-    plt.axis('off')
+    plt.axis("off")
     plt.show()
 
 
 if __name__ == "__main__":
-    classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-    training_loader = get_training_dataloader(da=2, aa=1, num_samples=100, shuffle=True)
+    classes = [
+        "airplane",
+        "automobile",
+        "bird",
+        "cat",
+        "deer",
+        "dog",
+        "frog",
+        "horse",
+        "ship",
+        "truck",
+    ]
+    training_loader = get_dataloader(da=2, aa=1, num_samples=100, shuffle=True, train=False, normalize=False)
 
     for img, label, confidence in training_loader:
         for i in range(len(img)):

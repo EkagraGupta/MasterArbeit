@@ -2,41 +2,77 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
+from typing import Optional, List
 
-from dataset import load_dataset
+from dump.dataset import load_dataset
 
 
 class SoftAugment:
+    """A class to perform soft augmentation on images."""
+
     def __init__(
         self,
-        n_class=10,
-        k=2,
-        bg_crop=0.01,
-        sigma_crop=10,
+        n_class: int = 10,
+        k: int = 2,
+        bg_crop: float = 0.01,
+        sigma_crop: float = 10,
     ):
+        """Initializes the SoftAugment class with specific parameters.
+
+        Args:
+            n_class (int, optional): Number of classes. Defaults to 10.
+            k (int, optional): Non linear power factor. Defaults to 2.
+            bg_crop (float, optional): Background crop value. Defaults to 0.01.
+            sigma_crop (float, optional): standard deviation for Gaussian offset. Defaults to 10.
+        """
         self.n_class = n_class
         self.chance = 1 / n_class
         self.k = k
 
         # crop parameters
         self.sigma_crop = sigma_crop
-        # self.t_crop = t_crop
-        # self.max_p_crop = max_p_crop
-        # self.pow_crop = pow_crop
         self.bg_crop = bg_crop
 
     def draw_offset(self, sigma=0.3, limit=24, n=100):
-        # draw an integer from a (clipped) Gaussian
-        for d in range(n):
+        """Draws an integer offset from a clipped Guassian Distribution.
+
+        Args:
+            sigma (float, optional): Standard deviation. Defaults to 0.3.
+            limit (int, optional): Limit to clip the Gaussian. Defaults to 24.
+            n (int, optional): Number of attempts. Defaults to 100.
+
+        Returns:
+            int: The drawn offset.
+        """
+        for _ in range(n):
             x = torch.randn((1)) * sigma
             if abs(x) <= limit:
                 return int(x)
         return int(0)
 
     def compute_visibility(self, dim1, dim2, tx, ty):
+        """Computes the visibility factor based on translation offsets.
+
+        Args:
+            dim1 (int): Dimension 1 of the image.
+            dim2 (int): Dimension 2 of the image.
+            tx (int): Translation offset in x-direction.
+            ty (int): Translation offset in y-direction.
+
+        Returns:
+            float: The visibility factor.
+        """
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
     def __call__(self, image):
+        """Applies the soft augmentation to the input images.
+
+        Args:
+            image (torch.Tensor): The input image tensor
+
+        Returns:
+            _type_: The augmented image and the confidence score.
+        """
         dim1, dim2 = image.size(1), image.size(2)
 
         # create background
@@ -49,7 +85,6 @@ class SoftAugment:
 
         left, right = tx + dim1, tx + dim1 * 2
         top, bottom = ty + dim2, ty + dim2 * 2
-        # print(f'l: {left}\tr: {right}\tt: {top}\tb: {bottom}\nd1: {bg.size(1)}\td2: {bg.size(2)}')
 
         visibility = self.compute_visibility(dim1, dim2, tx, ty)
         confidence = 1 - (1 - self.chance) * (1 - visibility) ** self.k
@@ -59,17 +94,28 @@ class SoftAugment:
         return cropped_image, confidence
 
 
-def soft_target(pred, label, confidence):
+def soft_target(pred: torch.Tensor, label: torch.Tensor, confidence: float):
+    """Generates soft target labels and computes the weighted KL divergence loss.
+
+    Args:
+        pred (torch.Tensor): The predicted logits.
+        label (torch.Tensor): The true labels.
+        confidence (float, optional): The confidence scores.
+
+    Returns:
+        torch.Tensor: The computed loss.
+    """
     label = label.unsqueeze(1)
+    confidence = torch.tensor(confidence).view(-1, 1)
 
     log_prob = F.log_softmax(pred, dim=1)
     n_class = pred.size(1)
 
     # make soft one-hot target
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
-    confidence_expanded = confidence.unsqueeze(1).expand_as(one_hot)
+    confidence_expanded = confidence.expand_as(one_hot)
     one_hot.scatter_(dim=1, index=label, src=confidence_expanded)
-    print(f"Soft: {one_hot}\tHard: {label.item()}")
+    print(f"Soft Label: {one_hot}\n")
 
     # compute weighted KL loss
     kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
@@ -79,7 +125,12 @@ def soft_target(pred, label, confidence):
 if __name__ == "__main__":
     transform = transforms.Compose([transforms.ToTensor()])
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
-    images, labels = next(iter(trainloader))
+
+    from load_augmented_dataset import get_training_dataloader
+    custom_trainloader = get_training_dataloader(num_samples=10, shuffle=True)
+
+
+    images, labels, confidence = next(iter(custom_trainloader))
     print(f"\nOriginal Hard label: {labels} -> {classes[labels.item()]}\n")
     soft_augment = SoftAugment()
 
