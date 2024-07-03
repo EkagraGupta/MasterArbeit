@@ -3,6 +3,7 @@ import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
 from typing import Optional, List
+import numpy as np
 
 from dump.dataset import load_dataset
 
@@ -12,6 +13,7 @@ class SoftAugment:
 
     def __init__(
         self,
+        aa_info: dict = {'None': 10},
         n_class: int = 10,
         k: int = 2,
         bg_crop: float = 0.01,
@@ -28,6 +30,7 @@ class SoftAugment:
         self.n_class = n_class
         self.chance = 1 / n_class
         self.k = k
+        self.aa_info = aa_info
 
         # crop parameters
         self.sigma_crop = sigma_crop
@@ -64,7 +67,7 @@ class SoftAugment:
         """
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
-    def __call__(self, image):
+    def __call__(self, image, aa_info):
         """Applies the soft augmentation to the input images.
 
         Args:
@@ -87,8 +90,11 @@ class SoftAugment:
         top, bottom = ty + dim2, ty + dim2 * 2
 
         visibility = self.compute_visibility(dim1, dim2, tx, ty)
-        confidence = 1 - (1 - self.chance) * (1 - visibility) ** self.k
-
+        confidence = 1 - (1 - self.chance) * (1 - visibility) ** self.k         # The non-linear function
+        print(f'Initial Confidence: {confidence}')
+        confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
+        print(f'After Aggressive: {confidence}')
+        
         cropped_image = bg[:, left:right, top:bottom]
 
         return cropped_image, confidence
@@ -127,8 +133,8 @@ if __name__ == "__main__":
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
 
     from load_augmented_dataset import get_training_dataloader
-    custom_trainloader = get_training_dataloader(num_samples=10, shuffle=True)
 
+    custom_trainloader = get_training_dataloader(num_samples=10, shuffle=True)
 
     images, labels, confidence = next(iter(custom_trainloader))
     print(f"\nOriginal Hard label: {labels} -> {classes[labels.item()]}\n")

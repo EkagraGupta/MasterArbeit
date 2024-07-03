@@ -1,31 +1,58 @@
-from utils.augment_parameters import get_augmentation_info
 from torchvision import transforms
-from dump.dataset import load_dataset
-from PIL import Image
-import numpy as np
 import matplotlib.pyplot as plt
+from torchvision.transforms import functional as F
+from utils.trivial_augment import TrivialAugmentWide
 
-class TrivialAug:
-    def __init__(
-            self
-    ):
+from dump.dataset import load_dataset
+
+
+class CustomTrivialAugmentWide:
+    """A class to perform trivial augmentation on images which 
+    returns augmented image and its augmentation information.
+    """
+    def __init__(self):
+        """Initializes the CustomTrivialAugmentWide class.
+        """
         pass
 
     def __call__(self, image):
-        augmented_image, augment_info = get_augmentation_info(image)
-        return augmented_image, augment_info
-    
+        """Applies the trivial augmentation to input images.
 
-if __name__=='__main__':
+        Args:
+            image (torch.Tensor): The input image tensor.
+
+        Returns:
+            tuple: The augmented image tensor and augmentation information.
+        """
+        augmented_image, augment_info = self.get_augment_info(image)
+        return augmented_image, augment_info
+
+    @staticmethod
+    def get_augment_info(image):
+        """Applies trivial augmentaiton to the input image.
+
+        Args:
+            image (torch.Tensor): The input image tensor.
+
+        Returns:
+            tuple: The augmented image tensor and augmentation information.
+        """
+        # pil_image = F.to_pil_image(image)
+        trivial_augment = TrivialAugmentWide()
+        augmented_pil_image, image_info = trivial_augment(image)
+        # print(type(augmented_pil_image))
+        return augmented_pil_image, image_info
+
+
+if __name__ == "__main__":
     transform = transforms.Compose([transforms.ToTensor()])
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
-    
+
     images, labels = next(iter(trainloader))
 
-    ta = TrivialAug()
+    ta = CustomTrivialAugmentWide()
     new_image, aug_info = ta(images[0])
-    print(new_image.shape)
-    print(aug_info)
+
     # Remove the extra batch dimension
     new_image = new_image.squeeze(0)
 
@@ -34,5 +61,5 @@ if __name__=='__main__':
 
     # Display the image
     plt.imshow(new_image_np)
-    plt.title('Augmented Image')
+    plt.title("Augmented Image")
     plt.show()

@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 from soft_augment import SoftAugment
-from utils.augment_parameters import get_augmentation_info
+from trivial_augment import CustomTrivialAugmentWide
 
 from typing import Optional, List
 
@@ -66,7 +66,7 @@ class CustomTransform(torch.utils.data.Dataset):
     in the dataset.
     """
 
-    def __init__(self, dataset, custom_transform, aggressive_augment: bool = True):
+    def __init__(self, dataset, custom_transform, aggressive_augment_transform):
         """Initializes the CustomTransform class with the given dataset and custom transformation.
 
         Args:
@@ -75,6 +75,7 @@ class CustomTransform(torch.utils.data.Dataset):
         """
         self.dataset = dataset
         self.custom_transform = custom_transform
+        self.aggressive_augment_transform = aggressive_augment_transform
 
     def __getitem__(self, index: int) -> tuple:
         """Retrieves an item from the dataset at the specified index and applies the custom transformation.
@@ -87,10 +88,14 @@ class CustomTransform(torch.utils.data.Dataset):
                     If custom_transform is None, the original image and a confidence score of 0.0 are returned.
         """
         image, label = self.dataset[index]
-        if self.custom_transform is None:
-            confidence = 0.
-        else:
-            image, confidence = self.custom_transform(image)
+        confidence = 1.0
+
+        if self.aggressive_augment_transform is not None:
+            image, augment_info = self.aggressive_augment_transform(image)
+            # confidence = augment_info.values()
+        if self.custom_transform is not None:
+            print(augment_info)
+            image, confidence = self.custom_transform(image, augment_info)
         return image, label, confidence
 
     def __len__(self):
@@ -111,7 +116,7 @@ def get_dataloader(
     length_cut: int = 16,
     mask_cut: Optional[int] = 1,
     normalize: bool = True,
-    train: bool = True
+    train: bool = True,
 ) -> torch.utils.data.DataLoader:
     """Creates and returns a DataLoader for training with specified data augmentations.
 
@@ -132,12 +137,12 @@ def get_dataloader(
         normalize (bool): Whether to define mean and standard deviation to normalize images.
         num_samples (int, optional): Number of samples to be included in truncated dataset (for testing).
         train (bool): Whether to get training loader or test loader.
-        
+
     Returns:
         torch.utils.data.DataLoader: Instance for the training dataset.
     """
     n_classes = 10
-    custom_transform = None
+    aa_transform, custom_transform = None, None
 
     if normalize:
         # below from cutout official repo
@@ -177,7 +182,8 @@ def get_dataloader(
         t.append(transforms.RandAugment())
     elif aa == 1:
         print("Using Trivial Augmentation!\n")
-        t.append(transforms.TrivialAugmentWide())
+        # t.append(CustomTrivialAugmentWide())
+        aa_transform = CustomTrivialAugmentWide()
 
     # Add standard transformations
     t.extend([transforms.ToTensor(), transforms.Normalize(mean, std)])
@@ -210,9 +216,7 @@ def get_dataloader(
         print(f"\nTruncated dataset to {len(data_set)} images.\n")
 
     # Apply custom transformation (will be ineffective if not specified)
-    data_set = CustomTransform(
-        dataset=data_set, custom_transform=custom_transform
-    )
+    data_set = CustomTransform(dataset=data_set, custom_transform=custom_transform, aggressive_augment_transform=aa_transform)
 
     # Create DataLoader
     train_loader = torch.utils.data.DataLoader(data_set, batch_size, shuffle)
@@ -249,7 +253,9 @@ if __name__ == "__main__":
         "ship",
         "truck",
     ]
-    training_loader = get_dataloader(da=2, aa=1, num_samples=100, shuffle=True, train=False, normalize=False)
+    training_loader = get_dataloader(
+        da=2, aa=1, num_samples=100, shuffle=True, train=False, normalize=False
+    )
 
     for img, label, confidence in training_loader:
         for i in range(len(img)):
