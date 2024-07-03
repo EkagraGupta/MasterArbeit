@@ -1,3 +1,4 @@
+import torch
 from torchvision import transforms
 import matplotlib.pyplot as plt
 from torchvision.transforms import functional as F
@@ -37,7 +38,8 @@ class CustomTrivialAugmentWide:
         Returns:
             tuple: The augmented image tensor and augmentation information.
         """
-        # pil_image = F.to_pil_image(image)
+        # if image.dtype == torch.float32:
+        #     image = (image * 255).to(torch.uint8)
         trivial_augment = TrivialAugmentWide()
         augmented_pil_image, image_info = trivial_augment(image)
         # print(type(augmented_pil_image))

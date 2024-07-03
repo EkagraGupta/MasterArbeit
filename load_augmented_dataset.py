@@ -89,12 +89,12 @@ class CustomTransform(torch.utils.data.Dataset):
         """
         image, label = self.dataset[index]
         confidence = 1.0
+        augment_info = {'None': 1.0}
 
         if self.aggressive_augment_transform is not None:
             image, augment_info = self.aggressive_augment_transform(image)
             # confidence = augment_info.values()
         if self.custom_transform is not None:
-            print(augment_info)
             image, confidence = self.custom_transform(image, augment_info)
         return image, label, confidence
 
@@ -230,7 +230,7 @@ def display_image(image: torch.Tensor, title: Optional[str] = None) -> None:
         image (torch.Tensor): The image tensor to display.
         title (Optional[str], optional): The title of the image. Defaults to None.
     """
-    image = image / 2 + 0.5  # unnormalize
+    # image = image / 2 + 0.5  # unnormalize
     np_image = image.numpy()
     np_image = np.clip(np_image, 0, 1)
     plt.imshow(np.transpose(np_image, (1, 2, 0)))
@@ -254,7 +254,7 @@ if __name__ == "__main__":
         "truck",
     ]
     training_loader = get_dataloader(
-        da=2, aa=1, num_samples=100, shuffle=True, train=False, normalize=False
+        da=2, aa=-1, num_samples=10, shuffle=True, train=False, normalize=False
     )
 
     for img, label, confidence in training_loader:
@@ -263,4 +263,3 @@ if __name__ == "__main__":
                 img[i],
                 title=f"Label: {label[i].item()} ({classes[label[i].item()]}) - Confidence: {confidence[i].item():.3f}",
             )
-        break

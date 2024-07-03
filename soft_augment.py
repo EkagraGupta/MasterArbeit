@@ -72,9 +72,10 @@ class SoftAugment:
 
         Args:
             image (torch.Tensor): The input image tensor
+            aa_info (dict): Augmentation info from Aggressive augmentations
 
         Returns:
-            _type_: The augmented image and the confidence score.
+            tuple: The augmented image and the confidence score.
         """
         dim1, dim2 = image.size(1), image.size(2)
 
