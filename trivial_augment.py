@@ -1,10 +1,10 @@
-import torch
 from torchvision import transforms
 import matplotlib.pyplot as plt
 from torchvision.transforms import functional as F
 from utils.trivial_augment import TrivialAugmentWide
 
 from dump.dataset import load_dataset
+from utils.ncc import normalized_cross_correlation
 import piq
 
 
@@ -54,6 +54,7 @@ class CustomTrivialAugmentWide:
         trivial_augment = TrivialAugmentWide()
         augmented_image, image_info = trivial_augment(image)
         augmentation_type = next(iter(image_info.keys()))
+        print(f'\nInitial tr: {image_info[augmentation_type]}')
         if augmentation_type in pixelwise_augs:
             resize = transforms.Resize((41, 41))
             # Apply the resize transformation to both the original and augmented images
@@ -65,7 +66,9 @@ class CustomTrivialAugmentWide:
                 im_resize.unsqueeze(0), augmented_im_resize.unsqueeze(0)
             )
             image_info[augmentation_type] = vif_value.item()
-        # print(type(augmented_pil_image))
+        else:
+            image_info[augmentation_type] = normalized_cross_correlation(image, augmented_image)
+        print(f'After comparison: {image_info[augmentation_type]}\n')
         return augmented_image, image_info
 
 

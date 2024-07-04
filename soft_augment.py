@@ -2,9 +2,7 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
-from typing import Optional, List
 import numpy as np
-import piq
 
 from dump.dataset import load_dataset
 
@@ -109,15 +107,19 @@ class SoftAugment:
         confidence = (
             1 - (1 - self.chance) * (1 - visibility) ** self.k
         )  # The non-linear function
-        # print(f"After Aggressive: {confidence}")
+        print(f"Before Aggressive: {confidence}")
 
         augmentation_type = next(iter(aa_info.keys()))
         if augmentation_type in self.pixelwise_augs:
+            # Pixelwise augmentations
             confidence = confidence * aa_info[augmentation_type]
             print(f"\nConfidence (pxwise aug): {confidence}\n")
         else:
-            confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
-        # print(f"Initial Confidence: {confidence}")
+            # Geometric transformations
+            # confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
+            confidence = confidence * abs(aa_info[augmentation_type])
+            print(f"\nConfidence (geo aug): {confidence}\n")
+        print(f"After AA: {confidence}")
         return cropped_image, confidence
 
 
