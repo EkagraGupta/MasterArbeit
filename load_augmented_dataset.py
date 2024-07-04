@@ -76,6 +76,18 @@ class CustomTransform(torch.utils.data.Dataset):
         self.dataset = dataset
         self.custom_transform = custom_transform
         self.aggressive_augment_transform = aggressive_augment_transform
+        self.pixelwise_augs = [
+            "Invert",
+            "Equalize",
+            "AutoContrast",
+            "Posterize",
+            "Solarize",
+            "SolarizeAdd",
+            "Color",
+            "Contrast",
+            "Brightness",
+            "Sharpness",
+        ]
 
     def __getitem__(self, index: int) -> tuple:
         """Retrieves an item from the dataset at the specified index and applies the custom transformation.
@@ -93,10 +105,15 @@ class CustomTransform(torch.utils.data.Dataset):
 
         if self.aggressive_augment_transform is not None:
             image, augment_info = self.aggressive_augment_transform(image)
-            # confidence = augment_info.values()
+            augment_type = next(iter(augment_info.keys()))
+            confidence = (
+                next(iter(augment_info.values()))
+                if augment_type in self.pixelwise_augs
+                else 1.0
+            )
         if self.custom_transform is not None:
             image, confidence = self.custom_transform(image, augment_info)
-        print(f'Augmentation Info: {augment_info}')
+        print(f"Augmentation Info: {augment_info}")
         return image, label, confidence
 
     def __len__(self):
@@ -260,7 +277,7 @@ if __name__ == "__main__":
         "truck",
     ]
     training_loader = get_dataloader(
-        da=2, aa=1, num_samples=10, shuffle=True, train=False
+        da=1, aa=1, num_samples=10, shuffle=True, train=False
     )
 
     for img, label, confidence in training_loader:

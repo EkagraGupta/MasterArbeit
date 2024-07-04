@@ -4,6 +4,7 @@ from torchvision import transforms
 from torchvision.transforms import functional as ff
 from typing import Optional, List
 import numpy as np
+import piq
 
 from dump.dataset import load_dataset
 
@@ -31,6 +32,18 @@ class SoftAugment:
         self.chance = 1 / n_class
         self.k = k
         self.aa_info = aa_info
+        self.pixelwise_augs = [
+            "Invert",
+            "Equalize",
+            "AutoContrast",
+            "Posterize",
+            "Solarize",
+            "SolarizeAdd",
+            "Color",
+            "Contrast",
+            "Brightness",
+            "Sharpness",
+        ]
 
         # crop parameters
         self.sigma_crop = sigma_crop
@@ -90,16 +103,21 @@ class SoftAugment:
         left, right = tx + dim1, tx + dim1 * 2
         top, bottom = ty + dim2, ty + dim2 * 2
 
+        cropped_image = bg[:, left:right, top:bottom]
+
         visibility = self.compute_visibility(dim1, dim2, tx, ty)
         confidence = (
             1 - (1 - self.chance) * (1 - visibility) ** self.k
         )  # The non-linear function
-        print(f"Initial Confidence: {confidence}")
-        confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
-        print(f"After Aggressive: {confidence}")
+        # print(f"After Aggressive: {confidence}")
 
-        cropped_image = bg[:, left:right, top:bottom]
-
+        augmentation_type = next(iter(aa_info.keys()))
+        if augmentation_type in self.pixelwise_augs:
+            confidence = confidence * aa_info[augmentation_type]
+            print(f"\nConfidence (pxwise aug): {confidence}\n")
+        else:
+            confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
+        # print(f"Initial Confidence: {confidence}")
         return cropped_image, confidence
 
 

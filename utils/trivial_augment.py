@@ -508,7 +508,11 @@ class TrivialAugmentWide(torch.nn.Module):
         """Modification"""
         # Convert float32 to uint8 for specific operations
         original_dtype = img.dtype
-        if img.dtype == torch.float32 and op_name in ["Posterize", "Solarize", "Equalize"]:
+        if img.dtype == torch.float32 and op_name in [
+            "Posterize",
+            "Solarize",
+            "Equalize",
+        ]:
             img = (img * 255).to(torch.uint8)
             img, aug_info = _apply_op(
                 img, op_name, magnitude, interpolation=self.interpolation, fill=fill

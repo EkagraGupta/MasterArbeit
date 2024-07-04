@@ -5,6 +5,7 @@ from torchvision.transforms import functional as F
 from utils.trivial_augment import TrivialAugmentWide
 
 from dump.dataset import load_dataset
+import piq
 
 
 class CustomTrivialAugmentWide:
@@ -38,14 +39,40 @@ class CustomTrivialAugmentWide:
         Returns:
             tuple: The augmented image tensor and augmentation information.
         """
+        pixelwise_augs = [
+            "Invert",
+            "Equalize",
+            "AutoContrast",
+            "Posterize",
+            "Solarize",
+            "SolarizeAdd",
+            "Color",
+            "Contrast",
+            "Brightness",
+            "Sharpness",
+        ]
         trivial_augment = TrivialAugmentWide()
-        augmented_pil_image, image_info = trivial_augment(image)
+        augmented_image, image_info = trivial_augment(image)
+        augmentation_type = next(iter(image_info.keys()))
+        if augmentation_type in pixelwise_augs:
+            resize = transforms.Resize((41, 41))
+            # Apply the resize transformation to both the original and augmented images
+            to_pil = transforms.ToPILImage()
+            to_tensor = transforms.ToTensor()
+            im_resize = to_tensor(resize(to_pil(image)))
+            augmented_im_resize = to_tensor(resize(to_pil(augmented_image)))
+            vif_value = piq.vif_p(
+                im_resize.unsqueeze(0), augmented_im_resize.unsqueeze(0)
+            )
+            image_info[augmentation_type] = vif_value.item()
         # print(type(augmented_pil_image))
-        return augmented_pil_image, image_info
+        return augmented_image, image_info
 
 
 if __name__ == "__main__":
-    transform = transforms.Compose([transforms.ToTensor()])
+    transform = transforms.Compose(
+        [transforms.ToTensor(), transforms.Resize((512, 512))]
+    )
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
 
     images, labels = next(iter(trainloader))
