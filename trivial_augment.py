@@ -8,12 +8,12 @@ from dump.dataset import load_dataset
 
 
 class CustomTrivialAugmentWide:
-    """A class to perform trivial augmentation on images which 
+    """A class to perform trivial augmentation on images which
     returns augmented image and its augmentation information.
     """
+
     def __init__(self):
-        """Initializes the CustomTrivialAugmentWide class.
-        """
+        """Initializes the CustomTrivialAugmentWide class."""
         pass
 
     def __call__(self, image):
@@ -38,8 +38,6 @@ class CustomTrivialAugmentWide:
         Returns:
             tuple: The augmented image tensor and augmentation information.
         """
-        # if image.dtype == torch.float32:
-        #     image = (image * 255).to(torch.uint8)
         trivial_augment = TrivialAugmentWide()
         augmented_pil_image, image_info = trivial_augment(image)
         # print(type(augmented_pil_image))
@@ -54,6 +52,7 @@ if __name__ == "__main__":
 
     ta = CustomTrivialAugmentWide()
     new_image, aug_info = ta(images[0])
+    print(aug_info)
 
     # Remove the extra batch dimension
     new_image = new_image.squeeze(0)

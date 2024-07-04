@@ -501,9 +501,25 @@ class TrivialAugmentWide(torch.nn.Module):
         if signed and torch.randint(2, (1,)):
             magnitude *= -1.0
 
-        return _apply_op(
-            img, op_name, magnitude, interpolation=self.interpolation, fill=fill
-        )
+        # return _apply_op(
+        #     img, op_name, magnitude, interpolation=self.interpolation, fill=fill
+        # )
+
+        """Modification"""
+        # Convert float32 to uint8 for specific operations
+        original_dtype = img.dtype
+        if img.dtype == torch.float32 and op_name in ["Posterize", "Solarize", "Equalize"]:
+            img = (img * 255).to(torch.uint8)
+            img, aug_info = _apply_op(
+                img, op_name, magnitude, interpolation=self.interpolation, fill=fill
+            )
+            img = img.to(torch.float32) / 255
+        else:
+            img, aug_info = _apply_op(
+                img, op_name, magnitude, interpolation=self.interpolation, fill=fill
+            )
+        """Modification"""
+        return img, aug_info
 
     def __repr__(self) -> str:
         s = (

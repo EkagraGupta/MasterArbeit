@@ -13,7 +13,7 @@ class SoftAugment:
 
     def __init__(
         self,
-        aa_info: dict = {'None': 10},
+        aa_info: dict = {"None": 10},
         n_class: int = 10,
         k: int = 2,
         bg_crop: float = 0.01,
@@ -91,11 +91,13 @@ class SoftAugment:
         top, bottom = ty + dim2, ty + dim2 * 2
 
         visibility = self.compute_visibility(dim1, dim2, tx, ty)
-        confidence = 1 - (1 - self.chance) * (1 - visibility) ** self.k         # The non-linear function
-        print(f'Initial Confidence: {confidence}')
+        confidence = (
+            1 - (1 - self.chance) * (1 - visibility) ** self.k
+        )  # The non-linear function
+        print(f"Initial Confidence: {confidence}")
         confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
-        print(f'After Aggressive: {confidence}')
-        
+        print(f"After Aggressive: {confidence}")
+
         cropped_image = bg[:, left:right, top:bottom]
 
         return cropped_image, confidence

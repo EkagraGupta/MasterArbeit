@@ -89,13 +89,14 @@ class CustomTransform(torch.utils.data.Dataset):
         """
         image, label = self.dataset[index]
         confidence = 1.0
-        augment_info = {'None': 1.0}
+        augment_info = {"None": 1.0}
 
         if self.aggressive_augment_transform is not None:
             image, augment_info = self.aggressive_augment_transform(image)
             # confidence = augment_info.values()
         if self.custom_transform is not None:
             image, confidence = self.custom_transform(image, augment_info)
+        print(f'Augmentation Info: {augment_info}')
         return image, label, confidence
 
     def __len__(self):
@@ -115,7 +116,7 @@ def get_dataloader(
     aa: int = 0,
     length_cut: int = 16,
     mask_cut: Optional[int] = 1,
-    normalize: bool = True,
+    # normalize: bool = True,
     train: bool = True,
 ) -> torch.utils.data.DataLoader:
     """Creates and returns a DataLoader for training with specified data augmentations.
@@ -144,13 +145,13 @@ def get_dataloader(
     n_classes = 10
     aa_transform, custom_transform = None, None
 
-    if normalize:
-        # below from cutout official repo
-        mean = [x / 255.0 for x in [125.3, 123.0, 113.9]]
-        std = [x / 255.0 for x in [63.0, 62.1, 66.7]]
-    else:
-        mean = [0.0 for _ in range(3)]
-        std = [1.0 for _ in range(3)]
+    # if normalize:
+    #     # below from cutout official repo
+    #     mean = [x / 255.0 for x in [125.3, 123.0, 113.9]]
+    #     std = [x / 255.0 for x in [63.0, 62.1, 66.7]]
+    # else:
+    #     mean = [0.0 for _ in range(3)]
+    #     std = [1.0 for _ in range(3)]
 
     # Define data augmentation transformations
     if da == -1:
@@ -186,7 +187,8 @@ def get_dataloader(
         aa_transform = CustomTrivialAugmentWide()
 
     # Add standard transformations
-    t.extend([transforms.ToTensor(), transforms.Normalize(mean, std)])
+    # t.extend([transforms.ToTensor(), transforms.Normalize(mean, std)])
+    t.extend([transforms.ToTensor()])
 
     # Add cutout if specified
     if da == 1:
@@ -216,7 +218,11 @@ def get_dataloader(
         print(f"\nTruncated dataset to {len(data_set)} images.\n")
 
     # Apply custom transformation (will be ineffective if not specified)
-    data_set = CustomTransform(dataset=data_set, custom_transform=custom_transform, aggressive_augment_transform=aa_transform)
+    data_set = CustomTransform(
+        dataset=data_set,
+        custom_transform=custom_transform,
+        aggressive_augment_transform=aa_transform,
+    )
 
     # Create DataLoader
     train_loader = torch.utils.data.DataLoader(data_set, batch_size, shuffle)
@@ -254,7 +260,7 @@ if __name__ == "__main__":
         "truck",
     ]
     training_loader = get_dataloader(
-        da=2, aa=-1, num_samples=10, shuffle=True, train=False, normalize=False
+        da=2, aa=1, num_samples=10, shuffle=True, train=False
     )
 
     for img, label, confidence in training_loader:
