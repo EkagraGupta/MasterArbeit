@@ -54,7 +54,7 @@ class CustomTrivialAugmentWide:
         trivial_augment = TrivialAugmentWide()
         augmented_image, image_info = trivial_augment(image)
         augmentation_type = next(iter(image_info.keys()))
-        print(f'\nInitial tr: {image_info[augmentation_type]}')
+        print(f"\nInitial tr: {image_info[augmentation_type]}")
         if augmentation_type in pixelwise_augs:
             resize = transforms.Resize((41, 41))
             # Apply the resize transformation to both the original and augmented images
@@ -67,8 +67,10 @@ class CustomTrivialAugmentWide:
             )
             image_info[augmentation_type] = vif_value.item()
         else:
-            image_info[augmentation_type] = normalized_cross_correlation(image, augmented_image)
-        print(f'After comparison: {image_info[augmentation_type]}\n')
+            image_info[augmentation_type] = normalized_cross_correlation(
+                image, augmented_image
+            )
+        print(f"After comparison: {image_info[augmentation_type]}\n")
         return augmented_image, image_info
 
 

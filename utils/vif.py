@@ -1,6 +1,6 @@
 import numpy as np
 from skimage import io, color
-from skimage.metrics import structural_similarity as ssim       # another metric
+from skimage.metrics import structural_similarity as ssim  # another metric
 
 # from skimage.measure import compare_vif
 import piq
