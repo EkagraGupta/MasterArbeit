@@ -47,7 +47,8 @@ class SoftAugment:
         self.sigma_crop = sigma_crop
         self.bg_crop = bg_crop
 
-    def draw_offset(self, sigma=0.3, limit=24, n=100):
+    def draw_offset(self, sigma=0.3, limit=24, n=100):              # If tiny-imagenet, it has 64x64 px, take care of that
+        # Adapt limit as per px size
         """Draws an integer offset from a clipped Guassian Distribution.
 
         Args:
@@ -116,10 +117,9 @@ class SoftAugment:
             print(f"\nConfidence (pxwise aug): {confidence}\n")
         else:
             # Geometric transformations
-            # confidence = np.clip(abs(confidence * next(iter(aa_info.values()))), 0, 1)
             confidence = confidence * abs(aa_info[augmentation_type])
             print(f"\nConfidence (geo aug): {confidence}\n")
-        print(f"After AA: {confidence}")
+        # print(f"After AA: {confidence}")
         return cropped_image, confidence
 
 
@@ -147,7 +147,8 @@ def soft_target(pred: torch.Tensor, label: torch.Tensor, confidence: float):
     print(f"Soft Label: {one_hot}\n")
 
     # compute weighted KL loss
-    kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
+    kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)                # Look into it
+    # If confidence = 1, it behaves like cross-entropy loss
     return kl.mean()
 
 
@@ -155,9 +156,9 @@ if __name__ == "__main__":
     transform = transforms.Compose([transforms.ToTensor()])
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
 
-    from load_augmented_dataset import get_training_dataloader
+    from load_augmented_dataset import get_dataloader
 
-    custom_trainloader = get_training_dataloader(num_samples=10, shuffle=True)
+    custom_trainloader = get_dataloader(num_samples=10, shuffle=False)
 
     images, labels, confidence = next(iter(custom_trainloader))
     print(f"\nOriginal Hard label: {labels} -> {classes[labels.item()]}\n")

@@ -206,6 +206,7 @@ def get_dataloader(
     if da == 1:
         t.append(Cutout(n_holes=1, length=length_cut, mask=mask_cut))
 
+
     # Compose all transformations
     transform = transforms.Compose(t)
 
@@ -272,7 +273,7 @@ if __name__ == "__main__":
         "truck",
     ]
     training_loader = get_dataloader(
-        da=0, aa=1, num_samples=10, shuffle=True, train=False
+        da=-1, aa=1, num_samples=10, shuffle=False, train=False
     )
 
     for img, label, confidence in training_loader:
