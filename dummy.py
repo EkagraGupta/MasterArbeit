@@ -7,7 +7,7 @@ transform = transforms.Compose(
     [
         transforms.ToTensor(),
         transforms.Resize((512, 512)),
-        transforms.TrivialAugmentWide(),
+        transforms.RandomRotation(90),
     ]
 )
 trainloader, _, classes = load_dataset(batch_size=1, transform=transform)

@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
+import numpy as np
 
 from dump.dataset import load_dataset
 
@@ -110,10 +111,11 @@ class SoftAugment:
         )  # The non-linear function
 
         augmentation_type = next(iter(aa_info.keys()))
+        print(f'confidence: {confidence}\taa: {aa_info[augmentation_type]}\n')
         if augmentation_type in self.pixelwise_augs:
-            confidence *= aa_info[augmentation_type]
+            confidence = np.clip(abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1)
         else:
-            confidence *= abs(aa_info[augmentation_type])
+            confidence = np.clip(abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1)
 
         return cropped_image, confidence
 
@@ -168,8 +170,6 @@ if __name__ == "__main__":
     pil_new_image.save(
         "/home/ekagra/Desktop/Study/MA/code/example/example_augmented_image.png"
     )
-
-    print(f"Confidence: {confidence}")
 
     outputs = torch.tensor(
         [[0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.91, 0.01, 0.01, 0.01]]

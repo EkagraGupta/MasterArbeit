@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 from soft_augment import SoftAugment
 from trivial_augment import CustomTrivialAugmentWide
-from typing import Optional
+from typing import Optional, List
 
 
 class Cutout(object):
@@ -60,7 +60,7 @@ class CustomTransform(torch.utils.data.Dataset):
         if self.aggressive_augment_transform is not None:
             image, augment_info = self.aggressive_augment_transform(image)
             confidence = next(iter(augment_info.values()))
-            print(f"AA enabled: {augment_info}\n")
+            # print(f"AA enabled: {augment_info}\n")
         if self.custom_transform is not None:
             image, confidence = self.custom_transform(image, augment_info)
         return image, label, confidence
@@ -142,6 +142,28 @@ def display_image(image: torch.Tensor, title: Optional[str] = None) -> None:
     plt.axis("off")
     plt.show()
 
+def display_images_in_grid(images: List[torch.Tensor], labels: List[int], confidences: List[float], classes: List[str]) -> None:
+    """Displays a list of image tensors in a grid.
+
+    Args:
+        images (List[torch.Tensor]): The list of image tensors to display.
+        labels (List[int]): The list of labels for the images.
+        confidence (List[float]): The list of confidence scores for the images.
+        classes (List[str]): The list of class names.
+    """
+    _, axes = plt.subplots(2, 5, figsize=(15, 6))
+    axes = axes.flatten()
+
+    for idx, (im, label, confidence) in enumerate(zip(images, labels, confidences)):
+        np_im = im.numpy()
+        np_im = np.clip(np_im, 0, 1)
+        axes[idx].imshow(np.transpose(np_im, (1, 2, 0)))
+        axes[idx].set_title(f'{classes[label]} ({confidence: .3f})')
+        axes[idx].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
 
 if __name__ == "__main__":
     classes = [
@@ -160,9 +182,15 @@ if __name__ == "__main__":
         da=-1, aa=1, num_samples=10, shuffle=False, train=False
     )
 
+    images, labels, confidences = [], [], []
     for img, label, confidence in training_loader:
-        for i in range(len(img)):
-            display_image(
-                img[i],
-                title=f"Label: {label[i].item()} ({classes[label[i].item()]}) - Confidence: {confidence[i].item():.3f}",
-            )
+        # for i in range(len(img)):
+        #     display_image(
+        #         img[i],
+        #         title=f"Label: {label[i].item()} ({classes[label[i].item()]}) - Confidence: {confidence[i].item():.3f}",
+        #     )
+        images.extend(img)
+        labels.extend(label)
+        confidences.extend(confidence)
+    display_images_in_grid(images, labels, confidences, classes)
+
