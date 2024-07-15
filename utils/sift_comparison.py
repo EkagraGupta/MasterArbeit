@@ -28,6 +28,7 @@ def sift_operation(im1, im2, display_matches:bool = False):
         )
         plt.imshow(im3)
         plt.imsave('/home/ekagra/Desktop/Study/MA/code/example/sift_test_example4.png', im3)
+        plt.title(len(matches))
         plt.show()
 
     return len(matches)
