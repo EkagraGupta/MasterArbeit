@@ -5,6 +5,7 @@ from utils.trivial_augment import TrivialAugmentWide
 
 from dump.dataset import load_dataset
 from utils.ncc import normalized_cross_correlation
+from utils.sift_comparison import sift_correction_factor
 import piq
 
 
@@ -55,6 +56,7 @@ class CustomTrivialAugmentWide:
         augmented_image, image_info = trivial_augment(image)
         augmentation_type = next(iter(image_info.keys()))
         # print(f"\nInitial tr: {image_info[augmentation_type]}")
+        print(type(image), type(augmented_image))
         if augmentation_type in pixelwise_augs:
             resize = transforms.Resize((41, 41))
             # Apply the resize transformation to both the original and augmented images
@@ -67,15 +69,20 @@ class CustomTrivialAugmentWide:
             )
             image_info[augmentation_type] = vif_value.item()
         else:
-            image_info[augmentation_type] = normalized_cross_correlation(
-                image, augmented_image
-            )
+            # image_info[augmentation_type] = normalized_cross_correlation(
+            #     image, augmented_image
+            # )
+            image_info[augmentation_type] = sift_correction_factor(original_image=image,
+                                                                   augmented_image=augmented_image)
         # print(f"After comparison: {image_info[augmentation_type]}\n")
         return augmented_image, image_info
 
 
 if __name__ == "__main__":
-    transform = transforms.Compose([transforms.ToTensor()])
+    transform = transforms.Compose([
+        transforms.Resize((512, 512)),
+        transforms.ToTensor()]
+        )
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
 
     images, labels = next(iter(trainloader))
@@ -84,17 +91,12 @@ if __name__ == "__main__":
     new_image, aug_info = ta(images[0])
     print(aug_info)
 
-    # Remove the extra batch dimension
     new_image = new_image.squeeze(0)
-
-    # If the image is in shape (3, 32, 32), it needs to be transposed to (32, 32, 3) for matplotlib
     new_image_np = new_image.permute(1, 2, 0).numpy()
-
-    # Display the image
     plt.imsave(
         "/home/ekagra/Desktop/Study/MA/code/example/augmented_example_image.png",
         new_image_np,
     )
     plt.imshow(new_image_np)
     plt.title("Augmented Image")
-    plt.show()
+    # plt.show()

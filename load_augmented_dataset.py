@@ -53,17 +53,17 @@ class CustomTransform(torch.utils.data.Dataset):
         self.aggressive_augment_transform = aggressive_augment_transform
 
     def __getitem__(self, index: int) -> tuple:
-        image, label = self.dataset[index]
+        im, label = self.dataset[index]
         confidence = 1.0
-        augment_info = {"None": 1.0}
+        aa_info = {"None": 1.0}
 
         if self.aggressive_augment_transform is not None:
-            image, augment_info = self.aggressive_augment_transform(image)
-            confidence = next(iter(augment_info.values()))
-            # print(f"AA enabled: {augment_info}\n")
+            im, aa_info = self.aggressive_augment_transform(im)
+            confidence = next(iter(aa_info.values()))
+            print(f"AA enabled: {aa_info}\n")
         if self.custom_transform is not None:
-            image, confidence = self.custom_transform(image, augment_info)
-        return image, label, confidence
+            im, confidence = self.custom_transform(im, aa_info)
+        return im, label, confidence
 
     def __len__(self):
         return len(self.dataset)
@@ -134,9 +134,9 @@ def get_dataloader(
 
 
 def display_image(image: torch.Tensor, title: Optional[str] = None) -> None:
-    np_image = image.numpy()
-    np_image = np.clip(np_image, 0, 1)
-    plt.imshow(np.transpose(np_image, (1, 2, 0)))
+    im_numpy = image.numpy()
+    im_numpy = np.clip(im_numpy, 0, 1)
+    plt.imshow(np.transpose(im_numpy, (1, 2, 0)))
     if title:
         plt.title(title)
     plt.axis("off")
@@ -161,9 +161,9 @@ def display_images_in_grid(
     axes = axes.flatten()
 
     for idx, (im, label, confidence) in enumerate(zip(images, labels, confidences)):
-        np_im = im.numpy()
-        np_im = np.clip(np_im, 0, 1)
-        axes[idx].imshow(np.transpose(np_im, (1, 2, 0)))
+        im_numpy = im.numpy()
+        im_numpy = np.clip(im_numpy, 0, 1)
+        axes[idx].imshow(np.transpose(im_numpy, (1, 2, 0)))
         axes[idx].set_title(f"{classes[label]} ({confidence: .3f})")
         axes[idx].axis("off")
 
@@ -189,13 +189,13 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = [], [], []
-    for img, label, confidence in training_loader:
+    for im, label, confidence in training_loader:
         # for i in range(len(img)):
         #     display_image(
         #         img[i],
         #         title=f"Label: {label[i].item()} ({classes[label[i].item()]}) - Confidence: {confidence[i].item():.3f}",
         #     )
-        images.extend(img)
+        images.extend(im)
         labels.extend(label)
-        confidences.extend(confidence)
+        confidences.extend(np.clip(confidence, 0., 1.))
     display_images_in_grid(images, labels, confidences, classes)
