@@ -111,12 +111,15 @@ class SoftAugment:
         )  # The non-linear function
 
         augmentation_type = next(iter(aa_info.keys()))
-        print(f'confidence: {confidence}\taa: {aa_info[augmentation_type]}\n')
+        print(f"confidence: {confidence}\taa: {aa_info[augmentation_type]}\n")
         if augmentation_type in self.pixelwise_augs:
-            confidence = np.clip(abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1)
+            confidence = np.clip(
+                abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1
+            )
         else:
-            confidence = np.clip(abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1)
-
+            confidence = np.clip(
+                abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1
+            )
         return cropped_image, confidence
 
 

@@ -54,7 +54,7 @@ class CustomTrivialAugmentWide:
         trivial_augment = TrivialAugmentWide()
         augmented_image, image_info = trivial_augment(image)
         augmentation_type = next(iter(image_info.keys()))
-        print(f"\nInitial tr: {image_info[augmentation_type]}")
+        # print(f"\nInitial tr: {image_info[augmentation_type]}")
         if augmentation_type in pixelwise_augs:
             resize = transforms.Resize((41, 41))
             # Apply the resize transformation to both the original and augmented images
@@ -70,14 +70,12 @@ class CustomTrivialAugmentWide:
             image_info[augmentation_type] = normalized_cross_correlation(
                 image, augmented_image
             )
-        print(f"After comparison: {image_info[augmentation_type]}\n")
+        # print(f"After comparison: {image_info[augmentation_type]}\n")
         return augmented_image, image_info
 
 
 if __name__ == "__main__":
-    transform = transforms.Compose(
-        [transforms.ToTensor(), transforms.Resize((512, 512))]
-    )
+    transform = transforms.Compose([transforms.ToTensor()])
     trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
 
     images, labels = next(iter(trainloader))
@@ -93,6 +91,10 @@ if __name__ == "__main__":
     new_image_np = new_image.permute(1, 2, 0).numpy()
 
     # Display the image
+    plt.imsave(
+        "/home/ekagra/Desktop/Study/MA/code/example/augmented_example_image.png",
+        new_image_np,
+    )
     plt.imshow(new_image_np)
     plt.title("Augmented Image")
     plt.show()

@@ -142,7 +142,13 @@ def display_image(image: torch.Tensor, title: Optional[str] = None) -> None:
     plt.axis("off")
     plt.show()
 
-def display_images_in_grid(images: List[torch.Tensor], labels: List[int], confidences: List[float], classes: List[str]) -> None:
+
+def display_images_in_grid(
+    images: List[torch.Tensor],
+    labels: List[int],
+    confidences: List[float],
+    classes: List[str],
+) -> None:
     """Displays a list of image tensors in a grid.
 
     Args:
@@ -158,9 +164,9 @@ def display_images_in_grid(images: List[torch.Tensor], labels: List[int], confid
         np_im = im.numpy()
         np_im = np.clip(np_im, 0, 1)
         axes[idx].imshow(np.transpose(np_im, (1, 2, 0)))
-        axes[idx].set_title(f'{classes[label]} ({confidence: .3f})')
-        axes[idx].axis('off')
-    
+        axes[idx].set_title(f"{classes[label]} ({confidence: .3f})")
+        axes[idx].axis("off")
+
     plt.tight_layout()
     plt.show()
 
@@ -193,4 +199,3 @@ if __name__ == "__main__":
         labels.extend(label)
         confidences.extend(confidence)
     display_images_in_grid(images, labels, confidences, classes)
-
