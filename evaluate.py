@@ -1,7 +1,7 @@
 import torch
 
 from wideresnet import WideResNet_28_4
-from load_augmented_dataset import get_dataloader
+from dump.load_augmented_dataset import get_dataloader
 
 # Load the saved model weights
 # net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"

@@ -2,8 +2,8 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
-from soft_augment import RandomCrop
-from trivial_augment import CustomTrivialAugmentWide
+from augmentations.random_crop import RandomCrop
+from augmentations.trivial_augment import CustomTrivialAugmentWide
 from typing import Optional, List
 
 
@@ -45,7 +45,8 @@ class Cutout(object):
 
 
 class CustomTransform(torch.utils.data.Dataset):
-    """A custom dataset wrapper that applies a user-defined transformation to the images."""
+    """A custom dataset wrapper that applies a user-defined transformation
+    to the images."""
 
     def __init__(self, dataset, custom_transform, aggressive_augment_transform):
         self.dataset = dataset
@@ -60,7 +61,6 @@ class CustomTransform(torch.utils.data.Dataset):
         if self.aggressive_augment_transform is not None:
             im, aa_info = self.aggressive_augment_transform(im)
             confidence = next(iter(aa_info.values()))
-            # print(f"AA enabled: {aa_info}\n")
         if self.custom_transform is not None:
             im, confidence = self.custom_transform(im, aa_info)
         return im, label, confidence

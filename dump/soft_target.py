@@ -5,7 +5,7 @@ from torch.nn import functional as F
 from torchvision import transforms
 from torchvision.transforms import functional as ff
 
-from dump.dataset import load_dataset
+from utils.dataset import load_dataset
 
 
 def soft_target(

@@ -1,5 +1,5 @@
 from torchvision import datasets, transforms
-from dump.dataset import load_dataset
+from utils.dataset import load_dataset
 from PIL import Image
 import numpy as np
 

@@ -4,7 +4,7 @@ import numpy as np
 import torchvision
 from torchvision import transforms
 
-from dump.dataset import load_dataset
+from utils.dataset import load_dataset
 
 
 def display_sample(original_loader, augmented_loader):

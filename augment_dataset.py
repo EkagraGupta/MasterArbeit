@@ -1,7 +1,8 @@
 import torch
 from functools import reduce
-from trivial_augment import CustomTrivialAugmentWide
-from soft_augment import RandomCrop
+
+from augmentations.trivial_augment import CustomTrivialAugmentWide
+from augmentations.random_crop import RandomCrop
 
 
 class AugmentedDataset(torch.utils.data.Dataset):
@@ -37,7 +38,6 @@ class AugmentedDataset(torch.utils.data.Dataset):
         # )
         augmented_x, confidences = self.transforms_augmentation(x)
         combined_confidence = self.get_confidence(confidences)
-
         # if self.robust_samples == 0:
         #     return augment(x), y
         # elif self.robust_samples == 1:
@@ -53,12 +53,13 @@ class AugmentedDataset(torch.utils.data.Dataset):
 
 
 if __name__ == "__main__":
+
     from torchvision import datasets, transforms
     from PIL import Image
 
     transforms_preprocess = transforms.Compose([transforms.ToTensor()])
     transforms_randomcrop = RandomCrop()
-    transforms_aggressiveaugment = CustomTrivialAugmentWide()
+    transforms_aggressiveaugment = CustomTrivialAugmentWide(custom=True)
     transform_combined = transforms.Compose(
         [transforms.ToTensor(), transforms_aggressiveaugment, transforms_randomcrop]
     )
@@ -71,3 +72,6 @@ if __name__ == "__main__":
     trainloader = torch.utils.data.DataLoader(
         augmentation_x, batch_size=1, shuffle=False
     )
+
+    images, labels, confidences = next(iter(trainloader))
+    print(confidences)
