@@ -60,7 +60,7 @@ class CustomTransform(torch.utils.data.Dataset):
         if self.aggressive_augment_transform is not None:
             im, aa_info = self.aggressive_augment_transform(im)
             confidence = next(iter(aa_info.values()))
-            print(f"AA enabled: {aa_info}\n")
+            # print(f"AA enabled: {aa_info}\n")
         if self.custom_transform is not None:
             im, confidence = self.custom_transform(im, aa_info)
         return im, label, confidence
@@ -96,7 +96,7 @@ def get_dataloader(
         ]
     elif da == 2:
         t = [transforms.RandomHorizontalFlip()]
-        custom_transform = SoftAugment(n_class=n_classes, k=2)
+        custom_transform = RandomCrop(n_class=n_classes, k=2)
 
     if aa == -1:
         pass
@@ -185,7 +185,7 @@ if __name__ == "__main__":
         "truck",
     ]
     training_loader = get_dataloader(
-        da=2, aa=1, num_samples=10, shuffle=False, train=False
+        da=2, aa=1, num_samples=100, shuffle=False, train=False
     )
 
     images, labels, confidences = [], [], []
@@ -197,5 +197,5 @@ if __name__ == "__main__":
         #     )
         images.extend(im)
         labels.extend(label)
-        confidences.extend(np.clip(confidence, 0., 1.))
+        confidences.extend(np.clip(confidence, 0.0, 1.0))
     display_images_in_grid(images, labels, confidences, classes)

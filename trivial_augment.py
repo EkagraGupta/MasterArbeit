@@ -56,7 +56,6 @@ class CustomTrivialAugmentWide:
         augmented_image, image_info = trivial_augment(image)
         augmentation_type = next(iter(image_info.keys()))
         # print(f"\nInitial tr: {image_info[augmentation_type]}")
-        print(type(image), type(augmented_image))
         if augmentation_type in pixelwise_augs:
             resize = transforms.Resize((41, 41))
             # Apply the resize transformation to both the original and augmented images
@@ -67,27 +66,27 @@ class CustomTrivialAugmentWide:
             vif_value = piq.vif_p(
                 im_resize.unsqueeze(0), augmented_im_resize.unsqueeze(0)
             )
-            image_info[augmentation_type] = vif_value.item()
+            # image_info[augmentation_type] = vif_value.item()
+            confidence_aa = vif_value.item()
         else:
-            # image_info[augmentation_type] = normalized_cross_correlation(
-            #     image, augmented_image
+            # image_info[augmentation_type] = sift_correction_factor(
+            #     original_image=image, augmented_image=augmented_image
             # )
-            image_info[augmentation_type] = sift_correction_factor(original_image=image,
-                                                                   augmented_image=augmented_image)
-        # print(f"After comparison: {image_info[augmentation_type]}\n")
-        return augmented_image, image_info
+            confidence_aa = sift_correction_factor(
+                original_image=image, augmented_image=augmented_image
+            )
+        print(f"\nAugmentation info: {image_info}\n")
+        # return augmented_image, image_info
+        return augmented_image, confidence_aa
 
 
 if __name__ == "__main__":
-    transform = transforms.Compose([
-        transforms.Resize((512, 512)),
-        transforms.ToTensor()]
-        )
+    transform = transforms.Compose(
+        [transforms.Resize((512, 512)), transforms.ToTensor()]
+    )
     trainloader, _, classes = load_dataset(batch_size=10, transform=transform)
 
     images, labels = next(iter(trainloader))
-    import time
-    start = time.time()
     ta = CustomTrivialAugmentWide()
     new_image, aug_info = ta(images[0])
     print(aug_info)

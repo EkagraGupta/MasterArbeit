@@ -12,7 +12,6 @@ class RandomCrop:
 
     def __init__(
         self,
-        aa_info: dict = {"None": 10},
         n_class: int = 10,
         k: int = 2,
         bg_crop: float = 0.01,
@@ -31,19 +30,19 @@ class RandomCrop:
         self.n_class = n_class
         self.chance = 1 / n_class
         self.k = k
-        self.aa_info = aa_info
-        self.pixelwise_augs = [
-            "Invert",
-            "Equalize",
-            "AutoContrast",
-            "Posterize",
-            "Solarize",
-            "SolarizeAdd",
-            "Color",
-            "Contrast",
-            "Brightness",
-            "Sharpness",
-        ]
+        # self.aa_info = aa_info
+        # self.pixelwise_augs = [
+        #     "Invert",
+        #     "Equalize",
+        #     "AutoContrast",
+        #     "Posterize",
+        #     "Solarize",
+        #     "SolarizeAdd",
+        #     "Color",
+        #     "Contrast",
+        #     "Brightness",
+        #     "Sharpness",
+        # ]
         self.sigma_crop = sigma_crop
         self.bg_crop = bg_crop
 
@@ -80,7 +79,7 @@ class RandomCrop:
         """
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
-    def __call__(self, image, aa_info):
+    def __call__(self, image):
         """
         Applies the soft augmentation to the input images.
 
@@ -91,6 +90,10 @@ class RandomCrop:
         Returns:
             tuple: The augmented image and the confidence score.
         """
+        confidence_aa = None
+        if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
+            confidence_aa = image[1]
+            image = image[0]
         dim1, dim2 = image.size(1), image.size(2)
 
         # Create background
@@ -106,21 +109,26 @@ class RandomCrop:
         cropped_image = bg[:, left:right, top:bottom]
 
         visibility = self.compute_visibility(dim1, dim2, tx, ty)
-        confidence = (
+        confidence_rc = (
             1 - (1 - self.chance) * (1 - visibility) ** self.k
         )  # The non-linear function
 
-        augmentation_type = next(iter(aa_info.keys()))
-        print(f"confidence: {confidence}\taa: {aa_info[augmentation_type]}\n")
-        if augmentation_type in self.pixelwise_augs:
-            confidence = np.clip(
-                abs(aa_info[augmentation_type] * confidence), 0, 1
-            )
+        # augmentation_type = next(iter(aa_info.keys()))
+        # print(f"confidence: {confidence}\taa: {aa_info[augmentation_type]}\n")
+        # if augmentation_type in self.pixelwise_augs:
+        #     confidence = np.clip(
+        #         abs(aa_info[augmentation_type] * confidence), 0, 1
+        #     )
+        # else:
+        #     confidence = np.clip(
+        #         abs(aa_info[augmentation_type] * confidence), 0, 1
+        #     )
+        if confidence_aa is not None:
+            confidence_aa = torch.tensor(confidence_aa, dtype=torch.float32)
+            confidences = (confidence_aa, confidence_rc)
         else:
-            confidence = np.clip(
-                abs(aa_info[augmentation_type] * confidence), 0, 1
-            )
-        return cropped_image, confidence
+            confidences = (confidence_rc,)
+        return cropped_image, confidences
 
 
 def soft_target(pred: torch.Tensor, label: torch.Tensor, confidence: float):
@@ -167,12 +175,14 @@ if __name__ == "__main__":
     aa_transform = CustomTrivialAugmentWide()
     image, aa_info = aa_transform(images[0])
     soft_augment = RandomCrop()
+    print(f"\nAA Info: {aa_info}\n")
 
-    new_image, confidence = soft_augment(images[0], aa_info=aa_info)
+    new_image, confidence = soft_augment(images[0])
     pil_new_image = ff.to_pil_image(new_image)
     pil_new_image.save(
         "/home/ekagra/Desktop/Study/MA/code/example/example_augmented_image.png"
     )
+    print(f"\nConfidence RC: {confidence}\n")
 
     outputs = torch.tensor(
         [[0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.91, 0.01, 0.01, 0.01]]
