@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
-from soft_augment import SoftAugment
+from soft_augment import RandomCrop
 from trivial_augment import CustomTrivialAugmentWide
 from typing import Optional, List
 
@@ -185,7 +185,7 @@ if __name__ == "__main__":
         "truck",
     ]
     training_loader = get_dataloader(
-        da=-1, aa=1, num_samples=10, shuffle=False, train=False
+        da=2, aa=1, num_samples=10, shuffle=False, train=False
     )
 
     images, labels, confidences = [], [], []

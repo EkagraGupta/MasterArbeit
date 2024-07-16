@@ -83,10 +83,11 @@ if __name__ == "__main__":
         transforms.Resize((512, 512)),
         transforms.ToTensor()]
         )
-    trainloader, _, classes = load_dataset(batch_size=1, transform=transform)
+    trainloader, _, classes = load_dataset(batch_size=10, transform=transform)
 
     images, labels = next(iter(trainloader))
-
+    import time
+    start = time.time()
     ta = CustomTrivialAugmentWide()
     new_image, aug_info = ta(images[0])
     print(aug_info)

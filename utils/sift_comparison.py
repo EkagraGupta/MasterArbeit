@@ -28,25 +28,27 @@ def sift_operation(im1, im2, display_matches:bool = False):
         )
         plt.imshow(im3)
         plt.imsave('/home/ekagra/Desktop/Study/MA/code/example/sift_test_example4.png', im3)
-        plt.title(len(matches))
         plt.show()
 
     return len(matches)
-
+import time
 def sift_correction_factor(original_image, augmented_image, display_matches: bool = False):
+    start = time.time()
     matches_reference = sift_operation(original_image, original_image)
     matches_12 = sift_operation(original_image, augmented_image, display_matches)
     correction_factor = matches_12 / matches_reference
+    end = time.time()
+    print(f'time: {end - start}')
     return correction_factor
 
 if __name__=='__main__':
     im1_path = "/home/ekagra/Desktop/Study/MA/code/example/resized_example_image.png"
-    im2_path = "/home/ekagra/Desktop/Study/MA/code/example/augmented_example_image.png"
+    im2_path = "/home/ekagra/Desktop/Study/MA/code/example/augmented_example_image2.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
     im1_gray = im1.convert('L')
     im2_gray = im2.convert('L')
 
     # matches = sift_operation(im1=im1_gray, im2=im2_gray, display_matches=True)
-    corr_fac = sift_correction_factor(original_image=im1, augmented_image=im2, display_matches=True)
+    corr_fac = sift_correction_factor(original_image=im1, augmented_image=im2, display_matches=False)
     print(f'Correction factor: {corr_fac}')

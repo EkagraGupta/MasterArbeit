@@ -7,7 +7,7 @@ import numpy as np
 from dump.dataset import load_dataset
 
 
-class SoftAugment:
+class RandomCrop:
     """A class to perform soft augmentation on images."""
 
     def __init__(
@@ -114,11 +114,11 @@ class SoftAugment:
         print(f"confidence: {confidence}\taa: {aa_info[augmentation_type]}\n")
         if augmentation_type in self.pixelwise_augs:
             confidence = np.clip(
-                abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1
+                abs(aa_info[augmentation_type] * confidence), 0, 1
             )
         else:
             confidence = np.clip(
-                abs(np.mean([aa_info[augmentation_type], confidence])), 0, 1
+                abs(aa_info[augmentation_type] * confidence), 0, 1
             )
         return cropped_image, confidence
 
@@ -166,7 +166,7 @@ if __name__ == "__main__":
 
     aa_transform = CustomTrivialAugmentWide()
     image, aa_info = aa_transform(images[0])
-    soft_augment = SoftAugment()
+    soft_augment = RandomCrop()
 
     new_image, confidence = soft_augment(images[0], aa_info=aa_info)
     pil_new_image = ff.to_pil_image(new_image)
