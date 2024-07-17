@@ -86,6 +86,7 @@ def _apply_op(
     elif op_name == "Posterize":
         img = F.posterize(img, int(magnitude))
     elif op_name == "Solarize":
+        magnitude = min(max(0, magnitude), 255)
         img = F.solarize(img, magnitude)
     elif op_name == "AutoContrast":
         img = F.autocontrast(img)

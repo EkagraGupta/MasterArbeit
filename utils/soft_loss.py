@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 
+
 def soft_target(pred, label, confidence):
     label = label.unsqueeze(1)
     confidence = torch.tensor(confidence).view(-1, 1)

@@ -1,9 +1,9 @@
 import torch
 from torchvision import transforms
-from torchvision.transforms import TrivialAugmentWide
+from utils.trivial_augment_wide import TrivialAugmentWide
 
 from utils.dataset import load_dataset
-from utils.trivial_augment import CTrivialAugmentWide
+from utils.custom_trivial_augment import CTrivialAugmentWide
 from utils.sift_comparison import sift_correction_factor
 from utils.vif import vif
 

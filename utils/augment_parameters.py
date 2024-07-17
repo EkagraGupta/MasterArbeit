@@ -1,7 +1,7 @@
 from torchvision.transforms import functional as F
 from torch import Tensor
 
-from utils.trivial_augment import TrivialAugmentWide
+from utils.custom_trivial_augment import TrivialAugmentWide
 
 
 def get_augmentation_info(image: Tensor) -> Tensor:

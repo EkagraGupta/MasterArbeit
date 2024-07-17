@@ -36,7 +36,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
     def __getitem__(self, i):
         x, y = self.dataset[i]
         confidences = None
-        combined_confidence = torch.tensor(1., dtype=torch.float32)
+        combined_confidence = torch.tensor(1.0, dtype=torch.float32)
         # for now "original" is set to True rather than returning from base_dataset
         original = True
         augment = (
@@ -65,74 +65,92 @@ class AugmentedDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.dataset)
-    
-def create_transforms(random_cropping=False, aggressive_augmentation=False, custom=False):
+
+
+def create_transforms(
+    random_cropping=False, aggressive_augmentation=False, custom=False
+):
     t = [transforms.ToTensor()]
     augmentations = [transforms.ToTensor()]
-    
+
     if aggressive_augmentation:
         augmentations.append(CustomTrivialAugmentWide(custom=custom))
     if random_cropping:
         augmentations.append(RandomCrop())
-    
+
     transforms_preprocess = transforms.Compose(t)
 
     transforms_augmentation = transforms.Compose(augmentations)
 
     return transforms_preprocess, transforms_augmentation
 
-def load_data(base_dataset, transforms_preprocess, transforms_augmentation=None, robust_samples=0):
+
+def load_data(
+    base_dataset, transforms_preprocess, transforms_augmentation=None, robust_samples=0
+):
     if transforms_augmentation is not None:
-        trainset = AugmentedDataset(dataset=base_dataset,
-                                    transforms_preprocess=transforms_preprocess,
-                                    transforms_augmentation=transforms_augmentation)
-        testset = datasets.CIFAR10(root='./data/test',
-                                   train=False,
-                                   transform=transforms_augmentation,
-                                   download=True)
+        trainset = AugmentedDataset(
+            dataset=base_dataset,
+            transforms_preprocess=transforms_preprocess,
+            transforms_augmentation=transforms_augmentation,
+        )
+        testset = datasets.CIFAR10(
+            root="./data/test",
+            train=False,
+            transform=transforms_augmentation,
+            download=True,
+        )
     else:
-        trainset = datasets.CIFAR10(root='./data/train',
-                                    train=True,
-                                    download=True,
-                                    transform=transforms_preprocess)
-        testset = datasets.CIFAR10(root='./data/test',
-                                   train=False,
-                                   transform=transforms_preprocess,
-                                   download=True)
+        trainset = datasets.CIFAR10(
+            root="./data/train",
+            train=True,
+            download=True,
+            transform=transforms_preprocess,
+        )
+        testset = datasets.CIFAR10(
+            root="./data/test",
+            train=False,
+            transform=transforms_preprocess,
+            download=True,
+        )
     return trainset, testset
-        
+
+
 def display_image_grid(images, labels, confidences, batch_size):
     # Convert images to a grid
     grid_img = torchvision.utils.make_grid(images, nrow=batch_size)
-    
+
     # Convert from tensor to numpy for display
     npimg = grid_img.numpy()
-    
+
     # Plot the grid
     plt.figure(figsize=(batch_size * 2, 2))
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.axis('off')
+    plt.axis("off")
 
     # Add titles
     for i in range(batch_size):
-        ax = plt.subplot(1, batch_size, i+1)
+        ax = plt.subplot(1, batch_size, i + 1)
         ax.imshow(np.transpose(images[i].numpy(), (1, 2, 0)))
         ax.set_title(f"Label: {labels[i].item()}\nConf: {confidences[i]:.2f}")
-        ax.axis('off')
+        ax.axis("off")
 
     plt.show()
 
+
 if __name__ == "__main__":
-    batch_size = 7
+    batch_size = 10
     base_dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
 
-    transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=True,
-                                                                       aggressive_augmentation=True,
-                                                                       custom=False)
-    trainset, testset = load_data(base_dataset=base_dataset,
-                                  transforms_preprocess=transforms_preprocess,
-                                  transforms_augmentation=transforms_augmentation)
-    
+    transforms_preprocess, transforms_augmentation = create_transforms(
+        random_cropping=True, aggressive_augmentation=False, custom=True
+    )
+    trainset, testset = load_data(
+        base_dataset=base_dataset,
+        transforms_preprocess=transforms_preprocess,
+        transforms_augmentation=transforms_augmentation,
+    )
+
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=False
     )

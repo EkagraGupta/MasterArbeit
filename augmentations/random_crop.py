@@ -1,5 +1,6 @@
 import torch
 
+
 class RandomCrop:
 
     def __init__(
@@ -56,6 +57,3 @@ class RandomCrop:
         else:
             confidences = confidence_rc
         return cropped_image, confidences
-
-
-

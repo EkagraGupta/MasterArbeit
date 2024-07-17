@@ -4,6 +4,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from torchvision import transforms
 
+
 def sift_operation(im1, im2, display_matches: bool = False):
     if not isinstance(im1, Image.Image) or not isinstance(im2, Image.Image):
         pil = transforms.ToPILImage()
