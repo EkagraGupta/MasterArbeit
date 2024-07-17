@@ -20,7 +20,10 @@ class AugmentedDataset(torch.utils.data.Dataset):
         transforms_generated=None,
         robust_samples=0,
     ):
-        self.dataset = dataset
+        if dataset is not None:
+            self.dataset = dataset
+        else:
+            self.dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
         self.preprocess = transforms_preprocess
         self.transforms_augmentation = transforms_augmentation
         self.transforms_generated = (
@@ -31,7 +34,9 @@ class AugmentedDataset(torch.utils.data.Dataset):
         self.generated_length = getattr(dataset, "generated_length", None)
 
     def get_confidence(self, confidences):
-        return reduce(lambda x, y: x * y, confidences)
+        combined_confidence = reduce(lambda x, y: x * y, confidences)
+        print(combined_confidence)
+        return combined_confidence
 
     def __getitem__(self, i):
         x, y = self.dataset[i]
@@ -53,6 +58,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
                 combined_confidence = self.get_confidence(confidences)
             else:
                 combined_confidence = confidences
+        # print(f'confidences: {confidences}\tcombined_confidence: {combined_confidence}\nType: {type(combined_confidence)}')
 
         if self.robust_samples == 0:
             return augment_x, y, combined_confidence
@@ -139,11 +145,11 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 10
+    batch_size = 1
     base_dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=False, custom=True
+        random_cropping=True, aggressive_augmentation=True, custom=True
     )
     trainset, testset = load_data(
         base_dataset=base_dataset,
@@ -156,4 +162,4 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size)
