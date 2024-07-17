@@ -1,9 +1,8 @@
+import numpy as np
 import cv2
 from PIL import Image
-import numpy as np
 import matplotlib.pyplot as plt
 from torchvision import transforms
-
 
 def sift_operation(im1, im2, display_matches: bool = False):
     if not isinstance(im1, Image.Image) or not isinstance(im2, Image.Image):
@@ -18,10 +17,16 @@ def sift_operation(im1, im2, display_matches: bool = False):
     keypoints1, descriptors1 = sift.detectAndCompute(im1_np, None)
     keypoints2, descriptors2 = sift.detectAndCompute(im2_np, None)
 
+    if descriptors1 is None or descriptors2 is None:
+        print(
+            f"Either the images are too different or lacking sufficient features for SIFT to detect"
+        )
+        return 1
+
     bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
     matches = bf.match(descriptors1, descriptors2)
     matches = sorted(matches, key=lambda x: x.distance)
-    print(f"Num matches: {len(matches)}")
+    # print(f"Num matches: {len(matches)}")
 
     if display_matches:
         im3 = cv2.drawMatches(
@@ -55,6 +60,6 @@ if __name__ == "__main__":
 
     # matches = sift_operation(im1=im1_gray, im2=im2_gray, display_matches=True)
     corr_fac = sift_correction_factor(
-        original_image=im1, augmented_image=im2, display_matches=False
+        original_image=im1, augmented_image=im2, display_matches=True
     )
     print(f"Correction factor: {corr_fac}")
