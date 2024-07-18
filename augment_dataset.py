@@ -60,7 +60,6 @@ class AugmentedDataset(torch.utils.data.Dataset):
             else:
                 combined_confidence = confidences
         # print(f'confidences: {confidences}\tcombined_confidence: {combined_confidence}\nType: {type(combined_confidence)}')
-
         augment_x = self.preprocess(augment_x)
         if self.robust_samples == 0:
             return augment_x, y, combined_confidence
@@ -92,20 +91,25 @@ def create_transforms(
     return transforms_preprocess, transforms_augmentation
 
 
-def load_data(
-    base_dataset, transforms_preprocess, transforms_augmentation=None, robust_samples=0
+def load_data(transforms_preprocess, transforms_augmentation=None, robust_samples=0
 ):
+    
+    base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
+    base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
+
     if transforms_augmentation is not None:
         trainset = AugmentedDataset(
-            dataset=base_dataset,
+            dataset=base_trainset,
             transforms_preprocess=transforms_preprocess,
             transforms_augmentation=transforms_augmentation,
         )
-        testset = datasets.CIFAR10(
-            root="./data/test",
-            train=False,
-            transform=transforms_augmentation,
-            download=True,
+
+
+        testset = AugmentedDataset(
+            dataset=base_testset,
+            transforms_preprocess=transforms_preprocess,
+            transforms_augmentation=transforms_augmentation,
+
         )
     else:
         trainset = datasets.CIFAR10(
@@ -163,10 +167,9 @@ if __name__ == "__main__":
     base_dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=True, custom=True
+        random_cropping=False, aggressive_augmentation=True, custom=True
     )
     trainset, testset = load_data(
-        base_dataset=base_dataset,
         transforms_preprocess=transforms_preprocess,
         transforms_augmentation=transforms_augmentation,
     )
