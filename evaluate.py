@@ -23,7 +23,7 @@ custom_trainset, custom_testset = load_data(
 
 custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=1)
 
-# Evaluate the model 
+# Evaluate the model
 correct, total = 0, 0
 
 with torch.no_grad():
@@ -40,8 +40,10 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         accuracy = correct / total
-        if (i+1)%1000==0:
-            print(f'Processed [{i+1}/{len(custom_dataloader)}] - Accuracy: {accuracy*100:.2f}%')
+        if (i + 1) % 1000 == 0:
+            print(
+                f"Processed [{i+1}/{len(custom_dataloader)}] - Accuracy: {accuracy*100:.2f}%"
+            )
     print(
         f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
     )

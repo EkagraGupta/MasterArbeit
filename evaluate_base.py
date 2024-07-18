@@ -35,8 +35,10 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         accuracy = correct / total
-        if (i+1)%1000==0:
-            print(f'Processed [{i+1}/{len(testloader)}] - Accuracy: {accuracy*100:.2f}%')
+        if (i + 1) % 1000 == 0:
+            print(
+                f"Processed [{i+1}/{len(testloader)}] - Accuracy: {accuracy*100:.2f}%"
+            )
     print(
         f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
     )

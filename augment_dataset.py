@@ -91,9 +91,8 @@ def create_transforms(
     return transforms_preprocess, transforms_augmentation
 
 
-def load_data(transforms_preprocess, transforms_augmentation=None, robust_samples=0
-):
-    
+def load_data(transforms_preprocess, transforms_augmentation=None, robust_samples=0):
+
     base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
     base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
@@ -104,12 +103,10 @@ def load_data(transforms_preprocess, transforms_augmentation=None, robust_sample
             transforms_augmentation=transforms_augmentation,
         )
 
-
         testset = AugmentedDataset(
             dataset=base_testset,
             transforms_preprocess=transforms_preprocess,
             transforms_augmentation=transforms_augmentation,
-
         )
     else:
         trainset = datasets.CIFAR10(
@@ -156,9 +153,11 @@ def display_image_grid(images, labels, confidences, batch_size):
     for i in range(batch_size):
         ax = plt.subplot(1, batch_size, i + 1)
         ax.imshow(np.transpose(images[i].numpy(), (1, 2, 0)))
-        ax.set_title(f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}")
+        ax.set_title(
+            f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}"
+        )
         ax.axis("off")
-    plt.suptitle('Random Cropping + Trivial Augment Applied!')
+    plt.suptitle("Random Cropping + Trivial Augment Applied!")
     plt.show()
 
 
