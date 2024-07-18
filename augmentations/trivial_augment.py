@@ -1,6 +1,6 @@
 import torch
 from torchvision import transforms
-from utils.trivial_augment_wide import TrivialAugmentWide
+from torchvision.transforms import TrivialAugmentWide
 
 from utils.dataset import load_dataset
 from utils.custom_trivial_augment import CTrivialAugmentWide
@@ -13,7 +13,7 @@ class CustomTrivialAugmentWide:
     def __init__(self, custom: bool = False):
         self.custom = custom
 
-    def __call__(self, im: torch.tensor) -> tuple:
+    def __call__(self, im):
         if self.custom:
             augment_im, augment_info = self.get_augment_info(im)
             return augment_im, augment_info
@@ -46,7 +46,7 @@ class CustomTrivialAugmentWide:
             confidence_aa = sift_correction_factor(
                 original_image=im, augmented_image=augment_im
             )
-        print(f"\nAugmentation info: {im_info}\n")
+        # print(f"\nAugmentation info: {im_info}\n")
         return augment_im, confidence_aa
 
 

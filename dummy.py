@@ -1,5 +1,15 @@
 import torch
+from torchvision import datasets, transforms
+from utils.dataset import load_dataset
 
-confidence = torch.tensor(5.0, dtype=float)
+transform = transforms.Compose(
+    [
+        # transforms.TrivialAugmentWide(),
+        transforms.ToTensor(),
+        transforms.TrivialAugmentWide(),
+    ]
+)
 
-print(confidence)
+trainloader, testloader, classes = load_dataset(batch_size=1000, transform=transform)
+
+images, labels = next(iter(trainloader))

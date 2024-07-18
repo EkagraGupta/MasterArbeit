@@ -86,7 +86,6 @@ def _apply_op(
     elif op_name == "Posterize":
         img = F.posterize(img, int(magnitude))
     elif op_name == "Solarize":
-        magnitude = min(max(0, magnitude), 255)
         img = F.solarize(img, magnitude)
     elif op_name == "AutoContrast":
         img = F.autocontrast(img)
@@ -505,25 +504,9 @@ class CTrivialAugmentWide(torch.nn.Module):
         # return _apply_op(
         #     img, op_name, magnitude, interpolation=self.interpolation, fill=fill
         # )
-
-        """Modification"""
-        # Convert float32 to uint8 for specific operations
-        original_dtype = img.dtype
-        if img.dtype == torch.float32 and op_name in [
-            "Posterize",
-            "Solarize",
-            "Equalize",
-        ]:
-            img = (img * 255).to(torch.uint8)
-            img, aug_info = _apply_op(
-                img, op_name, magnitude, interpolation=self.interpolation, fill=fill
-            )
-            img = img.to(torch.float32) / 255
-        else:
-            img, aug_info = _apply_op(
-                img, op_name, magnitude, interpolation=self.interpolation, fill=fill
-            )
-        """Modification"""
+        img, aug_info = _apply_op(
+            img, op_name, magnitude, interpolation=self.interpolation, fill=fill
+        )
         return img, aug_info
 
     def __repr__(self) -> str:

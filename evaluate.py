@@ -13,15 +13,16 @@ net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
 # custom_dataloader = get_dataloader(num_samples=None, train=False, da=2, aa=1)
-transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=True,
-                                                                   aggressive_augmentation=True,
-                                                                   custom=True)
-custom_trainset, custom_testset = load_data(base_dataset=None,
-                                            transforms_augmentation=transforms_augmentation,
-                                            transforms_preprocess=transforms_preprocess)
+transforms_preprocess, transforms_augmentation = create_transforms(
+    random_cropping=True, aggressive_augmentation=True, custom=True
+)
+custom_trainset, custom_testset = load_data(
+    base_dataset=None,
+    transforms_augmentation=transforms_augmentation,
+    transforms_preprocess=transforms_preprocess,
+)
 
-custom_dataloader = torch.utils.data.DataLoader(custom_testset,
-                                                batch_size=1)
+custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=1)
 
 # Evaluate the model
 correct, total = 0, 0
@@ -30,7 +31,7 @@ with torch.no_grad():
     net.eval()
     for data in custom_dataloader:
         images, labels, confidences = data
-        if len(images)>1:
+        if len(images) > 1:
             confidences = images[1]
             images = images[0]
         print(confidences)

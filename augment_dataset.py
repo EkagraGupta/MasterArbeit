@@ -23,7 +23,9 @@ class AugmentedDataset(torch.utils.data.Dataset):
         if dataset is not None:
             self.dataset = dataset
         else:
-            self.dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
+            self.dataset = datasets.CIFAR10(
+                root="./data/train", train=True, download=True
+            )
         self.preprocess = transforms_preprocess
         self.transforms_augmentation = transforms_augmentation
         self.transforms_generated = (
@@ -49,17 +51,18 @@ class AugmentedDataset(torch.utils.data.Dataset):
             if original == True
             else self.transforms_generated
         )
-
         augment_x = self.transforms_augmentation(x)
-        if isinstance(augment_x[1], tuple) or isinstance(augment_x[1], float):
+        if isinstance(augment_x, tuple):
             confidences = augment_x[1]
             augment_x = augment_x[0]
             if isinstance(confidences, tuple):
+
                 combined_confidence = self.get_confidence(confidences)
             else:
                 combined_confidence = confidences
         # print(f'confidences: {confidences}\tcombined_confidence: {combined_confidence}\nType: {type(combined_confidence)}')
 
+        augment_x = self.preprocess(augment_x)
         if self.robust_samples == 0:
             return augment_x, y, combined_confidence
         # elif self.robust_samples == 1:
@@ -77,15 +80,14 @@ def create_transforms(
     random_cropping=False, aggressive_augmentation=False, custom=False
 ):
     t = [transforms.ToTensor()]
-    augmentations = [transforms.ToTensor()]
+    augmentations = []
 
     if aggressive_augmentation:
         augmentations.append(CustomTrivialAugmentWide(custom=custom))
     if random_cropping:
         augmentations.append(RandomCrop())
-
+    # augmentations.append(transforms.ToTensor())
     transforms_preprocess = transforms.Compose(t)
-
     transforms_augmentation = transforms.Compose(augmentations)
 
     return transforms_preprocess, transforms_augmentation
@@ -123,6 +125,19 @@ def load_data(
 
 
 def display_image_grid(images, labels, confidences, batch_size):
+    classes = [
+        "airplane",
+        "automobile",
+        "bird",
+        "cat",
+        "deer",
+        "dog",
+        "frog",
+        "horse",
+        "ship",
+        "truck",
+    ]
+
     # Convert images to a grid
     grid_img = torchvision.utils.make_grid(images, nrow=batch_size)
 
@@ -138,18 +153,18 @@ def display_image_grid(images, labels, confidences, batch_size):
     for i in range(batch_size):
         ax = plt.subplot(1, batch_size, i + 1)
         ax.imshow(np.transpose(images[i].numpy(), (1, 2, 0)))
-        ax.set_title(f"Label: {labels[i].item()}\nConf: {confidences[i]:.2f}")
+        ax.set_title(f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}")
         ax.axis("off")
-
+    plt.suptitle('No Augmentations Applied!')
     plt.show()
 
 
 if __name__ == "__main__":
-    batch_size = 1
+    batch_size = 10
     base_dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=True, custom=True
+        random_cropping=False, aggressive_augmentation=False, custom=False
     )
     trainset, testset = load_data(
         base_dataset=base_dataset,
@@ -161,5 +176,6 @@ if __name__ == "__main__":
         trainset, batch_size=batch_size, shuffle=False
     )
 
+    print(testset.classes)
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size)
+    display_image_grid(images, labels, confidences, batch_size=batch_size)

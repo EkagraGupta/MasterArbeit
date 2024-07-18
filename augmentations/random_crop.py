@@ -1,4 +1,5 @@
 import torch
+from torchvision import transforms
 
 
 class RandomCrop:
@@ -31,7 +32,8 @@ class RandomCrop:
         if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
             confidence_aa = image[1]
             image = image[0]
-
+        to_tensor = transforms.ToTensor()
+        image = to_tensor(image)
         dim1, dim2 = image.size(1), image.size(2)
 
         # Create background
@@ -56,4 +58,6 @@ class RandomCrop:
             confidences = (confidence_aa, confidence_rc)
         else:
             confidences = confidence_rc
+        to_pil = transforms.ToPILImage()
+        cropped_image = to_pil(cropped_image)
         return cropped_image, confidences
