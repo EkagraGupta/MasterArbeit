@@ -37,7 +37,6 @@ class AugmentedDataset(torch.utils.data.Dataset):
 
     def get_confidence(self, confidences):
         combined_confidence = reduce(lambda x, y: x * y, confidences)
-        print(combined_confidence)
         return combined_confidence
 
     def __getitem__(self, i):
@@ -155,7 +154,7 @@ def display_image_grid(images, labels, confidences, batch_size):
         ax.imshow(np.transpose(images[i].numpy(), (1, 2, 0)))
         ax.set_title(f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}")
         ax.axis("off")
-    plt.suptitle('No Augmentations Applied!')
+    plt.suptitle('Random Cropping + Trivial Augment Applied!')
     plt.show()
 
 
@@ -164,7 +163,7 @@ if __name__ == "__main__":
     base_dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False, aggressive_augmentation=False, custom=False
+        random_cropping=True, aggressive_augmentation=True, custom=True
     )
     trainset, testset = load_data(
         base_dataset=base_dataset,
@@ -176,6 +175,5 @@ if __name__ == "__main__":
         trainset, batch_size=batch_size, shuffle=False
     )
 
-    print(testset.classes)
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size)

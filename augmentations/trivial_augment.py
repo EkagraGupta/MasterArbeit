@@ -58,4 +58,3 @@ if __name__ == "__main__":
     )
     trainloader, testloader, classes = load_dataset(batch_size=1, transform=transform)
     data = next(iter(trainloader))
-    print(len(data[0]))
