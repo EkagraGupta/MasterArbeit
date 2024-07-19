@@ -55,7 +55,6 @@ class AugmentedDataset(torch.utils.data.Dataset):
             confidences = augment_x[1]
             augment_x = augment_x[0]
             if isinstance(confidences, tuple):
-
                 combined_confidence = self.get_confidence(confidences)
             else:
                 combined_confidence = confidences
@@ -85,6 +84,8 @@ def create_transforms(
     if random_cropping:
         augmentations.append(RandomCrop())
     # augmentations.append(transforms.ToTensor())
+    """Random Erasing, Random Flip,   ()
+    """
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
 
@@ -163,10 +164,9 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 if __name__ == "__main__":
     batch_size = 10
-    base_dataset = datasets.CIFAR10(root="./data/train", train=True, download=True)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False, aggressive_augmentation=True, custom=True
+        random_cropping=True, aggressive_augmentation=True, custom=True
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -178,4 +178,5 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
+    print()
     display_image_grid(images, labels, confidences, batch_size=batch_size)

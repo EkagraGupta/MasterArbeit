@@ -33,8 +33,6 @@ with torch.no_grad():
         if len(images) > 1:
             confidences = images[1]
             images = images[0]
-        # print(confidences)
-        # break
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
