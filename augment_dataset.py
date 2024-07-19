@@ -4,13 +4,22 @@ from functools import reduce
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Optional
 
 from augmentations.trivial_augment import CustomTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
 
 
 class AugmentedDataset(torch.utils.data.Dataset):
-    """Dataset wrapper to perform augmentations and allow robust loss functions."""
+    """Dataset wrapper to perform augmentations and allow robust loss functions.
+
+    Attributes:
+        dataset (torch.utils.data.Dataset): The base dataset to augment.
+        transforms_preprocess (transforms.Compose): Transformations for preprocessing.
+        transforms_augmentation (transforms.Compose): Transformations for augmentation.
+        transforms_generated (transforms.Compose): Transformations for generated samples.
+        robust_samples (int): Number of robust samples to include.
+    """
 
     def __init__(
         self,
@@ -35,22 +44,39 @@ class AugmentedDataset(torch.utils.data.Dataset):
         self.original_length = getattr(dataset, "original_length", None)
         self.generated_length = getattr(dataset, "generated_length", None)
 
-    def get_confidence(self, confidences):
+    def get_confidence(self, confidences: Optional[tuple]) -> Optional[float]:
+        """Combines multiple confidence values into a single value.
+
+        Args:
+            confidences (Optional[tuple]): A tuple of confidence values.
+
+        Returns:
+            Optional[float]: The combined confidence value.
+        """
         combined_confidence = reduce(lambda x, y: x * y, confidences)
         return combined_confidence
 
-    def __getitem__(self, i):
+    def __getitem__(self, i: Optional[int]) -> Optional[tuple]:
+        """Retrieves an item from the dataset and applies augmentations.
+
+        Args:
+            i (Optional[int]): Index of the item to retrieve.
+
+        Returns:
+            Optional[tuple]: The augmented image, the label, and the combined confidence value.
+        """
         x, y = self.dataset[i]
         confidences = None
         combined_confidence = torch.tensor(1.0, dtype=torch.float32)
-        # for now "original" is set to True rather than returning from base_dataset
-        original = True
+        original = True  # for now "original" is set to True rather than returning from base_dataset
+
         augment = (
             self.transforms_augmentation
             if original == True
             else self.transforms_generated
         )
-        augment_x = self.transforms_augmentation(x)
+        augment_x = augment(x)
+
         if isinstance(augment_x, tuple):
             confidences = augment_x[1]
             augment_x = augment_x[0]
@@ -58,8 +84,10 @@ class AugmentedDataset(torch.utils.data.Dataset):
                 combined_confidence = self.get_confidence(confidences)
             else:
                 combined_confidence = confidences
+
         # print(f'confidences: {confidences}\tcombined_confidence: {combined_confidence}\nType: {type(combined_confidence)}')
         augment_x = self.preprocess(augment_x)
+
         if self.robust_samples == 0:
             return augment_x, y, combined_confidence
         # elif self.robust_samples == 1:
@@ -74,8 +102,20 @@ class AugmentedDataset(torch.utils.data.Dataset):
 
 
 def create_transforms(
-    random_cropping=False, aggressive_augmentation=False, custom=False
-):
+    random_cropping: bool = False,
+    aggressive_augmentation: bool = False,
+    custom: bool = False,
+) -> Optional[tuple]:
+    """Creates preprocessing and augmentation transformations.
+
+    Args:
+        random_cropping (bool, optional): Flag to include random cropping in augmentations. Defaults to False.
+        aggressive_augmentation (bool, optional): Flag to include aggressive augmentations. Defaults to False.
+        custom (bool, optional): Flag to use custom trivial augmentations. Defaults to False.
+
+    Returns:
+        Optional[tuple]: The preprocessing and augmentation transformations.
+    """
     t = [transforms.ToTensor()]
     augmentations = []
 
@@ -83,17 +123,24 @@ def create_transforms(
         augmentations.append(CustomTrivialAugmentWide(custom=custom))
     if random_cropping:
         augmentations.append(RandomCrop())
-    # augmentations.append(transforms.ToTensor())
-    """Random Erasing, Random Flip,   ()
-    """
+
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
 
     return transforms_preprocess, transforms_augmentation
 
 
-def load_data(transforms_preprocess, transforms_augmentation=None, robust_samples=0):
+def load_data(transforms_preprocess, transforms_augmentation=None) -> Optional[tuple]:
+    """Loads and prepares the CIFAR-10 dataset with specified transformations.
 
+    Args:
+        transforms_preprocess (transforms.Compose): Preprocessing transformations.
+        transforms_augmentation (transforms.Compose, optional): Augmentation transformations.
+        robust_samples (int, optional): Number of robust samples to include.
+
+    Returns:
+        Optional[tuple]: The training and testing datasets.
+    """
     base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
     base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
@@ -122,10 +169,20 @@ def load_data(transforms_preprocess, transforms_augmentation=None, robust_sample
             transform=transforms_preprocess,
             download=True,
         )
+
     return trainset, testset
 
 
 def display_image_grid(images, labels, confidences, batch_size):
+    """
+    Displays a grid of images with labels and confidence scores.
+
+    Args:
+        images (torch.Tensor): Batch of images.
+        labels (torch.Tensor): Corresponding labels for the images.
+        confidences (torch.Tensor): Corresponding confidence scores for the images.
+        batch_size (int): Number of images to display in the grid.
+    """
     classes = [
         "airplane",
         "automobile",
@@ -158,7 +215,7 @@ def display_image_grid(images, labels, confidences, batch_size):
             f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}"
         )
         ax.axis("off")
-    plt.suptitle("Random Cropping + Trivial Augment Applied!")
+    # plt.suptitle("Random Cropping + Trivial Augment Applied!")
     plt.show()
 
 
@@ -166,7 +223,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=True, custom=True
+        random_cropping=True, aggressive_augmentation=False, custom=False
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -178,5 +235,4 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
-    print()
     display_image_grid(images, labels, confidences, batch_size=batch_size)

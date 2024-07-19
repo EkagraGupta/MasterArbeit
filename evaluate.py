@@ -12,7 +12,6 @@ net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
 net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
-# custom_dataloader = get_dataloader(num_samples=None, train=False, da=2, aa=1)
 transforms_preprocess, transforms_augmentation = create_transforms(
     random_cropping=True, aggressive_augmentation=True, custom=True
 )
