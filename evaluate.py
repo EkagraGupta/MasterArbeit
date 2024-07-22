@@ -20,7 +20,7 @@ custom_trainset, custom_testset = load_data(
     transforms_preprocess=transforms_preprocess,
 )
 
-custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=10)
+custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=512)
 
 # Evaluate the model
 correct, total = 0, 0
@@ -29,17 +29,8 @@ with torch.no_grad():
     net.eval()
     for i, data in enumerate(custom_dataloader):
         images, labels, confidences = data
-        print(images.shape)
-        # if len(images) > 1:
-        #     confidences = images[1]
-        #     images = images[0]
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
-        """TRY"""
-        print(labels.size(0))
-        loss = soft_loss(pred=, label=labels, confidence=confidences)
-        print(f'\nprediction: {predicted.shape}\ngt: {labels.shape}\nconfidences: {confidences.shape}\nLOSS: {loss}\n')
-        """TRY"""        
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         accuracy = correct / total

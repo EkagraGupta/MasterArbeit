@@ -73,5 +73,5 @@ class CustomTrivialAugmentWide:
                 original_image=im, augmented_image=augment_im
             )
 
-        print(f"\nAugmentation info: {im_info}\n")
+        # print(f"\nAugmentation info: {im_info}\n")
         return augment_im, confidence_aa

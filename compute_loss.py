@@ -1,5 +1,6 @@
 import torch
 from torch.nn import functional as F
+import torch.nn as nn
 
 
 def soft_loss(pred, label, confidence):
@@ -36,8 +37,12 @@ if __name__ == "__main__":
             ]
         ]
     )
-    label = torch.tensor([0])
-    confidence = torch.tensor([0.05])
+    labels = torch.tensor([0])
+    confidence = torch.tensor([1.])
 
-    s_loss = soft_loss(pred=outputs, label=label, confidence=confidence)
-    print(soft_loss)
+    s_loss = soft_loss(pred=outputs, label=labels, confidence=confidence)
+    print(s_loss)
+
+    criterion = nn.CrossEntropyLoss()
+    h_loss = criterion(outputs, labels)
+    print(h_loss)
