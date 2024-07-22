@@ -5,7 +5,7 @@ from typing import Optional
 
 from utils.custom_trivial_augment import CTrivialAugmentWide
 from utils.sift_comparison import sift_correction_factor
-from utils.vif import vif
+from utils.vif import compute_vif
 
 
 class CustomTrivialAugmentWide:
@@ -65,7 +65,7 @@ class CustomTrivialAugmentWide:
 
         if augmentation_type in pixelwise_augs:
             # calculate VIF for pixel-wise augmentations
-            vif_value = vif(original_image=im, augmented_image=augment_im)
+            vif_value = compute_vif(im1=im, im2=augment_im)
             confidence_aa = vif_value.item()
         else:
             # calculate SIFT correction factor for geometric transformations
@@ -73,5 +73,5 @@ class CustomTrivialAugmentWide:
                 original_image=im, augmented_image=augment_im
             )
 
-        # print(f"\nAugmentation info: {im_info}\n")
+        print(f"\nAugmentation info: {im_info}\n")
         return augment_im, confidence_aa
