@@ -1,8 +1,8 @@
 import torch
 
 from wideresnet import WideResNet_28_4
-from dump.load_augmented_dataset import get_dataloader
 from augment_dataset import create_transforms, load_data
+from compute_loss import soft_loss
 
 # Load the saved model weights
 net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"
@@ -20,7 +20,7 @@ custom_trainset, custom_testset = load_data(
     transforms_preprocess=transforms_preprocess,
 )
 
-custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=1)
+custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=10)
 
 # Evaluate the model
 correct, total = 0, 0
@@ -29,11 +29,17 @@ with torch.no_grad():
     net.eval()
     for i, data in enumerate(custom_dataloader):
         images, labels, confidences = data
-        if len(images) > 1:
-            confidences = images[1]
-            images = images[0]
+        print(images.shape)
+        # if len(images) > 1:
+        #     confidences = images[1]
+        #     images = images[0]
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
+        """TRY"""
+        print(labels.size(0))
+        loss = soft_loss(pred=, label=labels, confidence=confidences)
+        print(f'\nprediction: {predicted.shape}\ngt: {labels.shape}\nconfidences: {confidences.shape}\nLOSS: {loss}\n')
+        """TRY"""        
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         accuracy = correct / total
