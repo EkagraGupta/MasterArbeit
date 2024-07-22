@@ -8,10 +8,10 @@ def soft_loss(pred, label, confidence):
     n_class = pred.size(1)
 
     # Make soft one-hot target
-    one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
-    print(f"\nOnehot: {one_hot}\n")
     label = label.unsqueeze(1)
     confidence = confidence.unsqueeze(1)
+    one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
+    print(f"\nOnehot: {one_hot}\n")
     one_hot.scatter_(dim=1, index=label, src=confidence)
     print(f"\nSoftened: {one_hot}\nSum: {torch.sum(one_hot)}")
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     )
     labels = torch.tensor([0])
     confidence = torch.tensor([1.])
-
+    print(f'outputs: {outputs.shape}\nlables: {labels.shape}\nconf: {confidence.shape}')
     s_loss = soft_loss(pred=outputs, label=labels, confidence=confidence)
     print(s_loss)
 
