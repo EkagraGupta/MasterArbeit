@@ -13,14 +13,16 @@ net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
 transforms_preprocess, transforms_augmentation = create_transforms(
-    random_cropping=True, aggressive_augmentation=True, custom=True
+    random_cropping=False, aggressive_augmentation=True, custom=True
 )
 custom_trainset, custom_testset = load_data(
     transforms_augmentation=transforms_augmentation,
     transforms_preprocess=transforms_preprocess,
 )
 
-custom_dataloader = torch.utils.data.DataLoader(custom_testset, batch_size=512)
+custom_dataloader = torch.utils.data.DataLoader(
+    custom_testset, batch_size=20, shuffle=False
+)
 
 # Evaluate the model
 correct, total = 0, 0
@@ -29,6 +31,7 @@ with torch.no_grad():
     net.eval()
     for i, data in enumerate(custom_dataloader):
         images, labels, confidences = data
+        print(confidences)
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
@@ -38,6 +41,7 @@ with torch.no_grad():
             print(
                 f"Processed [{i+1}/{len(custom_dataloader)}] - Accuracy: {accuracy*100:.2f}%"
             )
-    print(
-        f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
-    )
+        break
+    # print(
+    #     f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
+    # )

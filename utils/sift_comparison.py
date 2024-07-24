@@ -19,9 +19,16 @@ def sift_operation(im1, im2, display_matches: bool = False):
     keypoints2, descriptors2 = sift.detectAndCompute(im2_np, None)
 
     if descriptors1 is None or descriptors2 is None:
-        # print(
-        #     f"Either the images are too different or lacking sufficient features for SIFT to detect"
-        # )
+        print(
+            "Either the images are too different or lacking sufficient features for SIFT to detect"
+        )
+        resize = transforms.Resize(512)
+        if descriptors1 is None:
+            im1_resize = resize(im1)
+            im1_resize.show()
+        if descriptors2 is None:
+            im2_resize = resize(im2)
+            im2_resize.show()
         return 1
 
     bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
