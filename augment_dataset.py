@@ -235,4 +235,4 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size)
+    display_image_grid(images, labels, confidences, batch_size=batch_size)
