@@ -14,7 +14,7 @@ net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
 transforms_preprocess, transforms_augmentation = create_transforms(
-    random_cropping=True, aggressive_augmentation=True, custom=False
+    random_cropping=False, aggressive_augmentation=False, custom=False
 )
 custom_trainset, custom_testset = load_data(
     transforms_augmentation=transforms_augmentation,

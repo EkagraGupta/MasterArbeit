@@ -9,7 +9,7 @@ def soft_loss(pred, label, confidence):
 
     # Make soft one-hot target
     label = label.unsqueeze(1)
-    confidence = confidence.unsqueeze(1)
+    confidence = confidence.unsqueeze(1).float()
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
     # print(f"\nOnehot: {one_hot}\n")
     one_hot.scatter_(dim=1, index=label, src=confidence)
