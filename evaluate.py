@@ -5,16 +5,16 @@ from augment_dataset import create_transforms, load_data
 from compute_loss import soft_loss
 
 # Load the saved model weights
-net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"
+# net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"
 # net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net.pth"
-# net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_exp01.pth'
+net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_exp01.pth'
 net = WideResNet_28_4(num_classes=10)
 net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
 net.eval()  # set the model to evaluation mode
 
 # Prepare the DataLoader
 transforms_preprocess, transforms_augmentation = create_transforms(
-    random_cropping=False, aggressive_augmentation=False, custom=False
+    random_cropping=True, aggressive_augmentation=True, custom=False
 )
 custom_trainset, custom_testset = load_data(
     transforms_augmentation=transforms_augmentation,

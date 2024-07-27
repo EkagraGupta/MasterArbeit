@@ -117,7 +117,10 @@ def create_transforms(
         Optional[tuple]: The preprocessing and augmentation transformations.
     """
     t = [transforms.ToTensor()]
-    augmentations = []
+    augmentations = [
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomCrop(32, padding=4),  
+    ]
 
     if aggressive_augmentation:
         augmentations.append(CustomTrivialAugmentWide(custom=custom))
