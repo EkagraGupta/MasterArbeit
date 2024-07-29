@@ -3,20 +3,37 @@ from torch.nn import functional as F
 import torch.nn as nn
 
 
+# def soft_loss(pred, label, confidence):
+#     log_prob = F.log_softmax(pred, dim=1)
+#     n_class = pred.size(1)
+
+#     # Make soft one-hot target
+#     label = label.unsqueeze(1)
+#     confidence = confidence.unsqueeze(1).float()
+#     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
+#     # print(f"\nOnehot: {one_hot}\n")
+#     one_hot.scatter_(dim=1, index=label, src=confidence)
+#     # print(f"\nSoftened: {one_hot}\nSum: {torch.sum(one_hot)}")
+
+#     # Compute weighted KL loss
+#     kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
+#     return kl.mean()
+
 def soft_loss(pred, label, confidence):
-    log_prob = F.log_softmax(pred, dim=1)
-    n_class = pred.size(1)
-
-    # Make soft one-hot target
+    print(f'pred: {pred.shape}\nlabel: {label.shape}\nconf: {confidence.shape}')
     label = label.unsqueeze(1)
-    confidence = confidence.unsqueeze(1).float()
-    one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
-    # print(f"\nOnehot: {one_hot}\n")
-    one_hot.scatter_(dim=1, index=label, src=confidence)
-    # print(f"\nSoftened: {one_hot}\nSum: {torch.sum(one_hot)}")
+    target = label.long()
+    prob = (1 - (label - target))
 
-    # Compute weighted KL loss
-    kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
+    weight = torch.ones_like(prob).float()
+    n_classes = pred.size(1)
+    scatter_mul = 1.0
+
+    one_hot = (torch.ones_like(pred) * (1 - prob) * scatter_mul / (n_classes - 1)).float()
+    one_hot.scatter_(dim=1, index=target, src=prob.float())
+    log_prob = F.log_softmax(pred, dim=1)
+
+    kl = weight * F.kl_div(input=log_prob.float(), target=one_hot.float(), reduction='none').sum(-1)
     return kl.mean()
 
 
@@ -353,3 +370,4 @@ if __name__ == "__main__":
     # conventional loss computation
     criterion = nn.CrossEntropyLoss()
     h_loss = criterion(outputs, labels)
+    print(f's loss: {s_loss}\th loss: {h_loss}')
