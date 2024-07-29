@@ -23,6 +23,7 @@ def soft_loss(pred, label, confidence):
     print(f'pred: {pred.shape}\nlabel: {label.shape}\nconf: {confidence.shape}')
     label = label.unsqueeze(1)
     target = label.long()
+    confidence = confidence.unsqueeze(1).float()
     prob = (1 - (label - target))
 
     weight = torch.ones_like(prob).float()
@@ -30,7 +31,7 @@ def soft_loss(pred, label, confidence):
     scatter_mul = 1.0
 
     one_hot = (torch.ones_like(pred) * (1 - prob) * scatter_mul / (n_classes - 1)).float()
-    one_hot.scatter_(dim=1, index=target, src=prob.float())
+    one_hot.scatter_(dim=1, index=target, src=confidence)
     log_prob = F.log_softmax(pred, dim=1)
 
     kl = weight * F.kl_div(input=log_prob.float(), target=one_hot.float(), reduction='none').sum(-1)
