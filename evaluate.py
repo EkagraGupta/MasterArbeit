@@ -7,7 +7,7 @@ from compute_loss import soft_loss
 # Load the saved model weights
 # net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"
 # net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net.pth"
-net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_exp01.pth'
+net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_ta_baseline.pth'
 net = WideResNet_28_4(num_classes=10)
 net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
 net.eval()  # set the model to evaluation mode
