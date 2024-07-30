@@ -45,7 +45,7 @@ def sift_operation(im1, im2, display_matches: bool = False):
             "/home/ekagra/Desktop/Study/MA/code/example/sift_test_example4.png", im3
         )
         plt.show()
-    print(f'Number of Matching Keypoints Between the Traning and Query Images: {len(matches)}')
+    # print(f'Number of Matching Keypoints Between the Traning and Query Images: {len(matches)}')
     return len(matches)
 
 

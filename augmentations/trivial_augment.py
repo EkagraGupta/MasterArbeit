@@ -7,6 +7,7 @@ from utils.custom_trivial_augment import CTrivialAugmentWide
 from utils.sift_comparison import sift_correction_factor
 from utils.orb_comparison import orb_correction_factor
 from utils.ssim_comparison import ssim_operation
+from utils.ncc import normalized_cross_correlation
 from utils.vif import compute_vif
 
 
@@ -65,14 +66,18 @@ class CustomTrivialAugmentWide:
         augment_im, im_info = trivial_augment(im)
         augmentation_type = next(iter(im_info.keys()))
 
-        if augmentation_type in pixelwise_augs:
-            # calculate VIF for pixel-wise augmentations
-            vif_value = compute_vif(im1=im, im2=augment_im)
-            confidence_aa = vif_value.item()
-        else:
-            # calculate SIFT correction factor for geometric transformations
-            # confidence_aa = sift_correction_factor(original_image=im, augmented_image=augment_im)
-            # confidence_aa = orb_correction_factor(original_image=im, augmented_image=augment_im)
-            confidence_aa = ssim_operation(im1=im, im2=augment_im)
-        # print(f"\nAugmentation info: {im_info}\tconf: {confidence_aa}\n")
+        confidence_aa = ssim_operation(im1=im, im2=augment_im)
+        # if augmentation_type in pixelwise_augs:
+        #     # calculate VIF for pixel-wise augmentations
+        #     # vif_value = compute_vif(im1=im, im2=augment_im)
+        #     # confidence_aa = vif_value.item()
+        #     # confidence_aa = 0.5
+        # else:
+        #     # calculate SIFT correction factor for geometric transformations
+        #     # confidence_aa = sift_correction_factor(original_image=im, augmented_image=augment_im)
+        #     # confidence_aa = orb_correction_factor(original_image=im, augmented_image=augment_im)
+        #     confidence_aa = ssim_operation(im1=im, im2=augment_im)
+        #     # confidence_aa = normalized_cross_correlation(im1=im, im2=augment_im)
+        #     # confidence_aa = 0.5
+        print(f"\nAugmentation info: {im_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa

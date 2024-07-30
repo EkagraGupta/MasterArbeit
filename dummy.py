@@ -11,7 +11,7 @@ trainset, _ = load_data(transforms_preprocess=preprocess,
                         transforms_augmentation=augmentation)
 
 trainloader = torch.utils.data.DataLoader(trainset,
-                                          shuffle=True,
+                                          shuffle=False,
                                           batch_size=1)
 
 time_taken = measure_dataloader_time(trainloader)
@@ -19,12 +19,9 @@ time_taken = measure_dataloader_time(trainloader)
 print(f'\nTime taken: {time_taken:.3f} seconds.\n')
 
 # images, labels, confidences = next(iter(trainloader))
-
 # from torchvision import transforms
-
 # to_pil = transforms.ToPILImage()
-
 # im_pil = to_pil(images[0])
-# im_pil.show()
+# im_pil.save('/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png')
 
 
