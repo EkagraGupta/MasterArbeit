@@ -1,20 +1,30 @@
+from augment_dataset import create_transforms, load_data
 import torch
-from torchvision import datasets, transforms
-from utils.dataset import load_dataset
+from utils.measure_dataloader import measure_dataloader_time
+from utils.orb_comparison import orb_correction_factor
 
-transform = transforms.Compose(
-    [
-        transforms.Resize(512),
-        transforms.TrivialAugmentWide(),
-        transforms.ToTensor(),
-        # transforms.TrivialAugmentWide(),
-    ]
-)
+preprocess, augmentation = create_transforms(random_cropping=False,
+                                             aggressive_augmentation=True,
+                                             custom=True)
 
-trainloader, testloader, classes = load_dataset(batch_size=1, transform=transform)
+trainset, _ = load_data(transforms_preprocess=preprocess,
+                        transforms_augmentation=augmentation)
 
-images, labels = next(iter(trainloader))
+trainloader = torch.utils.data.DataLoader(trainset,
+                                          shuffle=True,
+                                          batch_size=1)
+
+# time_taken = measure_dataloader_time(trainloader)
+
+# print(f'\nTime taken: {time_taken:.3f} seconds.\n')
+
+images, labels, confidences = next(iter(trainloader))
+
+from torchvision import transforms
 
 to_pil = transforms.ToPILImage()
-pil_im = to_pil(images[0])
-pil_im.save("/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png")
+
+im_pil = to_pil(images[0])
+im_pil.show()
+
+

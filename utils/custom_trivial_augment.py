@@ -469,6 +469,11 @@ class CTrivialAugmentWide(torch.nn.Module):
             "AutoContrast": (torch.tensor(0.0), False),
             "Equalize": (torch.tensor(0.0), False),
         }
+    
+    # def get_max_magnitude(self, augmentation_type) -> Optional[float]:
+    #     op_meta = self._augmentation_space(self.num_magnitude_bins)
+    #     max_magnitude = torch.max(op_meta[augmentation_type][0])
+    #     return max_magnitude
 
     def forward(self, img: Tensor) -> Tensor:
         """
@@ -507,6 +512,7 @@ class CTrivialAugmentWide(torch.nn.Module):
         img, aug_info = _apply_op(
             img, op_name, magnitude, interpolation=self.interpolation, fill=fill
         )
+
         return img, aug_info
 
     def __repr__(self) -> str:

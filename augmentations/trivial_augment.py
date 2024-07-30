@@ -5,6 +5,8 @@ from typing import Optional
 
 from utils.custom_trivial_augment import CTrivialAugmentWide
 from utils.sift_comparison import sift_correction_factor
+from utils.orb_comparison import orb_correction_factor
+from utils.ssim_comparison import ssim_operation
 from utils.vif import compute_vif
 
 
@@ -69,9 +71,9 @@ class CustomTrivialAugmentWide:
             confidence_aa = vif_value.item()
         else:
             # calculate SIFT correction factor for geometric transformations
-            confidence_aa = sift_correction_factor(
-                original_image=im, augmented_image=augment_im
-            )
-
-        # print(f"\nAugmentation info: {im_info}\n")
+            # confidence_aa = sift_correction_factor(original_image=im, augmented_image=augment_im)
+            # confidence_aa = orb_correction_factor(original_image=im, augmented_image=augment_im)
+            confidence_aa = ssim_operation(im1=im, im2=augment_im)
+        #     confidence_aa = abs(im_info[augmentation_type]) / max_magnitude.item()
+        print(f"\nAugmentation info: {im_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa

@@ -226,7 +226,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=True, custom=True
+        random_cropping=False, aggressive_augmentation=True, custom=True
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
