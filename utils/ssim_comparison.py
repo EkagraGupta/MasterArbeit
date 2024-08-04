@@ -5,11 +5,11 @@ from PIL import Image
 from torchmetrics.functional import structural_similarity_index_measure as ssim
 import torch
 
-def ssim_operation(im1: Image.Image, im2: Image.Image):
+def ssim_operation(im1: Image.Image, im2: Image.Image, device="cpu"):
     # im1_np = np.array(im1.convert('L'))
     # im2_np = np.array(im2.convert('L'))
-    im1_np = np.array(im1)
-    im2_np = np.array(im2)
+    im1_np = np.array(im1).to(device)
+    im2_np = np.array(im2).to(device)
 
     # Ensure the win_size is appropriate for your image dimensions
     win_size = min(im1_np.shape[0], im1_np.shape[1], 7)
