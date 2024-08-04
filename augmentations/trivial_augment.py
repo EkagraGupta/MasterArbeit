@@ -77,7 +77,7 @@ class CustomTrivialAugmentWide:
         #     # confidence_aa = sift_correction_factor(original_image=im, augmented_image=augment_im)
         #     # confidence_aa = orb_correction_factor(original_image=im, augmented_image=augment_im)
         #     confidence_aa = ssim_operation(im1=im, im2=augment_im)
-            confidence_aa = normalized_cross_correlation(im1=im, im2=augment_im)
-        #     # confidence_aa = 0.5
+            # confidence_aa = normalized_cross_correlation(im1=im, im2=augment_im)
+            confidence_aa = 0.5
         # print(f"\nAugmentation info: {im_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa
