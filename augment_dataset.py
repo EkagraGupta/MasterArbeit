@@ -218,7 +218,6 @@ def display_image_grid(images, labels, confidences, batch_size):
             f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}"
         )
         ax.axis("off")
-    # plt.suptitle("Random Cropping + Trivial Augment Applied!")
     plt.show()
 
 

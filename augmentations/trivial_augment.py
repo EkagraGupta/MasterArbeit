@@ -6,7 +6,7 @@ from typing import Optional
 from utils.custom_trivial_augment import CTrivialAugmentWide
 from utils.sift_comparison import sift_correction_factor
 from utils.orb_comparison import orb_correction_factor
-from utils.ssim_comparison import ssim_operation
+from utils.ssim_comparison import ssim_operation, ssim_operation2
 from utils.ncc import normalized_cross_correlation
 from utils.vif import compute_vif
 
@@ -64,7 +64,7 @@ class CustomTrivialAugmentWide:
 
         trivial_augment = CTrivialAugmentWide()
         augment_im, im_info = trivial_augment(im)
-        augmentation_type = next(iter(im_info.keys()))
+        # augmentation_type = next(iter(im_info.keys()))
 
         confidence_aa = ssim_operation(im1=im, im2=augment_im)
         # if augmentation_type in pixelwise_augs:
