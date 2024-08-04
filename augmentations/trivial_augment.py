@@ -33,7 +33,7 @@ class CustomTrivialAugmentWide:
             Optional[tuple]: The augmented image and optionally the confidence scores.
         """
         if self.custom:
-            augment_im, augment_info = self.get_augment_info(im)
+            augment_im, augment_info = self.get_augment_info(im, self.device)
             return augment_im, augment_info
         else:
             trivial_augmentation = TrivialAugmentWide()
