@@ -105,7 +105,6 @@ def create_transforms(
     random_cropping: bool = False,
     aggressive_augmentation: bool = False,
     custom: bool = False,
-    device="cpu"
 ) -> Optional[tuple]:
     """Creates preprocessing and augmentation transformations.
 
@@ -124,7 +123,7 @@ def create_transforms(
     ]
 
     if aggressive_augmentation:
-        augmentations.append(CustomTrivialAugmentWide(custom=custom, device=device))
+        augmentations.append(CustomTrivialAugmentWide(custom=custom))
     if random_cropping:
         augmentations.append(RandomCrop())
 

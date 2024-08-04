@@ -19,9 +19,8 @@ class CustomTrivialAugmentWide:
         custom (bool): Flag to indicate if custom augmentation should be used.
     """
 
-    def __init__(self, custom: bool = False, device="cpu"):
+    def __init__(self, custom: bool = False):
         self.custom = custom
-        self.device = device
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
         """Applies the augmentation to the given image.
@@ -33,7 +32,7 @@ class CustomTrivialAugmentWide:
             Optional[tuple]: The augmented image and optionally the confidence scores.
         """
         if self.custom:
-            augment_im, augment_info = self.get_augment_info(im, self.device)
+            augment_im, augment_info = self.get_augment_info(im)
             return augment_im, augment_info
         else:
             trivial_augmentation = TrivialAugmentWide()
@@ -41,7 +40,7 @@ class CustomTrivialAugmentWide:
             return augment_im
 
     @staticmethod
-    def get_augment_info(self, im: torch.tensor) -> tuple:
+    def get_augment_info(im: torch.tensor) -> tuple:
         """Applies a custom trivial augmentation and computes a confidence score.
 
         Args:
@@ -67,7 +66,7 @@ class CustomTrivialAugmentWide:
         augment_im, im_info = trivial_augment(im)
         # augmentation_type = next(iter(im_info.keys()))
 
-        confidence_aa = ssim_operation(self.device, im1=im, im2=augment_im)
+        confidence_aa = ssim_operation2(im1=im, im2=augment_im)
         # if augmentation_type in pixelwise_augs:
         #     # calculate VIF for pixel-wise augmentations
         #     # vif_value = compute_vif(im1=im, im2=augment_im)
