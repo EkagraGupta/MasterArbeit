@@ -118,8 +118,8 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),  
+        # transforms.RandomHorizontalFlip(),
+        # transforms.RandomCrop(32, padding=4),  
     ]
 
     if aggressive_augmentation:
