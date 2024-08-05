@@ -21,13 +21,13 @@ def orb_operation(im1, im2):
     matches = bf.match(descriptors1, descriptors2)
     matches = sorted(matches, key=lambda x:x.distance)
 
-    # result = cv2.drawMatches(im1_np, keypoints1, im2_np, keypoints2, matches, im2_np, flags=2)
+    result = cv2.drawMatches(im1_np, keypoints1, im2_np, keypoints2, matches, im2_np, flags=2)
     
     # Display the best matching points
-    # plt.rcParams['figure.figsize'] = [14.0, 7.0]
-    # plt.title('Best Matching Points')
-    # plt.imshow(result)
-    # plt.show()
+    plt.rcParams['figure.figsize'] = [14.0, 7.0]
+    plt.title("Number of Matching Keypoints: " + str(len(matches)))
+    plt.imshow(result)
+    plt.show()
 
     # Print total number of matching points between the training and query images
     print("\nNumber of Matching Keypoints Between The Training and Query Images: ", len(matches))
@@ -44,10 +44,14 @@ def orb_correction_factor(
 if __name__=='__main__':
 
     im1_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png'
-    im2_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png'
+    im2_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image_geometric.png'
     # im2_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png'
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
+
+    resize = transforms.Resize(512)
+    im1 = resize(im1)
+    im2 = resize(im2)   
 
     corr_fac = orb_correction_factor(original_image=im1, augmented_image=im2)
     print(f'Correction factor: {corr_fac:.3f}')

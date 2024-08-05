@@ -2,7 +2,6 @@ from skimage.metrics import structural_similarity as sim
 import numpy as np
 from PIL import Image
 
-from torchmetrics.functional import structural_similarity_index_measure as ssim
 import torch
 
 def ssim_operation(im1: Image.Image, im2: Image.Image):
@@ -18,17 +17,17 @@ def ssim_operation(im1: Image.Image, im2: Image.Image):
     # ssim_index, _ = ssim(im1_np, im2_np, full=True)                                             # grayscale image
     return (ssim_index + 1) / 2
 
-def ssim_operation2(im1: Image.Image, im2: Image.Image):
-    im1_np = np.array(im1).astype(np.float32) / 255.0
-    im2_np = np.array(im2).astype(np.float32) / 255.0
+# def ssim_operation2(im1: Image.Image, im2: Image.Image):
+#     im1_np = np.array(im1).astype(np.float32) / 255.0
+#     im2_np = np.array(im2).astype(np.float32) / 255.0
 
-    # Convert numpy arrays to PyTorch tensors
-    im1_tensor = torch.tensor(im1_np).permute(2, 0, 1).unsqueeze(0)  # Shape: (1, C, H, W)
-    im2_tensor = torch.tensor(im2_np).permute(2, 0, 1).unsqueeze(0)  # Shape: (1, C, H, W)
+#     # Convert numpy arrays to PyTorch tensors
+#     im1_tensor = torch.tensor(im1_np).permute(2, 0, 1).unsqueeze(0)  # Shape: (1, C, H, W)
+#     im2_tensor = torch.tensor(im2_np).permute(2, 0, 1).unsqueeze(0)  # Shape: (1, C, H, W)
 
-    # Calculate SSIM using torchmetrics
-    similarity = ssim(im1_tensor, im2_tensor, data_range=1.0)
-    return similarity.item()
+#     # Calculate SSIM using torchmetrics
+#     similarity = ssim(im1_tensor, im2_tensor, data_range=1.0)
+#     return similarity.item()
 
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
