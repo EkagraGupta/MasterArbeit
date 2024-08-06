@@ -3,23 +3,6 @@ from utils.plot_non_linear_curve import plot_mean_std, get_mean_std
 from evaluate import evaluate_model
 import torch
 
-augmentation_types = [
-    # "Identity",
-    "ShearX",
-    "ShearY",
-    "TranslateX",
-    "TranslateY",
-    "Rotate",
-    "Brightness",
-    "Color",
-    "Contrast",
-    "Sharpness",
-    "Posterize",
-    "Solarize",
-    # "AutoContrast",
-    "Equalize",
-]
-
 
 def get_plot(augmentation_type, model, dataset_split=100):
     print(
@@ -57,7 +40,7 @@ def get_plot(augmentation_type, model, dataset_split=100):
         if model is not None:
             evaluate_model(model=model, dataloader=trainloader)
         else:
-            print(f'\nModel not provided. Skipping model evaluation.\n')
+            print(f"\nModel not provided. Skipping model evaluation.\n")
 
     plot_mean_std(mean_list, std_list, augmentation_type)
 
@@ -65,9 +48,26 @@ def get_plot(augmentation_type, model, dataset_split=100):
         f"\n============================ Finished: {augmentation_type} ============================\n"
     )
 
+
 if __name__ == "__main__":
+    augmentation_types = [
+        # "Identity",
+        "ShearX",
+        "ShearY",
+        "TranslateX",
+        "TranslateY",
+        "Rotate",
+        "Brightness",
+        "Color",
+        "Contrast",
+        "Sharpness",
+        "Posterize",
+        "Solarize",
+        # "AutoContrast",
+        "Equalize",
+    ]
+
     # for augmentation_type in augmentation_types:
     #     get_plot(augmentation_type)
-    get_plot("Brightness", model=None)
 
-# print(f'Mean: {mean_list}\tStd: {std_list}')
+    get_plot("Brightness", model=None)

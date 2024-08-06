@@ -4,6 +4,7 @@ from wideresnet import WideResNet_28_4
 from augment_dataset import create_transforms, load_data
 from compute_loss import soft_loss
 
+
 def evaluate_model(model, dataloader):
     # Evaluate the model
     correct, total = 0, 0
@@ -25,7 +26,8 @@ def evaluate_model(model, dataloader):
             f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
         )
         return accuracy * 100
-    
+
+
 if __name__ == "__main__":
     # Load the saved model weights
     # net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"
@@ -37,16 +39,20 @@ if __name__ == "__main__":
 
     # Prepare the DataLoader
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False, aggressive_augmentation=True, custom=True, augmentation_name='Brightness', augmentation_severity=5
+        random_cropping=False,
+        aggressive_augmentation=True,
+        custom=True,
+        augmentation_name="Brightness",
+        augmentation_severity=5,
     )
     custom_trainset, custom_testset = load_data(
         transforms_augmentation=transforms_augmentation,
         transforms_preprocess=transforms_preprocess,
-        dataset_split=1000
+        dataset_split=1000,
     )
 
     custom_dataloader = torch.utils.data.DataLoader(
         custom_testset, batch_size=128, shuffle=False
     )
     accuracy = evaluate_model(model=net, dataloader=custom_dataloader)
-    print(f'Accuracy: {accuracy:.2f}%')
+    print(f"Accuracy: {accuracy:.2f}%")
