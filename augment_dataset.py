@@ -85,7 +85,6 @@ class AugmentedDataset(torch.utils.data.Dataset):
             else:
                 combined_confidence = confidences
 
-        # print(f'confidences: {confidences}\tcombined_confidence: {combined_confidence}\nType: {type(combined_confidence)}')
         augment_x = self.preprocess(augment_x)
 
         if self.robust_samples == 0:
@@ -118,8 +117,8 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),  
+        # transforms.RandomHorizontalFlip(),
+        # transforms.RandomCrop(32, padding=4),  
     ]
 
     if aggressive_augmentation:
@@ -133,7 +132,7 @@ def create_transforms(
     return transforms_preprocess, transforms_augmentation
 
 
-def load_data(transforms_preprocess, transforms_augmentation=None) -> Optional[tuple]:
+def load_data(transforms_preprocess, transforms_augmentation=None, dataset_split: int=100) -> Optional[tuple]:
     """Loads and prepares the CIFAR-10 dataset with specified transformations.
 
     Args:
@@ -147,15 +146,20 @@ def load_data(transforms_preprocess, transforms_augmentation=None) -> Optional[t
     base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
     base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
+    """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
+    truncated_trainset = torch.utils.data.Subset(base_trainset, range(dataset_split))
+    truncated_testset = torch.utils.data.Subset(base_testset, range(dataset_split))
+    """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
+    
     if transforms_augmentation is not None:
         trainset = AugmentedDataset(
-            dataset=base_trainset,
+            dataset=truncated_trainset,
             transforms_preprocess=transforms_preprocess,
             transforms_augmentation=transforms_augmentation,
         )
 
         testset = AugmentedDataset(
-            dataset=base_testset,
+            dataset=truncated_testset,
             transforms_preprocess=transforms_preprocess,
             transforms_augmentation=transforms_augmentation,
         )

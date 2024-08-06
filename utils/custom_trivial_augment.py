@@ -451,29 +451,24 @@ class CTrivialAugmentWide(torch.nn.Module):
     def _augmentation_space(self, num_bins: int) -> Dict[str, Tuple[Tensor, bool]]:
         return {
             # op_name: (magnitudes, signed)
-            "Identity": (torch.tensor(0.0), False),
-            "ShearX": (torch.linspace(0.0, 0.99, num_bins), True),
-            "ShearY": (torch.linspace(0.0, 0.99, num_bins), True),
-            "TranslateX": (torch.linspace(0.0, 32.0, num_bins), True),
-            "TranslateY": (torch.linspace(0.0, 32.0, num_bins), True),
-            "Rotate": (torch.linspace(0.0, 135.0, num_bins), True),
+            # "Identity": (torch.tensor(0.0), False),
+            # "ShearX": (torch.linspace(0.0, 0.99, num_bins), True),
+            # "ShearY": (torch.linspace(0.0, 0.99, num_bins), True),
+            # "TranslateX": (torch.linspace(0.0, 32.0, num_bins), True),
+            # "TranslateY": (torch.linspace(0.0, 32.0, num_bins), True),
+            # "Rotate": (torch.linspace(0.0, 135.0, num_bins), True),
             "Brightness": (torch.linspace(0.0, 0.99, num_bins), True),
-            "Color": (torch.linspace(0.0, 0.99, num_bins), True),
-            "Contrast": (torch.linspace(0.0, 0.99, num_bins), True),
-            "Sharpness": (torch.linspace(0.0, 0.99, num_bins), True),
-            "Posterize": (
-                8 - (torch.arange(num_bins) / ((num_bins - 1) / 6)).round().int(),
-                False,
-            ),
-            "Solarize": (torch.linspace(255.0, 0.0, num_bins), False),
-            "AutoContrast": (torch.tensor(0.0), False),
-            "Equalize": (torch.tensor(0.0), False),
+            # "Color": (torch.linspace(0.0, 0.99, num_bins), True),
+            # "Contrast": (torch.linspace(0.0, 0.99, num_bins), True),
+            # "Sharpness": (torch.linspace(0.0, 0.99, num_bins), True),
+            # "Posterize": (
+            #     8 - (torch.arange(num_bins) / ((num_bins - 1) / 6)).round().int(),
+            #     False,
+            # ),
+            # "Solarize": (torch.linspace(255.0, 0.0, num_bins), False),
+            # "AutoContrast": (torch.tensor(0.0), False),
+            # "Equalize": (torch.tensor(0.0), False),
         }
-    
-    # def get_max_magnitude(self, augmentation_type) -> Optional[float]:
-    #     op_meta = self._augmentation_space(self.num_magnitude_bins)
-    #     max_magnitude = torch.max(op_meta[augmentation_type][0])
-    #     return max_magnitude
 
     def forward(self, img: Tensor) -> Tensor:
         """
@@ -494,21 +489,26 @@ class CTrivialAugmentWide(torch.nn.Module):
         op_index = int(torch.randint(len(op_meta), (1,)).item())
         op_name = list(op_meta.keys())[op_index]
         magnitudes, signed = op_meta[op_name]
-        magnitude = (
-            float(
-                magnitudes[
-                    torch.randint(len(magnitudes), (1,), dtype=torch.long)
-                ].item()
-            )
-            if magnitudes.ndim > 0
-            else 0.0
-        )
-        if signed and torch.randint(2, (1,)):
-            magnitude *= -1.0
+        
+        """MODIFCATION: Set magnitude and remove signed"""
+        # magnitude = (
+        #     float(
+        #         magnitudes[
+        #             torch.randint(len(magnitudes), (1,), dtype=torch.long)
+        #         ].item()
+        #     )
+        #     if magnitudes.ndim > 0
+        #     else 0.0
+        # )
+        magnitude = float(magnitudes[30].item())
+        # if signed and torch.randint(2, (1,)):
+        #     magnitude *= -1.0
+        """MODIFICATION: Set magnitude and remove signed"""
 
         # return _apply_op(
         #     img, op_name, magnitude, interpolation=self.interpolation, fill=fill
         # )
+        
         img, aug_info = _apply_op(
             img, op_name, magnitude, interpolation=self.interpolation, fill=fill
         )
