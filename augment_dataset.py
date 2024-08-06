@@ -104,6 +104,8 @@ def create_transforms(
     random_cropping: bool = False,
     aggressive_augmentation: bool = False,
     custom: bool = False,
+    augmentation_name: str = None,
+    augmentation_severity: int = 0,
 ) -> Optional[tuple]:
     """Creates preprocessing and augmentation transformations.
 
@@ -118,11 +120,17 @@ def create_transforms(
     t = [transforms.ToTensor()]
     augmentations = [
         # transforms.RandomHorizontalFlip(),
-        # transforms.RandomCrop(32, padding=4),  
+        # transforms.RandomCrop(32, padding=4),
     ]
 
     if aggressive_augmentation:
-        augmentations.append(CustomTrivialAugmentWide(custom=custom))
+        augmentations.append(
+            CustomTrivialAugmentWide(
+                custom=custom,
+                augmentation_name=augmentation_name,
+                severity=augmentation_severity,
+            )
+        )
     if random_cropping:
         augmentations.append(RandomCrop())
 
@@ -132,7 +140,11 @@ def create_transforms(
     return transforms_preprocess, transforms_augmentation
 
 
-def load_data(transforms_preprocess, transforms_augmentation=None, dataset_split: Optional[int]=100) -> Optional[tuple]:
+def load_data(
+    transforms_preprocess,
+    transforms_augmentation=None,
+    dataset_split: Optional[int] = 100,
+) -> Optional[tuple]:
     """Loads and prepares the CIFAR-10 dataset with specified transformations.
 
     Args:
@@ -147,8 +159,10 @@ def load_data(transforms_preprocess, transforms_augmentation=None, dataset_split
     base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
     """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
-    if dataset_split!='full':
-        truncated_trainset = torch.utils.data.Subset(base_trainset, range(dataset_split))
+    if dataset_split != "full":
+        truncated_trainset = torch.utils.data.Subset(
+            base_trainset, range(dataset_split)
+        )
         truncated_testset = torch.utils.data.Subset(base_testset, range(dataset_split))
     else:
         truncated_trainset = base_trainset

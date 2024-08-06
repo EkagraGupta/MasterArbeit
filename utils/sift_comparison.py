@@ -42,12 +42,14 @@ def sift_operation(im1, im2, display_matches: bool = False):
         )
         plt.imshow(im3)
         plt.imsave(
-            "/home/ekagra/Documents/GitHub/MasterArbeit/example/sift_test_example.png", im3
+            "/home/ekagra/Documents/GitHub/MasterArbeit/example/sift_test_example.png",
+            im3,
         )
         plt.title("Number of Matching Keypoints: " + str(len(matches)))
         plt.show()
     # print(f'Number of Matching Keypoints Between the Traning and Query Images: {len(matches)}')
     return len(matches)
+
 
 def sift_correction_factor(
     original_image, augmented_image, display_matches: bool = False
@@ -68,7 +70,7 @@ if __name__ == "__main__":
 
     resize = transforms.Resize(512)
     im1 = resize(im1)
-    im2 = resize(im2)   
+    im2 = resize(im2)
 
     # matches = sift_operation(im1=im1_gray, im2=im2_gray, display_matches=True)
     corr_fac = sift_correction_factor(

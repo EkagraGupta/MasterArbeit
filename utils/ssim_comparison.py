@@ -5,6 +5,7 @@ from PIL import Image
 
 import torch
 
+
 def ssim_operation(im1: Image.Image, im2: Image.Image):
     # im1_np = np.array(im1.convert('L'))
     # im2_np = np.array(im2.convert('L'))
@@ -14,11 +15,14 @@ def ssim_operation(im1: Image.Image, im2: Image.Image):
     # Ensure the win_size is appropriate for your image dimensions
     win_size = min(im1_np.shape[0], im1_np.shape[1], 7)
 
-    ssim_index, _ = ssim(im1_np, im2_np, full=True, channel_axis=2, win_size=win_size)          # color image
+    ssim_index, _ = ssim(
+        im1_np, im2_np, full=True, channel_axis=2, win_size=win_size
+    )  # color image
     # ssim_index, _ = ssim(im1_np, im2_np, full=True)                                             # grayscale image
 
     # ssim_index = ssim(im1_np, im2_np)
     return (ssim_index + 1) / 2
+
 
 # def msssim_operation(im1: Image.Image, im2: Image.Image):
 #     im1_np = np.array(im1)

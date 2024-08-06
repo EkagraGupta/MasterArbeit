@@ -19,8 +19,12 @@ class CustomTrivialAugmentWide:
         custom (bool): Flag to indicate if custom augmentation should be used.
     """
 
-    def __init__(self, custom: bool = False):
+    def __init__(
+        self, custom: bool = False, augmentation_name: str = None, severity: int = 0
+    ):
         self.custom = custom
+        self.augmentation_name = augmentation_name
+        self.severity = severity
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
         """Applies the augmentation to the given image.
@@ -32,7 +36,7 @@ class CustomTrivialAugmentWide:
             Optional[tuple]: The augmented image and optionally the confidence scores.
         """
         if self.custom:
-            augment_im, augment_info = self.get_augment_info(im)
+            augment_im, augment_info = self.get_augment_info(self, im)
             return augment_im, augment_info
         else:
             trivial_augmentation = TrivialAugmentWide()
@@ -40,7 +44,7 @@ class CustomTrivialAugmentWide:
             return augment_im
 
     @staticmethod
-    def get_augment_info(im: torch.tensor) -> tuple:
+    def get_augment_info(self, im: torch.tensor) -> tuple:
         """Applies a custom trivial augmentation and computes a confidence score.
 
         Args:
@@ -62,7 +66,9 @@ class CustomTrivialAugmentWide:
             "Sharpness",
         ]
 
-        trivial_augment = CTrivialAugmentWide()
+        trivial_augment = CTrivialAugmentWide(
+            augmentation_name=self.augmentation_name, severity=self.severity
+        )
         augment_im, augment_info = trivial_augment(im)
         # augmentation_type = next(iter(im_info.keys()))
 
@@ -79,5 +85,5 @@ class CustomTrivialAugmentWide:
         # #     confidence_aa = ssim_operation(im1=im, im2=augment_im)
         #     # confidence_aa = normalized_cross_correlation(im1=im, im2=augment_im)
         #     # confidence_aa = 0.5
-        print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa

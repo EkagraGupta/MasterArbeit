@@ -36,14 +36,16 @@ if __name__ == "__main__":
     # Plot the images side by side
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
     axes[0].imshow(im1)
-    axes[0].set_title('Original Image')
-    axes[0].axis('off')
+    axes[0].set_title("Original Image")
+    axes[0].axis("off")
 
     axes[1].imshow(im2)
-    axes[1].set_title('Augmented Image')
-    axes[1].axis('off')
+    axes[1].set_title("Augmented Image")
+    axes[1].axis("off")
 
     # Set the VIF value as the title of the figure
-    fig.suptitle(f'Visual Information Fidelity (VIF): {vif_val.item():.4f}', fontsize=16)
+    fig.suptitle(
+        f"Visual Information Fidelity (VIF): {vif_val.item():.4f}", fontsize=16
+    )
 
     plt.show()

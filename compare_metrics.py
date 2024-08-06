@@ -3,22 +3,23 @@ from PIL import Image
 import time
 import numpy as np
 
+
 def compare_images(im1, im2):
     # Convert images to numpy arrays
     im1_np = np.array(im1)
     im2_np = np.array(im2)
 
     metrics = {
-        'MSE': mse,
-        'RMSE': rmse,
-        'PSNR': psnr,
-        'SSIM': ssim,
-        'UQI': uqi,
-        'ERGAS': ergas,
-        'SCC': scc,
-        'RASE': rase,
-        'SAM': sam,
-        'MSSSIM': msssim
+        "MSE": mse,
+        "RMSE": rmse,
+        "PSNR": psnr,
+        "SSIM": ssim,
+        "UQI": uqi,
+        "ERGAS": ergas,
+        "SCC": scc,
+        "RASE": rase,
+        "SAM": sam,
+        "MSSSIM": msssim,
     }
 
     results = {}
@@ -31,9 +32,10 @@ def compare_images(im1, im2):
 
     return results
 
-if __name__=='__main__':
-    im1_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png'
-    im2_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image_pixelwise.png'
+
+if __name__ == "__main__":
+    im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
+    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image_pixelwise.png"
 
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)

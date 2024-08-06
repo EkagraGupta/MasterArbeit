@@ -1,5 +1,6 @@
 import time
 
+
 def measure_dataloader_time(dataloader):
     start_time = time.time()
     for batch_idx, batch in enumerate(dataloader):
