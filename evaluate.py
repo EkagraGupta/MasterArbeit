@@ -11,21 +11,17 @@ def evaluate_model(model, dataloader):
 
     with torch.no_grad():
         model.eval()
-        for i, data in enumerate(dataloader):
-            images, labels, confidences = data
+        for _, data in enumerate(dataloader):
+            images, labels, _ = data
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
             accuracy = correct / total
-            if (i + 1) % 1000 == 0:
-                print(
-                    f"Processed [{i+1}/{len(dataloader)}] - Accuracy: {accuracy*100:.2f}%"
-                )
-        print(
-            f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
-        )
-        return accuracy * 100
+        # print(
+        #     f"Accuracy of the network on the CIFAR-10 test dataset: {accuracy * 100:.2f} %"
+        # )
+        return accuracy
 
 
 if __name__ == "__main__":
@@ -35,7 +31,7 @@ if __name__ == "__main__":
     # net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_da0_aa1.pth'
     net = WideResNet_28_4(num_classes=10)
     net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
-    net.eval()  # set the model to evaluation mode
+    # net.eval()  # set the model to evaluation mode
 
     # Prepare the DataLoader
     transforms_preprocess, transforms_augmentation = create_transforms(
@@ -43,16 +39,16 @@ if __name__ == "__main__":
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
-        augmentation_severity=5,
+        augmentation_severity=30,
     )
     custom_trainset, custom_testset = load_data(
         transforms_augmentation=transforms_augmentation,
         transforms_preprocess=transforms_preprocess,
-        dataset_split=1000,
+        dataset_split=100,
     )
 
     custom_dataloader = torch.utils.data.DataLoader(
-        custom_testset, batch_size=128, shuffle=False
+        custom_trainset, batch_size=1, shuffle=False
     )
     accuracy = evaluate_model(model=net, dataloader=custom_dataloader)
-    print(f"Accuracy: {accuracy:.2f}%")
+    print(f"Accuracy: {accuracy*100:.2f}%")

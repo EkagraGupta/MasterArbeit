@@ -7,11 +7,12 @@ def get_mean_std(confidences_tensor):
     return mean, std
 
 
-def plot_mean_std(mean, std, augmentation_type=None):
+def plot_mean_std(mean, std, model_confidences, augmentation_type=None):
     x = range(1, len(mean) + 1)
     plt.figure(figsize=(8, 6))
-    plt.plot(x, mean, "-", color="red")
+    plt.plot(x, mean, "-", color="red", label='SSIM Confidence')
     plt.errorbar(x, mean, yerr=std, fmt="o")
+    plt.plot(x, model_confidences, "-", color="blue", label="Model Confidence")
     plt.xticks([1], ["Severity"])
     plt.ylabel("Value")
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
@@ -25,4 +26,5 @@ def plot_mean_std(mean, std, augmentation_type=None):
 if __name__ == "__main__":
     mean = [0.5, 0.6, 0.9, 0.8, 0.7]
     std = [0.1, 0.2, 0.3, 0.4, 0.5]
-    plot_mean_std(mean, std)
+    model_confidences = [0.9, 0.8, 0.7, 0.6, 0.5]
+    plot_mean_std(mean, std, model_confidences, "Brightness")

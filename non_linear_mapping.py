@@ -1,5 +1,6 @@
 from augment_dataset import create_transforms, load_data
 from utils.plot_non_linear_curve import plot_mean_std, get_mean_std
+from wideresnet import WideResNet_28_4
 from evaluate import evaluate_model
 import torch
 
@@ -9,6 +10,7 @@ def get_plot(augmentation_type, model, dataset_split=100):
         f"\n============================ Processing augmentation type: {augmentation_type} ============================\n"
     )
     mean_list, std_list = [], []
+    accuracy_list = []
 
     for severity in range(1, 30):
         print(f"Processing severity: {severity}\n")
@@ -24,25 +26,27 @@ def get_plot(augmentation_type, model, dataset_split=100):
             transforms_augmentation=augmentation,
             dataset_split=dataset_split,
         )
-        trainloader = torch.utils.data.DataLoader(
+        dataloader = torch.utils.data.DataLoader(
             trainset,
             shuffle=False,
-            batch_size=dataset_split,
+            batch_size=1,
         )
 
         # SSIM Calculation
-        _, _, confidences = next(iter(trainloader))
+        _, _, confidences = next(iter(dataloader))
         mean, std = get_mean_std(confidences)
         mean_list.append(mean.item())
         std_list.append(std.item())
 
         # Model Confidence Calculation
         if model is not None:
-            evaluate_model(model=model, dataloader=trainloader)
+            accuracy = evaluate_model(model=model, dataloader=dataloader)
+            accuracy_list.append(accuracy)
+            # print(f'Accuracy: {accuracy:.2f}%')
         else:
             print(f"\nModel not provided. Skipping model evaluation.\n")
 
-    plot_mean_std(mean_list, std_list, augmentation_type)
+    plot_mean_std(mean_list, std_list, accuracy_list, augmentation_type)
 
     print(
         f"\n============================ Finished: {augmentation_type} ============================\n"
@@ -52,22 +56,26 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        "ShearX",
-        "ShearY",
-        "TranslateX",
-        "TranslateY",
-        "Rotate",
+        # "ShearX",
+        # "ShearY",
+        # "TranslateX",
+        # "TranslateY",
+        # "Rotate",
         "Brightness",
-        "Color",
-        "Contrast",
-        "Sharpness",
-        "Posterize",
-        "Solarize",
+        # "Color",
+        # "Contrast",
+        # "Sharpness",
+        # "Posterize",
+        # "Solarize",
         # "AutoContrast",
-        "Equalize",
+        # "Equalize",
     ]
 
-    # for augmentation_type in augmentation_types:
-    #     get_plot(augmentation_type)
+    # Load the saved model weights
+    net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net.pth"
+    net = WideResNet_28_4(num_classes=10)
+    net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
+    # net.eval()
 
-    get_plot("Brightness", model=None)
+    for augmentation_type in augmentation_types:
+        get_plot(augmentation_type, model=net, dataset_split=1000)   
