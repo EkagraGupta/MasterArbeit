@@ -3,7 +3,7 @@ from utils.plot_non_linear_curve import plot_mean_std, get_mean_std
 import torch
 
 augmentation_types = [
-    "Identity",
+    # "Identity",
     "ShearX",
     "ShearY",
     "TranslateX",
@@ -21,6 +21,9 @@ augmentation_types = [
 
 
 def get_plot(augmentation_type, dataset_split=100):
+    print(
+        f"\n============================ Processing augmentation type: {augmentation_type} ============================\n"
+    )
     mean_list, std_list = [], []
 
     for severity in range(1, 30):
@@ -48,6 +51,10 @@ def get_plot(augmentation_type, dataset_split=100):
         std_list.append(std.item())
 
     plot_mean_std(mean_list, std_list, augmentation_type)
+
+    print(
+        f"\n============================ Finished: {augmentation_type} ============================\n"
+    )
 
 
 for augmentation_type in augmentation_types:

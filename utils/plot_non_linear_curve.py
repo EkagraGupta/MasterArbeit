@@ -9,15 +9,16 @@ def get_mean_std(confidences_tensor):
 
 def plot_mean_std(mean, std, augmentation_type=None):
     x = range(1, len(mean) + 1)
+    plt.figure(figsize=(8, 6))
     plt.plot(x, mean, "-", color="red")
     plt.errorbar(x, mean, yerr=std, fmt="o")
     plt.xticks([1], ["Severity"])
     plt.ylabel("Value")
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
-    plt.save(
+    plt.savefig(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}.png"
     )
-    plt.show()
+    # plt.show()
 
 
 # Example usage:
