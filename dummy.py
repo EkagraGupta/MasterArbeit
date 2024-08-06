@@ -9,7 +9,8 @@ preprocess, augmentation = create_transforms(random_cropping=False,
                                              custom=True)
 
 trainset, _ = load_data(transforms_preprocess=preprocess,
-                        transforms_augmentation=augmentation)
+                        transforms_augmentation=augmentation,
+                        dataset_split='full')
 
 trainloader = torch.utils.data.DataLoader(trainset,
                                           shuffle=False,

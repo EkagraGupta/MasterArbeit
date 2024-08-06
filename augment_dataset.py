@@ -132,7 +132,7 @@ def create_transforms(
     return transforms_preprocess, transforms_augmentation
 
 
-def load_data(transforms_preprocess, transforms_augmentation=None, dataset_split: int=100) -> Optional[tuple]:
+def load_data(transforms_preprocess, transforms_augmentation=None, dataset_split: Optional[int]=100) -> Optional[tuple]:
     """Loads and prepares the CIFAR-10 dataset with specified transformations.
 
     Args:
@@ -147,10 +147,14 @@ def load_data(transforms_preprocess, transforms_augmentation=None, dataset_split
     base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
     """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
-    truncated_trainset = torch.utils.data.Subset(base_trainset, range(dataset_split))
-    truncated_testset = torch.utils.data.Subset(base_testset, range(dataset_split))
+    if dataset_split!='full':
+        truncated_trainset = torch.utils.data.Subset(base_trainset, range(dataset_split))
+        truncated_testset = torch.utils.data.Subset(base_testset, range(dataset_split))
+    else:
+        truncated_trainset = base_trainset
+        truncated_testset = base_testset
     """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
-    
+
     if transforms_augmentation is not None:
         trainset = AugmentedDataset(
             dataset=truncated_trainset,
