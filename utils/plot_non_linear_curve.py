@@ -4,18 +4,20 @@ import matplotlib.pyplot as plt
 def get_mean_std(confidences_tensor):
     mean = confidences_tensor.mean()
     std = confidences_tensor.std()
+
     return mean, std
 
 
 def plot_mean_std(mean, std, model_confidences, augmentation_type=None):
     x = range(1, len(mean) + 1)
     plt.figure(figsize=(8, 6))
-    plt.plot(x, mean, "-", color="red", label='SSIM Confidence')
+    plt.plot(x, mean, "-", color="red", label="SSIM Confidence")
     plt.errorbar(x, mean, yerr=std, fmt="o")
     plt.plot(x, model_confidences, "-", color="blue", label="Model Confidence")
     plt.xticks([1], ["Severity"])
     plt.ylabel("Value")
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
+    plt.legend()
     plt.savefig(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}.png"
     )

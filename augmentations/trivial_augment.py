@@ -9,6 +9,7 @@ from utils.orb_comparison import orb_correction_factor
 from utils.ssim_comparison import ssim_operation
 from utils.ncc import normalized_cross_correlation
 from utils.vif import compute_vif
+from augmentations.random_crop import RandomCrop
 
 
 class CustomTrivialAugmentWide:
@@ -25,6 +26,7 @@ class CustomTrivialAugmentWide:
         self.custom = custom
         self.augmentation_name = augmentation_name
         self.severity = severity
+        self.chance = 1 / 10  # number of classes
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
         """Applies the augmentation to the given image.
@@ -70,20 +72,27 @@ class CustomTrivialAugmentWide:
             augmentation_name=self.augmentation_name, severity=self.severity
         )
         augment_im, augment_info = trivial_augment(im)
-        # augmentation_type = next(iter(im_info.keys()))
+        augmentation_type = next(iter(augment_info.keys()))
 
         confidence_aa = ssim_operation(im1=im, im2=augment_im)
-        # if augmentation_type in pixelwise_augs:
-        #     # calculate VIF for pixel-wise augmentations
-        #     # vif_value = compute_vif(im1=im, im2=augment_im)
-        #     # confidence_aa = vif_value.item()
-        #     # confidence_aa = 0.5
-        # else:
-        # #     # calculate SIFT correction factor for geometric transformations
-        #     # confidence_aa = sift_correction_factor(original_image=im, augmented_image=augment_im)
-        # #     # confidence_aa = orb_correction_factor(original_image=im, augmented_image=augment_im)
-        # #     confidence_aa = ssim_operation(im1=im, im2=augment_im)
-        #     # confidence_aa = normalized_cross_correlation(im1=im, im2=augment_im)
-        #     # confidence_aa = 0.5
+        if augmentation_type == "TranslateX":
+            dim1, dim2 = im.size[0], im.size[1]
+            tx = augment_info[augmentation_type]
+            # print(f'dim1: {dim1}, dim2: {dim2}, tx: {tx}')
+            random_crop = RandomCrop()
+            visibility = random_crop.compute_visibility(
+                dim1=dim1, dim2=dim2, tx=tx, ty=0
+            )
+            k = 3
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+        elif augmentation_type == "TranslateY":
+            dim1, dim2 = im.size[0], im.size[1]
+            ty = augment_info[augmentation_type]
+            random_crop = RandomCrop()
+            visibility = random_crop.compute_visibility(
+                dim1=dim1, dim2=dim2, tx=0, ty=ty
+            )
+            k = 3
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa
