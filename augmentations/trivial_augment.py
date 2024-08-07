@@ -94,5 +94,7 @@ class CustomTrivialAugmentWide:
             )
             k = 3
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+        elif augmentation_type == "ShearX":
+            confidence_aa = sift_correction_factor(original_image=im, augmented_image=augment_im)
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa

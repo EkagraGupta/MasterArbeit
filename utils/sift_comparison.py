@@ -62,7 +62,7 @@ def sift_correction_factor(
 
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
-    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image_geometric.png"
+    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
     im1_gray = im1.convert("L")

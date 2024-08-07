@@ -8,7 +8,7 @@ import time
 
 
 def save_to_csv(mean_list, std_list, accuracy_list, augmentation_type):
-    filename = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}_k4_results.csv"
+    filename = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}_results.csv"
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Severity", "Mean", "Std", "Accuracy"])
@@ -85,10 +85,10 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        # "ShearX",
+        "ShearX",
         # "ShearY",
         # "TranslateX",
-        "TranslateY",
+        # "TranslateY",
         # "Rotate",
         # "Brightness",
         # "Color",
