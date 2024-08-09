@@ -7,7 +7,7 @@ preprocess, augmentation = create_transforms(
     random_cropping=False,
     aggressive_augmentation=True,
     custom=True,
-    augmentation_name="ShearX",
+    augmentation_name="Rotate",
     augmentation_severity=15,
 )
 

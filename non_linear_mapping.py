@@ -9,7 +9,7 @@ import time
 
 
 def save_to_csv(mean_list, std_list, accuracy_list, augmentation_type, val_k):
-    filename = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}_k{val_k}_results.csv"
+    filename = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}_results.csv"
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Severity", "Mean", "Std", "Accuracy"])
@@ -89,8 +89,8 @@ if __name__ == "__main__":
         # "ShearX",
         # "ShearY",
         # "TranslateX",
-        "TranslateY",
-        # "Rotate",
+        # "TranslateY",
+        "Rotate",
         # "Brightness",
         # "Color",
         # "Contrast",
@@ -115,4 +115,4 @@ if __name__ == "__main__":
     net.load_state_dict(state_dict[state_dict_key], strict=False)
 
     for augmentation_type in augmentation_types:
-        get_plot(augmentation_type, model=net, dataset_split=500)
+        get_plot(augmentation_type, model=net, dataset_split=1000)

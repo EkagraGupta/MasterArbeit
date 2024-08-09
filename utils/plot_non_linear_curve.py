@@ -12,7 +12,8 @@ def plot_mean_std(mean, std, model_confidences, augmentation_type=None):
     x = range(1, len(mean) + 1)
     plt.figure(figsize=(8, 6))
     plt.plot(x, mean, "-", color="red", label="SSIM Confidence")
-    plt.errorbar(x, mean, yerr=std, fmt="o")
+    # plt.errorbar(x, mean, yerr=std, fmt="o")
+    plt.fill_between(x, [m - s for m, s in zip(mean, std)], [m + s for m, s in zip(mean, std)], color="red", alpha=0.2)
     plt.plot(x, model_confidences, "-", color="blue", label="Model Confidence")
     plt.xticks([1], ["Severity"])
     plt.ylabel("Value")
@@ -21,7 +22,7 @@ def plot_mean_std(mean, std, model_confidences, augmentation_type=None):
     plt.savefig(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}.png"
     )
-    # plt.show()
+    plt.show()
 
 
 # Example usage:
