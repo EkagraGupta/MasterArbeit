@@ -2,40 +2,37 @@ import torch
 from torchvision import transforms
 from utils.dataset import load_dataset
 
-from wideresnet import WideResNet_28_4
-from dump.load_augmented_dataset import get_dataloader
-from augment_dataset import create_transforms, load_data
+import wrn as wideresnet
 
 # Load the saved model weights
-net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net_da0_aa1.pth"
-# net_path = "/home/ekagra/Desktop/Study/MA/code/models/cifar_net.pth"
-net = WideResNet_28_4(num_classes=10)
-net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
-net.eval()  # set the model to evaluation mode
+net = wideresnet.WideResNet_28_4(10, 'CIFAR10', normalized=True, block=wideresnet.WideBasic, activation_function='silu')
+PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust.pth'
+
+net = torch.nn.DataParallel(net)
+net.load_state_dict(torch.load(PATH, map_location=torch.device('cpu'))['model_state_dict'], strict=False)
+
+net.eval()
 
 # Prepare the DataLoader
-transform = transforms.Compose([transforms.ToTensor()])
-trainloader, testloader, _ = load_dataset(batch_size=128, transform=transform)
+transform = transforms.Compose([
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomCrop(32, padding=4),
+    transforms.ToTensor(),
+])
+trainloader, testloader, _ = load_dataset(batch_size=100, transform=transform)
 
 # Evaluate the model
 correct, total = 0, 0
-
 with torch.no_grad():
     net.eval()
     for i, data in enumerate(testloader):
         images, labels = data
-        # print(images.shape)
-        # if len(images) > 1:
-        #     confidences = images[1]
-        #     images = images[0]
-        # print(confidences)
-        # break
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         accuracy = correct / total
-        if (i + 1) % 1000 == 0:
+        if (i + 1) % 50 == 0:
             print(
                 f"Processed [{i+1}/{len(testloader)}] - Accuracy: {accuracy*100:.2f}%"
             )
