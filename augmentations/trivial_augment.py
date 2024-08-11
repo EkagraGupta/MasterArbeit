@@ -4,9 +4,10 @@ from PIL import Image
 from typing import Optional
 
 from utils.custom_trivial_augment import CTrivialAugmentWide
-from utils.ssim_comparison import ssim_operation
-from utils.ncc import normalized_cross_correlation
+# from utils.ssim_comparison import ssim_operation
+# from utils.ncc import normalized_cross_correlation
 # from utils.vif import compute_vif
+from utils import comparison_metrics
 from augmentations.random_crop import RandomCrop
 # from utils.psnr_comparison import psnr_operation
 
@@ -62,7 +63,7 @@ class CustomTrivialAugmentWide:
             "Solarize",
             # "Color",
             "Contrast",
-            "Brightness",
+            # "Brightness",
             "Sharpness",
         ]
 
@@ -93,10 +94,9 @@ class CustomTrivialAugmentWide:
             k = 3
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         elif augmentation_type == ["Rotate", "Color", "Brightness"]:
-            confidence_aa = normalized_cross_correlation(im, augment_im)
+            confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
         elif augmentation_type in pixelwise_augs:
-            # confidence_aa = psnr_operation(im, augment_im)
-            confidence_aa = ssim_operation(im, augment_im)
+            confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
             # confidence_aa = normalized_cross_correlation(im, augment_im)
             # confidence_aa = compute_vif(im, augment_im)
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")

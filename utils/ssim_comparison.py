@@ -18,6 +18,7 @@ def ssim_operation(im1: Image.Image, im2: Image.Image):
     ssim_index, _ = ssim(
         im1_np, im2_np, full=True, channel_axis=2, win_size=win_size
     )  # color image
+    print(im1_np.shape)
     # ssim_index, _ = ssim(im1_np, im2_np, full=True)                                             # grayscale image
 
     # ssim_index = ssim(im1_np, im2_np)
