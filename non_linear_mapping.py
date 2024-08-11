@@ -81,7 +81,7 @@ if __name__ == "__main__":
         # "TranslateX",
         # "TranslateY",
         # "Rotate",
-        # "Brightness",
+        "Brightness",
         "Color",
         "Contrast",
         "Sharpness",

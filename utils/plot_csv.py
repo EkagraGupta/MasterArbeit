@@ -20,10 +20,7 @@ def plot_mean_and_accuracy(file_paths):
     # for k, values in data.items():
     #     plt.plot(values["Severity"], values["Mean"], label=f"k={k}")
     plt.plot(data[1]["Severity"], data[1]["Mean"], label="NCC", color="red")
-    plt.plot(data[2]["Severity"], data[2]["Mean"], label="PSNR-HVSM", color="blue")
-    plt.plot(data[3]["Severity"], data[3]["Mean"], label="SSIM", color="green")
-    plt.plot(data[4]["Severity"], data[4]["Mean"], label="VIF", color="orange")
-    plt.plot(data[5]["Severity"], data[5]["Mean"], label="NCC_new", color="purple")
+    plt.plot(data[2]["Severity"], data[2]["Mean"], label="SSIM", color="blue")
 
     plt.plot(severity, accuracy, label="Model Accuracy", linestyle="--", color="black")
 
@@ -43,10 +40,7 @@ if __name__ == "__main__":
     #     '/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateX_k4_results.csv'
     # ]
     file_paths = [
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Brightness/Brightness_ncc_results.csv",
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Brightness/Brightness_psnrhvsm_results.csv",
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Brightness/Brightness_ssim_results.csv",
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Brightness/Brightness_vif_results.csv",
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Brightness/Brightness_results.csv"
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_ssim_results.csv"
     ]
     plot_mean_and_accuracy(file_paths)
