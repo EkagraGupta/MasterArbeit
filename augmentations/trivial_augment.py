@@ -72,7 +72,7 @@ class CustomTrivialAugmentWide:
         )
         augment_im, augment_info = trivial_augment(im)
         augmentation_type = next(iter(augment_info.keys()))
-
+        confidence_aa = 0.0
         if augmentation_type == "TranslateX":
             dim1, dim2 = im.size[0], im.size[1]
             tx = augment_info[augmentation_type]
