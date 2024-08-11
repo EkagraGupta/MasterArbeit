@@ -92,7 +92,7 @@ class CustomTrivialAugmentWide:
             )
             k = 3
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        elif augmentation_type == ["Rotate", "Color"]:
+        elif augmentation_type == ["Rotate", "Color", "Brightness"]:
             confidence_aa = normalized_cross_correlation(im, augment_im)
         elif augmentation_type in pixelwise_augs:
             # confidence_aa = psnr_operation(im, augment_im)

@@ -119,16 +119,16 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        # transforms.RandomHorizontalFlip(),
-        # transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomCrop(32, padding=4),
     ]
 
     if aggressive_augmentation:
         augmentations.append(
             CustomTrivialAugmentWide(
                 custom=custom,
-                augmentation_name=augmentation_name,
-                severity=augmentation_severity,
+                # augmentation_name=augmentation_name,
+                # severity=augmentation_severity,
             )
         )
     if random_cropping:
