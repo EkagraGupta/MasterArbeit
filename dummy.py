@@ -7,8 +7,8 @@ preprocess, augmentation = create_transforms(
     random_cropping=False,
     aggressive_augmentation=True,
     custom=True,
-    augmentation_name="Rotate",
-    augmentation_severity=15,
+    augmentation_name="Brightness",
+    augmentation_severity=29,
 )
 
 trainset, _ = load_data(

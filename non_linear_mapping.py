@@ -1,33 +1,23 @@
 from augment_dataset import create_transforms, load_data
-from utils.plot_non_linear_curve import plot_mean_std, get_mean_std
-# from wideresnet import WideResNet_28_4
-import wrn as wideresnet
+from utils.plot_non_linear_curve import plot_mean_std, get_mean_std, save_to_csv
+from wideresnet import WideResNet_28_4
+# import wrn as wideresnet
 from evaluate import evaluate_model
 import torch
 import csv
 import time
+import os
 
 
-def save_to_csv(mean_list, std_list, accuracy_list, augmentation_type, val_k):
-    filename = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}_results.csv"
-    with open(filename, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Severity", "Mean", "Std", "Accuracy"])
-        for i, (mean, std, accuracy) in enumerate(
-            zip(mean_list, std_list, accuracy_list), 1
-        ):
-            writer.writerow([i, mean, std, accuracy])
-    print(f"Results saved to {filename}")
 
-
-def get_plot(augmentation_type, model, dataset_split=100, k=4):
+def get_plot(augmentation_type, model, dataset_split=100):
     print(
         f"\n============================ Processing augmentation type: {augmentation_type} ============================\n"
     )
     mean_list, std_list, time_list = [], [], []
     accuracy_list = []
 
-    for severity in range(1, 30):
+    for severity in range(0, 30):
         total_time = 0
         print(f"Processing severity: {severity}\n")
         preprocess, augmentation = create_transforms(
@@ -76,7 +66,7 @@ def get_plot(augmentation_type, model, dataset_split=100, k=4):
             print(f"\nModel not provided. Skipping model evaluation.\n")
 
     plot_mean_std(mean_list, std_list, accuracy_list, augmentation_type)
-    save_to_csv(mean_list, std_list, accuracy_list, augmentation_type, val_k=2)
+    save_to_csv(mean_list, std_list, accuracy_list, augmentation_type)
 
     print(
         f"\n============================ Finished: {augmentation_type} ============================\n"
@@ -90,29 +80,23 @@ if __name__ == "__main__":
         # "ShearY",
         # "TranslateX",
         # "TranslateY",
-        "Rotate",
+        # "Rotate",
         # "Brightness",
-        # "Color",
-        # "Contrast",
-        # "Sharpness",
-        # "Posterize",
-        # "Solarize",
+        "Color",
+        "Contrast",
+        "Sharpness",
+        "Posterize",
+        "Solarize",
         # "AutoContrast",
         # "Equalize",
     ]
 
     # Load the saved model weights
-    # net_path = "/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_da0_aa1.pth"
-    # net = WideResNet_28_4(num_classes=10)
-    # net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
-    # net.eval()
-
-    net = wideresnet.WideResNet_28_4(10, 'CIFAR10', normalized=True, block=wideresnet.WideBasic, activation_function='silu')
-    state_dict_key = "model_state_dict"
-    PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust.pth'
+    net = WideResNet_28_4(num_classes=10)
+    PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
     net = torch.nn.DataParallel(net)
     state_dict = torch.load(PATH, map_location=torch.device('cpu'))
-    net.load_state_dict(state_dict[state_dict_key], strict=False)
+    net.load_state_dict(state_dict["model_state_dict"], strict=False)
 
     for augmentation_type in augmentation_types:
-        get_plot(augmentation_type, model=net, dataset_split=1000)
+        get_plot(augmentation_type, model=net, dataset_split=500)

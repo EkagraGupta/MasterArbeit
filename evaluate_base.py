@@ -2,21 +2,21 @@ import torch
 from torchvision import transforms
 from utils.dataset import load_dataset
 
-import wrn as wideresnet
+# import wrn as wideresnet
+from wideresnet import WideResNet_28_4, WideBasic
 
 # Load the saved model weights
-net = wideresnet.WideResNet_28_4(10, 'CIFAR10', normalized=True, block=wideresnet.WideBasic, activation_function='silu')
-PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust.pth'
-
+net = WideResNet_28_4(num_classes=10)
+PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
 net = torch.nn.DataParallel(net)
-net.load_state_dict(torch.load(PATH, map_location=torch.device('cpu'))['model_state_dict'], strict=False)
-
-net.eval()
+state_dict = torch.load(PATH, map_location=torch.device('cpu'))
+net.load_state_dict(state_dict["model_state_dict"], strict=False)
 
 # Prepare the DataLoader
 transform = transforms.Compose([
     transforms.RandomHorizontalFlip(),
     transforms.RandomCrop(32, padding=4),
+    transforms.TrivialAugmentWide(),
     transforms.ToTensor(),
 ])
 trainloader, testloader, _ = load_dataset(batch_size=100, transform=transform)

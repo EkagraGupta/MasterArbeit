@@ -1,8 +1,9 @@
-import piq
+# import piq
 import numpy as np
 from torchvision import transforms
 from PIL import Image
 import matplotlib.pyplot as plt
+from torchmetrics.image import VisualInformationFidelity
 
 
 def compute_vif(im1, im2):
@@ -20,7 +21,9 @@ def compute_vif(im1, im2):
         im1_tensor = im1_tensor.unsqueeze(0)
         im2_tensor = im2_tensor.unsqueeze(0)
 
-    vif_value = piq.vif_p(im1_tensor, im2_tensor)
+    # vif_value = piq.vif_p(im1_tensor, im2_tensor)
+    vif = VisualInformationFidelity()
+    vif_value = vif(im1_tensor, im2_tensor)
     return np.clip(vif_value, 0.0, 1.0)
 
 
