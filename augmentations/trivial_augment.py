@@ -6,9 +6,9 @@ from typing import Optional
 from utils.custom_trivial_augment import CTrivialAugmentWide
 from utils.ssim_comparison import ssim_operation
 from utils.ncc import normalized_cross_correlation
-from utils.vif import compute_vif
+# from utils.vif import compute_vif
 from augmentations.random_crop import RandomCrop
-from utils.psnr_comparison import psnr_operation
+# from utils.psnr_comparison import psnr_operation
 
 
 class CustomTrivialAugmentWide:
