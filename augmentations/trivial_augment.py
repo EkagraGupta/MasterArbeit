@@ -72,7 +72,7 @@ class CustomTrivialAugmentWide:
         )
         augment_im, augment_info = trivial_augment(im)
         augmentation_type = next(iter(augment_info.keys()))
-        confidence_aa = 0.0
+        # confidence_aa = 0.0
         if augmentation_type == "TranslateX":
             dim1, dim2 = im.size[0], im.size[1]
             tx = augment_info[augmentation_type]
@@ -95,6 +95,8 @@ class CustomTrivialAugmentWide:
         elif augmentation_type == ["Rotate", "Color", "Brightness"]:
             confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
         elif augmentation_type in pixelwise_augs:
+            confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
+        else:
             confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa
