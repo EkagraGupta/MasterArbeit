@@ -92,14 +92,15 @@ class CustomTrivialAugmentWide:
             )
             k = 4 
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        elif augmentation_type in ["Rotate", "Color"]:
-            confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
+        # elif augmentation_type in ["Rotate", "Color"]:
+        #     confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
             # confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
             # print(f'ncc_val: {confidence_aa}\tncc_reversed: {comparison_metrics.normalized_cross_correlation(augment_im, im)}')
         # elif augmentation_type in pixelwise_augs:
         #     confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
         else:
-            confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
+            # confidence_aa = comparison_metrics.structural_similarity(im, augment_im)
+            confidence_aa = 1.0
             # confidence_aa = comparison_metrics.histogram_comparison(im, augment_im)
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, confidence_aa
