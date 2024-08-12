@@ -6,6 +6,7 @@ from scipy.signal import correlate2d
 from skimage.metrics import structural_similarity as ssim
 from torchvision import transforms
 from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
+from torchmetrics.image import StructuralSimilarityIndexMeasure, MultiScaleStructuralSimilarityIndexMeasure
 
 def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     # convert images to grayscale numpy arrays
@@ -32,6 +33,7 @@ def structural_similarity(im1: Image.Image, im2: Image.Image):
     ssim_index, _ = ssim(im1_np, im2_np, full=True, channel_axis=2)
 
     return (ssim_index + 1) / 2
+
 
 def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int=100):
     if not isinstance(im1, torch.Tensor) or not isinstance(im2, torch.Tensor):
@@ -61,15 +63,29 @@ def histogram_comparison(im1: Image.Image, im2: Image.Image):
     # print(f'Histogram Comparison Value: {metric_val:.3f}')
     return metric_val
 
+def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
+    # convert images to numpy arrays
+    # im1_np = np.array(im1)
+    # im2_np = np.array(im2)
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+    # compute the structural similarity index
+    sim = StructuralSimilarityIndexMeasure()
+    sim_val = sim(im1, im2)
+    return sim_val.item()
 
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
-    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image_pixelwise.png"
+    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
     
-    ncc_value = normalized_cross_correlation(im1, im2)
+    to_tensor = transforms.ToTensor()
+    # ncc_value = normalized_cross_correlation(im1, im2)
     ssim_value = structural_similarity(im1, im2)
-    psnr_value = psnr_hvs_calculation(im1, im2)
-    hist_value = histogram_comparison(im1, im2)
-    print(f'Normalized Cross Correlation Value: {ncc_value}\nSSIM: {ssim_value}\nPSNR Value: {psnr_value}\nHistogram Comparison Value: {hist_value}')
+    print(ssim_value)
+    # psnr_value = psnr_hvs_calculation(im1, im2)
+    # hist_value = histogram_comparison(im1, im2)
+    # print(f'Normalized Cross Correlation Value: {ncc_value}\nSSIM: {ssim_value}\nPSNR Value: {psnr_value}\nHistogram Comparison Value: {hist_value}')
+    multiscale_structural_similarity(to_tensor(im1), to_tensor(im2))
