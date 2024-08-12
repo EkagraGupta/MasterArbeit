@@ -14,7 +14,7 @@ def save_to_csv(mean_list, std_list, accuracy_list, augmentation_type):
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
-    filename = os.path.join(folder_name, f'{augmentation_type}_psnrhvsm_results.csv')
+    filename = os.path.join(folder_name, f'{augmentation_type}_results.csv')
 
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
@@ -29,7 +29,7 @@ def plot_mean_std(mean, std, model_confidences, augmentation_type=None):
     folder_name = f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
-    filename = os.path.join(folder_name, f'{augmentation_type}_psnrhvsm_results.png')
+    filename = os.path.join(folder_name, f'{augmentation_type}_results.png')
 
     x = range(1, len(mean) + 1)
     plt.figure(figsize=(8, 6))

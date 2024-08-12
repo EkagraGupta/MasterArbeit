@@ -46,7 +46,7 @@ def get_plot(augmentation_type, model, dataset_split=100):
                 batch_size=10000,
             )
 
-        # SSIM Calculation
+        # Confidence Calculation
         start_time = time.time()
         _, _, confidences = next(iter(dataloader))
         end_time = time.time()
@@ -82,11 +82,11 @@ if __name__ == "__main__":
         # "TranslateY",
         # "Rotate",
         "Brightness",
-        "Color",
-        "Contrast",
-        "Sharpness",
-        "Posterize",
-        "Solarize",
+        # "Color",
+        # "Contrast",
+        # "Sharpness",
+        # "Posterize",
+        # "Solarize",
         # "AutoContrast",
         # "Equalize",
     ]

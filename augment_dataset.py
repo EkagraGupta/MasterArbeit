@@ -127,8 +127,8 @@ def create_transforms(
         augmentations.append(
             CustomTrivialAugmentWide(
                 custom=custom,
-                # augmentation_name=augmentation_name,
-                # severity=augmentation_severity,
+                augmentation_name=augmentation_name,
+                severity=augmentation_severity,
             )
         )
     if random_cropping:

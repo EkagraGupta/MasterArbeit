@@ -40,7 +40,7 @@ if __name__ == "__main__":
     #     '/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateX_k4_results.csv'
     # ]
     file_paths = [
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_results.csv",
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_ssim_results.csv"
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateY/TranslateY_psnrhvsm_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateY/TranslateY_results.csv"
     ]
     plot_mean_and_accuracy(file_paths)
