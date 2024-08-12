@@ -6,7 +6,6 @@ from scipy.signal import correlate2d
 from skimage.metrics import structural_similarity as ssim
 from torchvision import transforms
 from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
-from mermaid import similarity_measure_factory as smf
 
 def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     # convert images to grayscale numpy arrays
