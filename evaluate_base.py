@@ -24,7 +24,7 @@ transform = transforms.Compose([
     # transforms.TrivialAugmentWide(),
     transforms.ToTensor(),
 ])
-trainloader, testloader, _ = load_dataset(batch_size=100, transform=transform)
+trainloader, testloader, _ = load_dataset(batch_size=1000, transform=transform)
 
 # Evaluate the model
 correct, total = 0, 0
@@ -32,6 +32,7 @@ with torch.no_grad():
     net.eval()
     for i, data in enumerate(testloader):
         images, labels = data
+        images, labels = images.to(device), labels.to(device)
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
