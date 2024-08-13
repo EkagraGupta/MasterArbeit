@@ -3,10 +3,11 @@ from PIL import Image
 import torch
 import cv2
 from scipy.signal import correlate2d
-from skimage.metrics import structural_similarity as ssim
+# from skimage.metrics import structural_similarity as ssim
 from torchvision import transforms
 from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
-from torchmetrics.image import StructuralSimilarityIndexMeasure, MultiScaleStructuralSimilarityIndexMeasure
+from torchmetrics.image import VisualInformationFidelity, StructuralSimilarityIndexMeasure, SpatialCorrelationCoefficient, LearnedPerceptualImagePatchSimilarity, PeakSignalNoiseRatio, RelativeAverageSpectralError, PeakSignalNoiseRatioWithBlockedEffect, SpectralAngleMapper, UniversalImageQualityIndex
+
 
 def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     # convert images to grayscale numpy arrays
@@ -24,18 +25,18 @@ def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     return (ncc_value + 1) / 2
 
 
-def structural_similarity(im1: Image.Image, im2: Image.Image):
-    # convert images to numpy arrays
-    im1_np = np.array(im1)
-    im2_np = np.array(im2)
+# def structural_similarity(im1: Image.Image, im2: Image.Image):
+#     # convert images to numpy arrays
+#     im1_np = np.array(im1)
+#     im2_np = np.array(im2)
 
-    # compute the structural similarity index
-    ssim_index, _ = ssim(im1_np, im2_np, full=True, channel_axis=2)
+#     # compute the structural similarity index
+#     ssim_index, _ = ssim(im1_np, im2_np, full=True, channel_axis=2)
 
-    return (ssim_index + 1) / 2
+#     return (ssim_index + 1) / 2
 
 
-def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int=100):
+def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int = 100):
     if not isinstance(im1, torch.Tensor) or not isinstance(im2, torch.Tensor):
         to_tensor = transforms.ToTensor()
         im1 = to_tensor(im1)
@@ -48,44 +49,146 @@ def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int
     psnr_normalized = psnr_hvsm / scaling_factor
     return min(psnr_normalized, 1.0)
 
+
 def histogram_comparison(im1: Image.Image, im2: Image.Image):
     im1_np = np.array(im1)
     im2_np = np.array(im2)
 
-    im1_hist = cv2.calcHist([im1_np], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
+    im1_hist = cv2.calcHist([im1_np], [0, 1, 2], None, [
+                            256, 256, 256], [0, 256, 0, 256, 0, 256])
     im1_hist[255, 255, 255] = 0
-    cv2.normalize(im1_hist, im1_hist, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
-    im2_hist = cv2.calcHist([im2_np], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256])
+    cv2.normalize(im1_hist, im1_hist, alpha=0,
+                  beta=1, norm_type=cv2.NORM_MINMAX)
+    im2_hist = cv2.calcHist([im2_np], [0, 1, 2], None, [
+                            256, 256, 256], [0, 256, 0, 256, 0, 256])
     im2_hist[255, 255, 255] = 0
-    cv2.normalize(im2_hist, im2_hist, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
+    cv2.normalize(im2_hist, im2_hist, alpha=0,
+                  beta=1, norm_type=cv2.NORM_MINMAX)
 
     metric_val = cv2.compareHist(im1_hist, im2_hist, cv2.HISTCMP_CORREL)
     # print(f'Histogram Comparison Value: {metric_val:.3f}')
     return metric_val
 
+
 def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
-    # convert images to numpy arrays
-    # im1_np = np.array(im1)
-    # im2_np = np.array(im2)
     to_tensor = transforms.ToTensor()
     im1 = to_tensor(im1).unsqueeze(0)
     im2 = to_tensor(im2).unsqueeze(0)
+
     # compute the structural similarity index
-    sim = StructuralSimilarityIndexMeasure()
-    sim_val = sim(im1, im2)
-    return sim_val.item()
+    ssim = StructuralSimilarityIndexMeasure(return_contrast_sensitivity=True)
+    structural_value, contrast_value = ssim(im1, im2)
+    luminance_value = structural_value / contrast_value
+    # print(f'Structural Value: {structural_value:.3f}\tContrast Value: {contrast_value:.3f}\tLuminance Value: {luminance_value:.3f}')
+    return structural_value.item(), contrast_value.item(), luminance_value.item()
+
+    # compute multiscale structural similarity index
+    # mssim = MultiScaleStructuralSimilarityIndexMeasure(kernel_size=2)
+    # multi_structural_value = mssim(im1, im2)
+    # return multi_structural_value.item()
+
+
+def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the spatial correlation coefficient
+    scc = SpatialCorrelationCoefficient()
+    spatial_correlation_value = scc(im1, im2)
+    return spatial_correlation_value.item()
+
+
+# DNT: too slow, uses alexnet/VGG models for comparison
+def learned_perceptual_similarity(im1: Image.Image, im2: Image.Image):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the learned perceptual image patch similarity
+    lpips = LearnedPerceptualImagePatchSimilarity()
+    perceptual_similarity_value = lpips(im1, im2)
+    return perceptual_similarity_value.item()
+
+
+def peak_signal_noise_ratio(im1: Image.Image, im2: Image.Image, max_psnr=100.0):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the peak signal-to-noise ratio
+    psnr = PeakSignalNoiseRatio(base=10)
+    psnr_value = psnr(im1, im2)
+
+    # normalize psnr_value
+    psnr_value = psnr_value / max_psnr
+    return min(psnr_value.item(), 1.0)
+
+
+def peak_signal_noise_ratio_blocked(im1: Image.Image, im2: Image.Image, max_psnr=100.0):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the peak signal-to-noise with blocked effect ratio
+    psnr_b = PeakSignalNoiseRatioWithBlockedEffect(block_size=8)
+    psnr_b_value = psnr_b(im1, im2)
+
+    # normalize psnr_b_value
+    psnr_b_value = psnr_b_value / max_psnr
+    return min(psnr_b_value.item(), 1.0)
+
+# DNT: there are no grounds to normalize it
+
+
+def relative_average_spectral_error(im1: Image.Image, im2: Image.Image):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the relative average spectral error
+    rase = RelativeAverageSpectralError()
+    spectral_error_value = rase(im1, im2)
+    return spectral_error_value.item()
+
+
+# have to debug, does not work
+def spectral_angle_mapper(im1: Image.Image, im2: Image.Image):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the spectral angle mapper
+    sam = SpectralAngleMapper()
+    spectral_angle_value = sam(im1, im2)
+    return 1.0 - spectral_angle_value.item()
+
+def universal_image_quality_index(im1: Image.Image, im2: Image.Image):
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(im1).unsqueeze(0)
+    im2 = to_tensor(im2).unsqueeze(0)
+
+    # compute the universal image quality index
+    uiq = UniversalImageQualityIndex()
+    uiq_value = uiq(im1, im2)
+    return uiq_value.item()
+
+def visual_information_fidelity(im1: Image.Image, im2: Image.Image):    # too slow and resize required
+    resize = transforms.Resize(41)
+    to_tensor = transforms.ToTensor()
+    im1 = to_tensor(resize(im1)).unsqueeze(0)
+    im2 = to_tensor(resize(im2)).unsqueeze(0)
+
+    # compute the visual information fidelity
+    vif = VisualInformationFidelity()
+    vif_value = vif(im1, im2)
+    return vif_value.item()
 
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
-    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
+    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
-    
-    to_tensor = transforms.ToTensor()
-    # ncc_value = normalized_cross_correlation(im1, im2)
-    ssim_value = structural_similarity(im1, im2)
-    print(ssim_value)
-    # psnr_value = psnr_hvs_calculation(im1, im2)
-    # hist_value = histogram_comparison(im1, im2)
-    # print(f'Normalized Cross Correlation Value: {ncc_value}\nSSIM: {ssim_value}\nPSNR Value: {psnr_value}\nHistogram Comparison Value: {hist_value}')
-    multiscale_structural_similarity(to_tensor(im1), to_tensor(im2))
+
+    vif_value = visual_information_fidelity(im1, im2)
+    print(f'Visual Information Fidelity: {vif_value:.3f}')

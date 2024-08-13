@@ -19,8 +19,11 @@ def plot_mean_and_accuracy(file_paths):
 
     # for k, values in data.items():
     #     plt.plot(values["Severity"], values["Mean"], label=f"k={k}")
-    plt.plot(data[1]["Severity"], data[1]["Mean"], label="NCC", color="red")
-    plt.plot(data[2]["Severity"], data[2]["Mean"], label="SSIM", color="blue")
+    plt.plot(data[1]["Severity"], data[1]["Mean"], label="psnr")
+    plt.plot(data[2]["Severity"], data[2]["Mean"], label="scc")
+    plt.plot(data[3]["Severity"], data[3]["Mean"], label="ssim")
+    plt.plot(data[4]["Severity"], data[4]["Mean"], label="uiq")
+    plt.plot(data[5]["Severity"], data[5]["Mean"], label="ncc")
 
     plt.plot(severity, accuracy, label="Model Accuracy", linestyle="--", color="black")
 
@@ -29,7 +32,6 @@ def plot_mean_and_accuracy(file_paths):
     plt.title("Mean and Accuracy Curves for Different k Values")
     plt.legend()
     plt.show()
-
 
 # Example usage
 if __name__ == "__main__":
@@ -40,7 +42,10 @@ if __name__ == "__main__":
     #     '/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateX_k4_results.csv'
     # ]
     file_paths = [
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateY/TranslateY_psnrhvsm_results.csv",
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/TranslateY/TranslateY_results.csv"
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/ShearX/ShearX_l_psnr_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/ShearX/ShearX_l_scc_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/ShearX/ShearX_l_ssim_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/ShearX/ShearX_l_uiq_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/ShearX/ShearX_ncc_results.csv"
     ]
     plot_mean_and_accuracy(file_paths)
