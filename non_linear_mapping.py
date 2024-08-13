@@ -1,13 +1,9 @@
 from augment_dataset import create_transforms, load_data
 from utils.plot_non_linear_curve import plot_mean_std, get_mean_std, save_to_csv
 from wideresnet import WideResNet_28_4
-# import wrn as wideresnet
 from evaluate import evaluate_model
 import torch
-import csv
 import time
-import os
-
 
 
 def get_plot(augmentation_type, model, dataset_split=100):
@@ -78,8 +74,8 @@ if __name__ == "__main__":
         # "Identity",
         "ShearX",
         "ShearY",
-        "TranslateX",
-        "TranslateY",
+        # "TranslateX",
+        # "TranslateY",
         "Rotate",
         "Brightness",
         "Color",

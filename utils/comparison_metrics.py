@@ -3,7 +3,7 @@ from PIL import Image
 import torch
 import cv2
 from scipy.signal import correlate2d
-# from skimage.metrics import structural_similarity as ssim
+from skimage.metrics import structural_similarity
 from torchvision import transforms
 from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
 from torchmetrics.image import VisualInformationFidelity, StructuralSimilarityIndexMeasure, SpatialCorrelationCoefficient, LearnedPerceptualImagePatchSimilarity, PeakSignalNoiseRatio, RelativeAverageSpectralError, PeakSignalNoiseRatioWithBlockedEffect, SpectralAngleMapper, UniversalImageQualityIndex
@@ -25,15 +25,15 @@ def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     return (ncc_value + 1) / 2
 
 
-# def structural_similarity(im1: Image.Image, im2: Image.Image):
-#     # convert images to numpy arrays
-#     im1_np = np.array(im1)
-#     im2_np = np.array(im2)
+def structural_similarity_calculation(im1: Image.Image, im2: Image.Image):
+    # convert images to numpy arrays
+    im1_np = np.array(im1)
+    im2_np = np.array(im2)
 
-#     # compute the structural similarity index
-#     ssim_index, _ = ssim(im1_np, im2_np, full=True, channel_axis=2)
+    # compute the structural similarity index
+    ssim_index, _ = structural_similarity(im1_np, im2_np, full=True, channel_axis=2)
 
-#     return (ssim_index + 1) / 2
+    return (ssim_index + 1) / 2
 
 
 def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int = 100):
@@ -138,9 +138,8 @@ def peak_signal_noise_ratio_blocked(im1: Image.Image, im2: Image.Image, max_psnr
     psnr_b_value = psnr_b_value / max_psnr
     return min(psnr_b_value.item(), 1.0)
 
+
 # DNT: there are no grounds to normalize it
-
-
 def relative_average_spectral_error(im1: Image.Image, im2: Image.Image):
     to_tensor = transforms.ToTensor()
     im1 = to_tensor(im1).unsqueeze(0)
@@ -163,6 +162,7 @@ def spectral_angle_mapper(im1: Image.Image, im2: Image.Image):
     spectral_angle_value = sam(im1, im2)
     return 1.0 - spectral_angle_value.item()
 
+
 def universal_image_quality_index(im1: Image.Image, im2: Image.Image):
     to_tensor = transforms.ToTensor()
     im1 = to_tensor(im1).unsqueeze(0)
@@ -173,7 +173,9 @@ def universal_image_quality_index(im1: Image.Image, im2: Image.Image):
     uiq_value = uiq(im1, im2)
     return uiq_value.item()
 
-def visual_information_fidelity(im1: Image.Image, im2: Image.Image):    # too slow and resize required
+
+# too slow and resize required
+def visual_information_fidelity(im1: Image.Image, im2: Image.Image):
     resize = transforms.Resize(41)
     to_tensor = transforms.ToTensor()
     im1 = to_tensor(resize(im1)).unsqueeze(0)
@@ -184,11 +186,12 @@ def visual_information_fidelity(im1: Image.Image, im2: Image.Image):    # too sl
     vif_value = vif(im1, im2)
     return vif_value.item()
 
+
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
     im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
 
-    vif_value = visual_information_fidelity(im1, im2)
-    print(f'Visual Information Fidelity: {vif_value:.3f}')
+    ssim_value = structural_similarity_calculation(im1, im2)
+    print(f'Structural Similarity Index: {ssim_value:.3f}')

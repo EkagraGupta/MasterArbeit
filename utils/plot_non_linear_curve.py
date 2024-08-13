@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import os
 import csv
 
-COMPARISON_METRIC = 'ncc'
+COMPARISON_METRIC = 'ssim'
+
 
 def get_mean_std(confidences_tensor):
     mean = confidences_tensor.mean()
@@ -10,12 +11,14 @@ def get_mean_std(confidences_tensor):
 
     return mean, std
 
+
 def save_to_csv(mean_list, std_list, accuracy_list, augmentation_type):
     folder_name = f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
 
-    filename = os.path.join(folder_name, f'{augmentation_type}_{COMPARISON_METRIC}_results.csv')
+    filename = os.path.join(
+        folder_name, f'{augmentation_type}_{COMPARISON_METRIC}_results.csv')
 
     with open(filename, mode="w", newline="") as file:
         writer = csv.writer(file)
@@ -26,11 +29,13 @@ def save_to_csv(mean_list, std_list, accuracy_list, augmentation_type):
             writer.writerow([i, mean, std, accuracy])
     print(f"Results saved to {filename}")
 
+
 def plot_mean_std(mean, std, model_confidences, augmentation_type=None):
     folder_name = f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}'
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
-    filename = os.path.join(folder_name, f'{augmentation_type}_{COMPARISON_METRIC}_results.png')
+    filename = os.path.join(
+        folder_name, f'{augmentation_type}_{COMPARISON_METRIC}_results.png')
 
     x = range(1, len(mean) + 1)
     plt.figure(figsize=(8, 6))
