@@ -8,14 +8,19 @@ def read_csv(file_path):
 
 
 def plot_mean_and_accuracy(file_paths, out_path):
-    data = {}
-    accuracy = None
+    data, accuracies = {}, {}
+    # accuracy = None
+    mean_acc = 0
 
     for k, file_path in enumerate(file_paths, start=1):
         severity, mean, acc = read_csv(file_path)
         data[k] = {"Severity": severity, "Mean": mean}
-        if accuracy is None:
-            accuracy = acc  # Store accuracy from the first file
+        accuracies[k] = {'Severity': severity, 'Accuracy': acc}
+        # if accuracy is None:
+        #     accuracy = acc  # Store accuracy from the first file
+    for k in range(1, 7):
+        mean_acc += accuracies[k]['Accuracy']
+    mean_acc /= 6
 
     # for k, values in data.items():
     #     plt.plot(values["Severity"], values["Mean"], label=f"k={k}")
@@ -24,9 +29,10 @@ def plot_mean_and_accuracy(file_paths, out_path):
     plt.plot(data[2]["Severity"], data[2]["Mean"], label="lightning ssim")
     plt.plot(data[3]["Severity"], data[3]["Mean"], label="uiq")
     plt.plot(data[4]["Severity"], data[4]["Mean"], label="ncc")
-    plt.plot(data[5]["Severity"], data[5]["Mean"], label="sa")
+    plt.plot(data[5]["Severity"], data[5]["Mean"], label="ssim")
+    plt.plot(data[6]["Severity"], data[6]["Mean"], label="ssim contrast")
 
-    plt.plot(severity, accuracy, label="Model Accuracy",
+    plt.plot(severity, mean_acc, label="Model Accuracy",
              linestyle="--", color="black")
 
     plt.xlabel("Severity")
@@ -39,14 +45,14 @@ def plot_mean_and_accuracy(file_paths, out_path):
 
 # Example usage
 if __name__ == "__main__":
-    augmentation_type = 'TranslateY'
+    augmentation_type = 'Solarize'
     file_paths = [
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_l_scc_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_l_ssim_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_l_uiq_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ncc_results.csv",
-        # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_results.csv",
-        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_sa_results.csv"
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_results.csv",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_contrast_results.csv"
     ]
     out_path = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_results.png"
     plot_mean_and_accuracy(file_paths, out_path)

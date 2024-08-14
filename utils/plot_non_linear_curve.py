@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import csv
 
-COMPARISON_METRIC = 'sa'
+COMPARISON_METRIC = 'ssim'
 
 
 def get_mean_std(confidences_tensor):

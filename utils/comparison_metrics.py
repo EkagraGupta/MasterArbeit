@@ -31,9 +31,17 @@ def structural_similarity_calculation(im1: Image.Image, im2: Image.Image):
     im2_np = np.array(im2)
 
     # compute the structural similarity index
-    ssim_index, _ = structural_similarity(im1_np, im2_np, full=True, channel_axis=2)
+    # ssim_index, _ = structural_similarity(im1_np, im2_np, full=True, channel_axis=2, gaussian_weights=True, sigma=1.5, use_sample_covariance=False, data_range=1.0)
+    ssim_index, _ = structural_similarity(im1=im1_np,
+                                          im2=im2_np,
+                                          gaussian_weights=True,
+                                          sigma=1.5,
+                                          use_sample_covariance=False,
+                                          full=True,
+                                          channel_axis=2,
+                                          data_range=1.0)
 
-    return (ssim_index + 1) / 2
+    return ssim_index
 
 
 def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int = 100):
@@ -194,4 +202,7 @@ if __name__ == "__main__":
     im2 = Image.open(im2_path)
 
     ssim_value = structural_similarity_calculation(im1, im2)
-    print(f'Structural Similarity Index: {ssim_value:.3f}')
+    lightning_ssim_value, _, _ = multiscale_structural_similarity(im1, im2)
+
+    print(
+        f'Structural Similarity Value: {ssim_value:.3f}\tLightning SSIM Value: {lightning_ssim_value:.3f}')
