@@ -68,26 +68,26 @@ class CustomTrivialAugmentWide:
         )
         augment_im, augment_info = trivial_augment(im)
         augmentation_type = next(iter(augment_info.keys()))
-        confidence_aa = comparison_metrics.structural_similarity_calculation(im, augment_im)
-        # if augmentation_type == "TranslateX":
-        #     dim1, dim2 = im.size[0], im.size[1]
-        #     tx = augment_info[augmentation_type]
-        #     # print(f'dim1: {dim1}, dim2: {dim2}, tx: {tx}')
-        #     random_crop = RandomCrop()
-        #     visibility = random_crop.compute_visibility(
-        #         dim1=dim1, dim2=dim2, tx=tx, ty=0
-        #     )
-        #     k = 3
-        #     confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        # elif augmentation_type == "TranslateY":
-        #     dim1, dim2 = im.size[0], im.size[1]
-        #     ty = augment_info[augmentation_type]
-        #     random_crop = RandomCrop()
-        #     visibility = random_crop.compute_visibility(
-        #         dim1=dim1, dim2=dim2, tx=0, ty=ty
-        #     )
-        #     k = 3
-        #     confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+        # confidence_aa = comparison_metrics.structural_similarity_calculation(im, augment_im)
+        if augmentation_type == "TranslateX":
+            dim1, dim2 = im.size[0], im.size[1]
+            tx = augment_info[augmentation_type]
+            # print(f'dim1: {dim1}, dim2: {dim2}, tx: {tx}')
+            random_crop = RandomCrop()
+            visibility = random_crop.compute_visibility(
+                dim1=dim1, dim2=dim2, tx=tx, ty=0
+            )
+            k = 3
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+        elif augmentation_type == "TranslateY":
+            dim1, dim2 = im.size[0], im.size[1]
+            ty = augment_info[augmentation_type]
+            random_crop = RandomCrop()
+            visibility = random_crop.compute_visibility(
+                dim1=dim1, dim2=dim2, tx=0, ty=ty
+            )
+            k = 2
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         # else:
         #     structural_value, contrast_value, luminance_value = comparison_metrics.multiscale_structural_similarity(im, augment_im)
         #     if augmentation_type=='Brightness':

@@ -7,7 +7,7 @@ def read_csv(file_path):
     return df["Severity"], df["Mean"], df["Accuracy"]
 
 
-def plot_mean_and_accuracy(file_paths):
+def plot_mean_and_accuracy(file_paths, out_path):
     data = {}
     accuracy = None
 
@@ -24,7 +24,7 @@ def plot_mean_and_accuracy(file_paths):
     plt.plot(data[2]["Severity"], data[2]["Mean"], label="lightning ssim")
     plt.plot(data[3]["Severity"], data[3]["Mean"], label="uiq")
     plt.plot(data[4]["Severity"], data[4]["Mean"], label="ncc")
-    plt.plot(data[5]["Severity"], data[5]["Mean"], label="ssim")
+    plt.plot(data[5]["Severity"], data[5]["Mean"], label="sa")
 
     plt.plot(severity, accuracy, label="Model Accuracy",
              linestyle="--", color="black")
@@ -33,17 +33,20 @@ def plot_mean_and_accuracy(file_paths):
     plt.ylabel("Value")
     plt.title("Mean for Different Comparison Metrics")
     plt.legend()
+    plt.savefig(out_path)
     plt.show()
 
 
 # Example usage
 if __name__ == "__main__":
-    augmentation_type = 'Solarize'
+    augmentation_type = 'TranslateY'
     file_paths = [
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_l_scc_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_l_ssim_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_l_uiq_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ncc_results.csv",
-        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_results.csv"
+        # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_results.csv",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_sa_results.csv"
     ]
-    plot_mean_and_accuracy(file_paths)
+    out_path = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_results.png"
+    plot_mean_and_accuracy(file_paths, out_path)
