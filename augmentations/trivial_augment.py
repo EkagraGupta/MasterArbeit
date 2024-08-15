@@ -101,5 +101,5 @@ class CustomTrivialAugmentWide:
         #         confidence_aa = contrast_value
         #     else:
         #         confidence_aa = structural_value
-        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, list((augmentation_magnitude, confidence_aa))
