@@ -444,6 +444,7 @@ class CTrivialAugmentWide(torch.nn.Module):
         fill: Optional[List[float]] = None,
         severity: int = 3,
         augmentation_name: str = "None",
+        get_signed: bool = False
     ) -> None:
         super().__init__()
         self.num_magnitude_bins = num_magnitude_bins
@@ -452,6 +453,7 @@ class CTrivialAugmentWide(torch.nn.Module):
         """MODIFICATION: Add severity"""
         self.severity = severity
         self.augmentation_name = augmentation_name
+        self.get_signed = get_signed
         """MODIFICATION: Add severity"""
 
     def _augmentation_space(self, num_bins: int) -> Dict[str, Tuple[Tensor, bool]]:
@@ -544,12 +546,14 @@ class CTrivialAugmentWide(torch.nn.Module):
         #     if magnitudes.ndim > 0
         #     else 0.0
         # )
+        # if signed and torch.randint(2, (1,)):
+        #     magnitude *= -1.0
 
         magnitude = float(magnitudes[self.severity].item())
+        if self.get_signed:
+            magnitude *= -1.0
         """MODIFICATION: Set magnitude and remove signed"""
 
-        if signed and torch.randint(2, (1,)):
-            magnitude *= -1.0
 
         # return _apply_op(
         #     img, op_name, magnitude, interpolation=self.interpolation, fill=fill

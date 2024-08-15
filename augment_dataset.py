@@ -106,6 +106,7 @@ def create_transforms(
     custom: bool = False,
     augmentation_name: str = None,
     augmentation_severity: int = 0,
+    augmentation_sign: bool = False
 ) -> Optional[tuple]:
     """Creates preprocessing and augmentation transformations.
 
@@ -129,6 +130,7 @@ def create_transforms(
                 custom=custom,
                 augmentation_name=augmentation_name,
                 severity=augmentation_severity,
+                get_signed=augmentation_sign
             )
         )
     if random_cropping:
@@ -247,7 +249,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False, aggressive_augmentation=True, custom=True
+        random_cropping=False, aggressive_augmentation=True, custom=True, augmentation_name="Brightness", augmentation_severity=29, augmentation_sign=True
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -259,4 +261,5 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size)
+    print(confidences)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size)

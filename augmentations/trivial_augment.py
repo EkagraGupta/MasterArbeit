@@ -17,11 +17,12 @@ class CustomTrivialAugmentWide:
     """
 
     def __init__(
-        self, custom: bool = False, augmentation_name: str = None, severity: int = 0
+        self, custom: bool = False, augmentation_name: str = None, severity: int = 0, get_signed: bool = False
     ):
         self.custom = custom
         self.augmentation_name = augmentation_name
         self.severity = severity
+        self.get_signed = get_signed
         self.chance = 1 / 10  # number of classes
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
@@ -64,10 +65,11 @@ class CustomTrivialAugmentWide:
         ]
 
         trivial_augment = CTrivialAugmentWide(
-            augmentation_name=self.augmentation_name, severity=self.severity
+            augmentation_name=self.augmentation_name, severity=self.severity, get_signed=self.get_signed
         )
         augment_im, augment_info = trivial_augment(im)
         augmentation_type = next(iter(augment_info.keys()))
+        augmentation_magnitude = augment_info[augmentation_type]
         confidence_aa = comparison_metrics.structural_similarity_calculation(
             im, augment_im)
         # if augmentation_type in pixelwise_augs:
@@ -99,6 +101,5 @@ class CustomTrivialAugmentWide:
         #         confidence_aa = contrast_value
         #     else:
         #         confidence_aa = structural_value
-
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
-        return augment_im, confidence_aa
+        return augment_im, list((augmentation_magnitude, confidence_aa))
