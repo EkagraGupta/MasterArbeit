@@ -70,8 +70,27 @@ class CustomTrivialAugmentWide:
         augment_im, augment_info = trivial_augment(im)
         augmentation_type = next(iter(augment_info.keys()))
         augmentation_magnitude = augment_info[augmentation_type]
-        confidence_aa = comparison_metrics.structural_similarity_calculation(
-            im, augment_im)
+
+        # SSIM Calculation
+        # confidence_aa = comparison_metrics.structural_similarity_calculation(
+        #     im, augment_im)
+        
+        # Structural SSIM calculation
+        # confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
+
+        # Normalized Cross Correlation calculation
+        # confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
+
+        # Spatial Correlation Coefficient calculation
+        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
+
+        # Universal Image Quality Index calculation
+        # confidence_aa = comparison_metrics.universal_image_quality_index(im, augment_im)
+
+        # Visual Information Fidelity calculation
+        confidence_aa = comparison_metrics.visual_information_fidelity(im, augment_im)
+
+
         # if augmentation_type in pixelwise_augs:
         #     _, confidence_aa, _ = comparison_metrics.multiscale_structural_similarity(im, augment_im)
         # if augmentation_type == "TranslateX":
@@ -101,5 +120,5 @@ class CustomTrivialAugmentWide:
         #         confidence_aa = contrast_value
         #     else:
         #         confidence_aa = structural_value
-        print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, list((augmentation_magnitude, confidence_aa))

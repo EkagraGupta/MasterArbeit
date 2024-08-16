@@ -13,13 +13,13 @@ def get_plot(augmentation_type, model, dataset_split=100):
     mean_list, std_list, time_list, augmentation_magnitudes_list = [], [], [], []
     accuracy_list = []
 
-    for enable_sign in range(1):
-        # if enable_sign == 1:
-        #     enable_sign = True
-        # else:
-        #     enable_sign = False
+    for enable_sign in range(0, 2):
+        if enable_sign == 1:
+            enable_sign = True
+        else:
+            enable_sign = False
 
-        for severity in range(1, 31):
+        for severity in range(0, 31):
             total_time = 0
             print(
                 f"Processing severity: {severity} with sign: {enable_sign}\n")
@@ -87,17 +87,17 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        # "ShearX",
-        # "ShearY",
-        # "TranslateX",
-        # "TranslateY",
-        # "Rotate",
+        "ShearX",
+        "ShearY",
+        "TranslateX",
+        "TranslateY",
+        "Rotate",
         "Brightness",
-        # "Color",
-        # "Contrast",
-        # "Sharpness",
+        "Color",
+        "Contrast",
+        "Sharpness",
         # "Posterize",
-        # "Solarize",
+        "Solarize",
         # "AutoContrast",
         # "Equalize",
     ]
@@ -110,4 +110,4 @@ if __name__ == "__main__":
     net.load_state_dict(state_dict["model_state_dict"], strict=False)
  
     for augmentation_type in augmentation_types:
-        get_plot(augmentation_type, model=net, dataset_split=500)
+        get_plot(augmentation_type, model=net, dataset_split=2000)

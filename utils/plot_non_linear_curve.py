@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = 'test'
+COMPARISON_METRIC = 'vif'
 
 
 def get_mean_std(confidences_tensor):
@@ -84,7 +84,7 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
     plt.legend()
     plt.savefig(filename)
-    plt.show()
+    # plt.show()
 
 
 # Example usage:

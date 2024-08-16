@@ -88,7 +88,7 @@ def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
     structural_value, contrast_value = ssim(im1, im2)
     luminance_value = structural_value / contrast_value
     # print(f'Structural Value: {structural_value:.3f}\tContrast Value: {contrast_value:.3f}\tLuminance Value: {luminance_value:.3f}')
-    return structural_value.item(), contrast_value.item(), luminance_value.item()
+    return structural_value.item()
 
 
 def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):
