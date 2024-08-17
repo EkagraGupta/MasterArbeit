@@ -87,17 +87,17 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        "ShearX",
-        "ShearY",
-        "TranslateX",
-        "TranslateY",
-        "Rotate",
+        # "ShearX",
+        # "ShearY",
+        # "TranslateX",
+        # "TranslateY",
+        # "Rotate",
         "Brightness",
-        "Color",
-        "Contrast",
-        "Sharpness",
+        # "Color",
+        # "Contrast",
+        # "Sharpness",
         # "Posterize",
-        "Solarize",
+        # "Solarize",
         # "AutoContrast",
         # "Equalize",
     ]
@@ -110,4 +110,4 @@ if __name__ == "__main__":
     net.load_state_dict(state_dict["model_state_dict"], strict=False)
  
     for augmentation_type in augmentation_types:
-        get_plot(augmentation_type, model=net, dataset_split=2000)
+        get_plot(augmentation_type, model=net, dataset_split=500)

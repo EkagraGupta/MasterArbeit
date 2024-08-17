@@ -88,7 +88,7 @@ def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
     structural_value, contrast_value = ssim(im1, im2)
     luminance_value = structural_value / contrast_value
     # print(f'Structural Value: {structural_value:.3f}\tContrast Value: {contrast_value:.3f}\tLuminance Value: {luminance_value:.3f}')
-    return structural_value.item()
+    return luminance_value.item()
 
 
 def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):
@@ -189,15 +189,15 @@ def visual_information_fidelity(im1: Image.Image, im2: Image.Image):
     vif_value = vif(im1, im2)
     return vif_value.item()
 
+def gaussian(x, a, b, c):
+    gauss = a * np.exp(-0.5 * ((x - b) / c) ** 2)
+    if np.any(gauss>1.0):
+        gauss.where(gauss>1.0, 1.0, inplace=True)
+    return gauss
+
 
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
     im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
-
-    ssim_value = structural_similarity_calculation(im1, im2)
-    lightning_ssim_value, _, _ = multiscale_structural_similarity(im1, im2)
-
-    print(
-        f'Structural Similarity Value: {ssim_value:.3f}\tLightning SSIM Value: {lightning_ssim_value:.3f}')

@@ -74,26 +74,30 @@ class CustomTrivialAugmentWide:
         # SSIM Calculation
         # confidence_aa = comparison_metrics.structural_similarity_calculation(
         #     im, augment_im)
-        
+
         # Structural SSIM calculation
-        # confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
+        confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
 
         # Normalized Cross Correlation calculation
         # confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
 
         # Spatial Correlation Coefficient calculation
-        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
+        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
+        #     im, augment_im)
 
         # Universal Image Quality Index calculation
         # confidence_aa = comparison_metrics.universal_image_quality_index(im, augment_im)
 
         # Visual Information Fidelity calculation
-        confidence_aa = comparison_metrics.visual_information_fidelity(im, augment_im)
+        # confidence_aa = comparison_metrics.visual_information_fidelity(im, augment_im)
 
-
-        # if augmentation_type in pixelwise_augs:
-        #     _, confidence_aa, _ = comparison_metrics.multiscale_structural_similarity(im, augment_im)
-        # if augmentation_type == "TranslateX":
+        # if augmentation_type == 'ShearX':
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude, a=1.0, b=0.0, c=0.56)
+        # elif augmentation_type == 'ShearY':
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude, a=1.0, b=0.02, c=0.56)
+        # elif augmentation_type == 'TranslateX':
         #     dim1, dim2 = im.size[0], im.size[1]
         #     tx = augment_info[augmentation_type]
         #     # print(f'dim1: {dim1}, dim2: {dim2}, tx: {tx}')
@@ -103,7 +107,7 @@ class CustomTrivialAugmentWide:
         #     )
         #     k = 3
         #     confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        # elif augmentation_type == "TranslateY":
+        # elif augmentation_type == 'TranslateY':
         #     dim1, dim2 = im.size[0], im.size[1]
         #     ty = augment_info[augmentation_type]
         #     random_crop = RandomCrop()
@@ -113,12 +117,9 @@ class CustomTrivialAugmentWide:
         #     k = 2
         #     confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         # else:
-        #     structural_value, contrast_value, luminance_value = comparison_metrics.multiscale_structural_similarity(im, augment_im)
-        #     if augmentation_type=='Brightness':
-        #         confidence_aa = luminance_value
-        #     elif augmentation_type=='Contrast':
-        #         confidence_aa = contrast_value
-        #     else:
-        #         confidence_aa = structural_value
+        #     confidence_aa = comparison_metrics.spatial_correlation_coefficient(
+        #         im, augment_im)
+
+
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, list((augmentation_magnitude, confidence_aa))

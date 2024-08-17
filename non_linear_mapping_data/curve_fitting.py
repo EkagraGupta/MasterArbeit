@@ -3,7 +3,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 
-augmentation_type = 'Rotate'
+augmentation_type = 'ShearY'
 data = pd.read_csv(
     f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_results.csv')
 data = data.sort_values(by='Severity')
