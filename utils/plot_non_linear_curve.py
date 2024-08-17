@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = 'luminance_ssim'
+COMPARISON_METRIC = 'test'
 
 
 def get_mean_std(confidences_tensor):

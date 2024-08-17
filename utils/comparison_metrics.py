@@ -5,7 +5,7 @@ import cv2
 from scipy.signal import correlate2d
 from skimage.metrics import structural_similarity
 from torchvision import transforms
-from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
+# from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
 from torchmetrics.image import VisualInformationFidelity, StructuralSimilarityIndexMeasure, SpatialCorrelationCoefficient, LearnedPerceptualImagePatchSimilarity, PeakSignalNoiseRatio, RelativeAverageSpectralError, PeakSignalNoiseRatioWithBlockedEffect, SpectralAngleMapper, UniversalImageQualityIndex
 
 
@@ -44,18 +44,18 @@ def structural_similarity_calculation(im1: Image.Image, im2: Image.Image):
     return ssim_index
 
 
-def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int = 100):
-    if not isinstance(im1, torch.Tensor) or not isinstance(im2, torch.Tensor):
-        to_tensor = transforms.ToTensor()
-        im1 = to_tensor(im1)
-        im2 = to_tensor(im2)
+# def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int = 100):
+#     if not isinstance(im1, torch.Tensor) or not isinstance(im2, torch.Tensor):
+#         to_tensor = transforms.ToTensor()
+#         im1 = to_tensor(im1)
+#         im2 = to_tensor(im2)
 
-    im1_y, *_ = bt601ycbcr(im1)
-    im2_y, *_ = bt601ycbcr(im2)
+#     im1_y, *_ = bt601ycbcr(im1)
+#     im2_y, *_ = bt601ycbcr(im2)
 
-    psnr_hvs, psnr_hvsm = psnr_hvs_hvsm(im1_y, im2_y)
-    psnr_normalized = psnr_hvsm / scaling_factor
-    return min(psnr_normalized, 1.0)
+#     psnr_hvs, psnr_hvsm = psnr_hvs_hvsm(im1_y, im2_y)
+#     psnr_normalized = psnr_hvsm / scaling_factor
+#     return min(psnr_normalized, 1.0)
 
 
 def histogram_comparison(im1: Image.Image, im2: Image.Image):
@@ -194,6 +194,14 @@ def gaussian(x, a, b, c):
     if np.any(gauss>1.0):
         gauss.where(gauss>1.0, 1.0, inplace=True)
     return gauss
+
+def custom_function(x, a, b, c, d, e):
+    # best values: [ 1.2438093   7.18937766 -0.87255438 -0.0573816  -0.2456411 ]
+    result = a / (1.0 + np.exp(-b * (x - c))) + d * x + e
+    if np.any(result>1.0):
+        result.where(result>1.0, 1.0, inplace=True)
+        
+    return result
 
 
 if __name__ == "__main__":
