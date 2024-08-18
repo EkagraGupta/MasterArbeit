@@ -28,11 +28,11 @@ def plot_mean_and_accuracy(file_paths, out_path):
     # for k, values in data.items():
     #     plt.plot(values["Severity"], values["Mean"], label=f"k={k}")
     # plt.plot(data[1]["Severity"], data[1]["Mean"], label="psnr")
-    # plt.plot(data[1]["Severity"], data[1]["Mean"], label="Contrast (SSIM)")
-    # plt.plot(data[2]["Severity"], data[2]["Mean"], label="Luminance (SSIM)")
+    plt.plot(data[1]["Severity"], data[1]["Mean"], label="Contrast (SSIM)")
+    plt.plot(data[2]["Severity"], data[2]["Mean"], label="Luminance (SSIM)")
     plt.plot(data[1]["Severity"], data[1]["Mean"], label="NCC")
     plt.plot(data[2]["Severity"], data[2]["Mean"], label="SSIM")
-    plt.plot(data[3]["Severity"], data[3]["Mean"], label="Soft Augmentation")
+    plt.plot(data[3]["Severity"], data[3]["Mean"], label="SCC")
     # plt.plot(data[5]["Severity"], data[5]["Mean"], label="Sigmoid")
 
     plt.plot(severity, mean_acc, label="Model Accuracy",
@@ -48,14 +48,14 @@ def plot_mean_and_accuracy(file_paths, out_path):
 
 # Example usage
 if __name__ == "__main__":
-    augmentation_type = 'TranslateY'
+    augmentation_type = 'Posterize'
     file_paths = [
-        # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_contrast_ssim_results.csv",
-        # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_luminance_ssim_results.csv",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_contrast_ssim_results.csv",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_luminance_ssim_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ncc_results.csv",
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ssim_results.csv",
         # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_uiq_results.csv",
-        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_sa_results.csv",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_scc_results.csv",
         # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_sigmoid_results.csv",
     ]
     out_path = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_results.png"
