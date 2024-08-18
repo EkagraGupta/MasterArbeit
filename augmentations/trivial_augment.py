@@ -82,55 +82,54 @@ class CustomTrivialAugmentWide:
         # confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
 
         # Spatial Correlation Coefficient calculation
-        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
-        #     im, augment_im)
+        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
 
         # Universal Image Quality Index calculation
-        # confidence_aa = comparison_metrics.universal_image_quality_index(im, augment_im)
+        confidence_aa = comparison_metrics.universal_image_quality_index(im, augment_im)
 
         # Visual Information Fidelity calculation
         # confidence_aa = comparison_metrics.visual_information_fidelity(im, augment_im)
 
-        if augmentation_type == 'ShearX':
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude, a=1.0, b=0.0, c=0.56)
-        elif augmentation_type == 'ShearY':
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude, a=1.0, b=0.02, c=0.56)
-        elif augmentation_type == 'TranslateX':
-            dim1, dim2 = im.size[0], im.size[1]
-            tx = augment_info[augmentation_type]
-            # print(f'dim1: {dim1}, dim2: {dim2}, tx: {tx}')
-            random_crop = RandomCrop()
-            visibility = random_crop.compute_visibility(
-                dim1=dim1, dim2=dim2, tx=tx, ty=0
-            )
-            k = 3
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        elif augmentation_type == 'TranslateY':
-            dim1, dim2 = im.size[0], im.size[1]
-            ty = augment_info[augmentation_type]
-            random_crop = RandomCrop()
-            visibility = random_crop.compute_visibility(
-                dim1=dim1, dim2=dim2, tx=0, ty=ty
-            )
-            k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        elif augmentation_type == 'Brightness':
-            # confidence_aa = comparison_metrics.custom_function(augmentation_magnitude, 1.2438093, 7.18937766, -0.87255438, -0.0573816, -0.2456411)
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9753, 17.0263, -0.8297)
-        elif augmentation_type == 'Contrast':
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186)
-        elif augmentation_type == 'Color':
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 1.0, 4.93537641, -1.5837580)
-        elif augmentation_type == 'Sharpness':
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678)
-        else:
-            confidence_aa = 1.0
+        # if augmentation_type == 'ShearX':
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude, a=1.0, b=0.0, c=0.56)
+        # elif augmentation_type == 'ShearY':
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude, a=1.0, b=0.02, c=0.56)
+        # elif augmentation_type == 'TranslateX':
+        #     dim1, dim2 = im.size[0], im.size[1]
+        #     tx = augment_info[augmentation_type]
+        #     # print(f'dim1: {dim1}, dim2: {dim2}, tx: {tx}')
+        #     random_crop = RandomCrop()
+        #     visibility = random_crop.compute_visibility(
+        #         dim1=dim1, dim2=dim2, tx=tx, ty=0
+        #     )
+        #     k = 3
+        #     confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+        # elif augmentation_type == 'TranslateY':
+        #     dim1, dim2 = im.size[0], im.size[1]
+        #     ty = augment_info[augmentation_type]
+        #     random_crop = RandomCrop()
+        #     visibility = random_crop.compute_visibility(
+        #         dim1=dim1, dim2=dim2, tx=0, ty=ty
+        #     )
+        #     k = 2
+        #     confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+        # elif augmentation_type == 'Brightness':
+        #     # confidence_aa = comparison_metrics.custom_function(augmentation_magnitude, 1.2438093, 7.18937766, -0.87255438, -0.0573816, -0.2456411)
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 0.9753, 17.0263, -0.8297)
+        # elif augmentation_type == 'Contrast':
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186)
+        # elif augmentation_type == 'Color':
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 1.0, 4.93537641, -1.5837580)
+        # elif augmentation_type == 'Sharpness':
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678)
+        # else:
+        #     confidence_aa = 1.0
 
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, list((augmentation_magnitude, confidence_aa))

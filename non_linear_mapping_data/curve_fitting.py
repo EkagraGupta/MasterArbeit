@@ -14,8 +14,8 @@ def fit_poly(function, x, y):
     popt, pcov = curve_fit(function, x, y, p0=initial_guess)
     return popt, pcov
 
-def gaussian(x, a, b, c):
-    gauss = a * np.exp(-0.5 * ((x - b) / c) ** 2)
+def gaussian(x, a, b, c, d):
+    gauss = d + a * np.exp(-0.5 * ((x - b) / c) ** 2)
     if np.any(gauss>1.0):
         gauss.where(gauss>1.0, 1.0, inplace=True)
     return gauss
@@ -34,7 +34,7 @@ def fit_custom(function, x, y):
     return popt, pcov
 
 def fit_gaussian(function, x, y):
-    popt, pcov = curve_fit(function, x, y, p0=[1, 0, 10])
+    popt, pcov = curve_fit(function, x, y, p0=[2, 0, 10, 1])
     return popt, pcov
 
 def sigmoid(x, a, b, c):
@@ -65,7 +65,7 @@ def plot_curves(function, augmentation_magnitude, model_accuracy, augmentation_m
     plt.show()
 
 if __name__ == "__main__":
-    augmentation_type = 'Sharpness'
+    augmentation_type = 'Rotate'
     data = pd.read_csv(
         f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ncc_results.csv')
     data = data.sort_values(by='Severity')
@@ -75,14 +75,14 @@ if __name__ == "__main__":
     model_accuracy = data['Accuracy']
 
     # Fit the gaussian function to the data
-    # popt, pcov = fit_gaussian(gaussian, augmentation_magnitude, model_accuracy)
-    # print(f'Fitted Gaussian Parameters: {popt}')
-    # plot_curves(augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
+    popt, pcov = fit_gaussian(gaussian, augmentation_magnitude, augmentation_mean)
+    print(f'Fitted Gaussian Parameters: {popt}')
+    plot_curves(gaussian, augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
 
     # Fit the two_poly function to the data
-    popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
-    print(f'Fitted Two Poly Parameters: {popt}')
-    plot_curves(sigmoid, augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
+    # popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
+    # print(f'Fitted Two Poly Parameters: {popt}')
+    # plot_curves(sigmoid, augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
 
     # fit the sigmoid function to the data
     # popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
