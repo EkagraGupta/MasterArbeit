@@ -94,7 +94,7 @@ if __name__ == "__main__":
         # "Rotate",
         "Brightness",
         # "Color",
-        # "Contrast",
+        "Contrast",
         # "Sharpness",
         # "Posterize",
         # "Solarize",

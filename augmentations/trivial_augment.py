@@ -116,8 +116,11 @@ class CustomTrivialAugmentWide:
             )
             k = 2
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        # elif augmentation_type == 'Brightness':
-        #     confidence_aa = comparison_metrics.custom_function(augmentation_magnitude, 1.2438093, 7.18937766, -0.87255438, -0.0573816, -0.2456411)
+        elif augmentation_type == 'Brightness':
+            # confidence_aa = comparison_metrics.custom_function(augmentation_magnitude, 1.2438093, 7.18937766, -0.87255438, -0.0573816, -0.2456411)
+            confidence_aa = comparison_metrics.sigmoid(augmentation_magnitude, 0.9753, 17.0263, -0.8297)
+        elif augmentation_type=='Contrast':
+            confidence_aa = comparison_metrics.sigmoid(augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186)
 
         else:
             confidence_aa = 1.0

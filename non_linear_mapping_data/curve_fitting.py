@@ -37,11 +37,16 @@ def fit_gaussian(function, x, y):
     popt, pcov = curve_fit(function, x, y, p0=[1, 0, 10])
     return popt, pcov
 
-def plot_curves(augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt):
+def sigmoid(x, a, b, c):
+    return a / (1.0 + np.exp(-b * (x - c)))
+
+def fit_sigmoid(function, x, y):
+    popt, pcov = curve_fit(function, x, y, p0=[1, 1, 1])
+    return popt, pcov
+
+def plot_curves(function, augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt):
     # Generate fitted values
-    # fitted_values = gaussian(augmentation_magnitude, *popt)
-    # fitted_values = poly(augmentation_magnitude, *popt)
-    fitted_values = custom_function(augmentation_magnitude, *popt)
+    fitted_values = function(augmentation_magnitude, *popt)
 
     # Plot the original data and the fitted curve
     plt.figure(figsize=(10, 6))
@@ -75,6 +80,11 @@ if __name__ == "__main__":
     # plot_curves(augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
 
     # Fit the two_poly function to the data
-    popt, pcov = fit_custom(custom_function, augmentation_magnitude, model_accuracy)
+    popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
     print(f'Fitted Two Poly Parameters: {popt}')
-    plot_curves(augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
+    plot_curves(sigmoid, augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
+
+    # fit the sigmoid function to the data
+    # popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
+    # print(f'Fitted Sigmoid Parameters: {popt}')
+    # plot_curves(augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)

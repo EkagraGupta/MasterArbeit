@@ -86,9 +86,10 @@ def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
     # compute the structural similarity index
     ssim = StructuralSimilarityIndexMeasure(return_contrast_sensitivity=True)
     structural_value, contrast_value = ssim(im1, im2)
-    luminance_value = structural_value / contrast_value
+    # luminance_value = structural_value / contrast_value
     # print(f'Structural Value: {structural_value:.3f}\tContrast Value: {contrast_value:.3f}\tLuminance Value: {luminance_value:.3f}')
-    return luminance_value.item()
+    return structural_value.item()
+    # return contrast_value.item()
 
 
 def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):
@@ -201,6 +202,12 @@ def custom_function(x, a, b, c, d, e):
     if np.any(result>1.0):
         result.where(result>1.0, 1.0, inplace=True)
         
+    return result
+
+def sigmoid(x, a, b, c):
+    result = a / (1.0 + np.exp(-b * (x - c)))
+    if np.any(result>1.0):
+        result.where(result>1.0, 1.0, inplace=True)
     return result
 
 
