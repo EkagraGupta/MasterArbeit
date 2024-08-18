@@ -87,14 +87,14 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        # "ShearX",
+        # "ShearY",
         # "ShearY",
         # "TranslateX",
-        # "TranslateY",
+        "TranslateY",
         # "Rotate",
-        "Brightness",
+        # "Brightness",
         # "Color",
-        "Contrast",
+        # "Contrast",
         # "Sharpness",
         # "Posterize",
         # "Solarize",

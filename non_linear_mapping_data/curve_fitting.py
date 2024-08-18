@@ -65,9 +65,9 @@ def plot_curves(function, augmentation_magnitude, model_accuracy, augmentation_m
     plt.show()
 
 if __name__ == "__main__":
-    augmentation_type = 'Brightness'
+    augmentation_type = 'Sharpness'
     data = pd.read_csv(
-        f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_luminance_ssim_results.csv')
+        f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ncc_results.csv')
     data = data.sort_values(by='Severity')
     augmentation_magnitude = data['Severity']
     augmentation_mean = data['Mean']

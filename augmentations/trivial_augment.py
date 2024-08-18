@@ -118,13 +118,19 @@ class CustomTrivialAugmentWide:
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         elif augmentation_type == 'Brightness':
             # confidence_aa = comparison_metrics.custom_function(augmentation_magnitude, 1.2438093, 7.18937766, -0.87255438, -0.0573816, -0.2456411)
-            confidence_aa = comparison_metrics.sigmoid(augmentation_magnitude, 0.9753, 17.0263, -0.8297)
-        elif augmentation_type=='Contrast':
-            confidence_aa = comparison_metrics.sigmoid(augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186)
-
+            confidence_aa = comparison_metrics.sigmoid(
+                augmentation_magnitude, 0.9753, 17.0263, -0.8297)
+        elif augmentation_type == 'Contrast':
+            confidence_aa = comparison_metrics.sigmoid(
+                augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186)
+        elif augmentation_type == 'Color':
+            confidence_aa = comparison_metrics.sigmoid(
+                augmentation_magnitude, 1.0, 4.93537641, -1.5837580)
+        elif augmentation_type == 'Sharpness':
+            confidence_aa = comparison_metrics.sigmoid(
+                augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678)
         else:
             confidence_aa = 1.0
-
 
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, list((augmentation_magnitude, confidence_aa))

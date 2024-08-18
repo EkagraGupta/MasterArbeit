@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = 'sigmoid'
+COMPARISON_METRIC = 'sa'
 
 
 def get_mean_std(confidences_tensor):
