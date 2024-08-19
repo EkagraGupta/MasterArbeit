@@ -6,24 +6,26 @@ from utils.dataset import load_dataset
 from wideresnet import WideResNet_28_4, WideBasic
 
 # Load the saved model weights
-# net = WideResNet_28_4(num_classes=10)
-# PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
-# net = torch.nn.DataParallel(net)
-# state_dict = torch.load(PATH, map_location=torch.device('cpu'))
-# net.load_state_dict(state_dict["model_state_dict"], strict=False)
+net = WideResNet_28_4(num_classes=10)
+PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
+net = torch.nn.DataParallel(net)
+state_dict = torch.load(PATH, map_location=torch.device('cpu'))
+net.load_state_dict(state_dict["model_state_dict"], strict=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-net = WideResNet_28_4(num_classes=10)  # Initialize the same model class
-PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/cifar_net_ta_baseline.pth'
-state_dict = torch.load(PATH, map_location=device)
-print(state_dict.keys())
-net.load_state_dict(state_dict["model_state_dict"], strict=False)
+# net = WideResNet_28_4(num_classes=10)  # Initialize the same model class
+# net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
+# net = torch.nn.DataParallel(net)
+# state_dict = torch.load(net_path, map_location=torch.device('cpu'))
+# # print(state_dict.keys())
+# net.load_state_dict(state_dict, strict=False)
+# # net.to(device)
 net.to(device)
 
 # Prepare the DataLoader
 transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomCrop(32, padding=4),
+    # transforms.RandomHorizontalFlip(),
+    # transforms.RandomCrop(32, padding=4),
     # transforms.TrivialAugmentWide(),
     transforms.ToTensor(),
 ])
