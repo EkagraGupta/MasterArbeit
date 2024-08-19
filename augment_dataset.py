@@ -145,7 +145,7 @@ def create_transforms(
 def load_data(
     transforms_preprocess,
     transforms_augmentation=None,
-    dataset_split: Optional[int] = 100,
+    dataset_split: Optional[int] = 'full',
 ) -> Optional[tuple]:
     """Loads and prepares the CIFAR-10 dataset with specified transformations.
 

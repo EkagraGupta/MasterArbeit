@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = 'uiq'
+COMPARISON_METRIC = 'ncc'
 
 
 def get_mean_std(confidences_tensor):
@@ -65,6 +65,9 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     std = df['Std'].tolist()
     model_confidences = df['Accuracy'].tolist()
     augmentation_magnitudes = df['Severity'].tolist()
+
+    # if augmentation_type=='Solarize':
+    #     augmentation_magnitudes.reverse()
     
     # Create folder if it doesn't exist
     folder_name = f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}'
@@ -84,14 +87,14 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
     plt.legend()
     plt.savefig(filename)
-    # plt.show()
+    plt.show()
 
 
 # Example usage:
 if __name__ == "__main__":
-    mean = [0.5, 0.6, 0.9, 0.8, 0.7]
-    std = [1.0, 1.0, 0.3, 0.4, 0.5]
-    model_confidences = [0.9, 0.8, 0.7, 0.6, 0.5]
-    augmentation_magnitudes = [1, 2, 3, 4, 5]
+    # mean = [0.5, 0.6, 0.9, 0.8, 0.7]
+    # std = [1.0, 1.0, 0.3, 0.4, 0.5]
+    # model_confidences = [0.9, 0.8, 0.7, 0.6, 0.5]
+    # augmentation_magnitudes = [1, 2, 3, 4, 5]
     # plot_mean_std(mean, std, model_confidences, "Brightness", augmentation_magnitudes)
-    plot_mean_std_from_csv('/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Brightness/Brightness_ssim_results.csv', 'Brightness')
+    plot_mean_std_from_csv('/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_ncc_results.csv', 'Solarize')
