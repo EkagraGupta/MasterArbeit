@@ -249,7 +249,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False, aggressive_augmentation=True, custom=True, augmentation_name="Brightness", augmentation_severity=29, augmentation_sign=True
+        random_cropping=True, aggressive_augmentation=True, custom=False, augmentation_name="Brightness", augmentation_severity=29, augmentation_sign=True
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -261,5 +261,5 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
-    print(confidences)
-    # display_image_grid(images, labels, confidences, batch_size=batch_size)
+    print(transforms_augmentation)
+    display_image_grid(images, labels, confidences, batch_size=batch_size)

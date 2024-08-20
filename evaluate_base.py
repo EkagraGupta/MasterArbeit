@@ -24,8 +24,8 @@ net.to(device)
 
 # Prepare the DataLoader
 transform = transforms.Compose([
-    # transforms.RandomHorizontalFlip(),
-    # transforms.RandomCrop(32, padding=4),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomCrop(32, padding=4),
     # transforms.TrivialAugmentWide(),
     transforms.ToTensor(),
 ])
