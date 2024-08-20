@@ -13,7 +13,7 @@ state_dict = torch.load(PATH, map_location=torch.device('cpu'))
 net.load_state_dict(state_dict["model_state_dict"], strict=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# net = WideResNet_28_4(num_classes=10)  # Initialize the same model class
+# net = WideResNet_28_4(num_classes=10)  # Initialize the same mode/l class
 # net_path = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
 # net = torch.nn.DataParallel(net)
 # state_dict = torch.load(net_path, map_location=torch.device('cpu'))
