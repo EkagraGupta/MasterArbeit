@@ -54,6 +54,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
             Optional[float]: The combined confidence value.
         """
         combined_confidence = reduce(lambda x, y: x * y, confidences)
+        # print(f'Combined confidence: {combined_confidence}')
         return combined_confidence
 
     def __getitem__(self, i: Optional[int]) -> Optional[tuple]:
@@ -75,8 +76,9 @@ class AugmentedDataset(torch.utils.data.Dataset):
             if original == True
             else self.transforms_generated
         )
-        augment_x = augment(x)
 
+        augment_x = augment(x)
+    
         if isinstance(augment_x, tuple):
             confidences = augment_x[1]
             augment_x = augment_x[0]
@@ -223,6 +225,9 @@ def display_image_grid(images, labels, confidences, batch_size):
         "truck",
     ]
 
+    if isinstance(confidences, list):
+        confidences = confidences[1]
+
     # Convert images to a grid
     grid_img = torchvision.utils.make_grid(images, nrow=batch_size)
 
@@ -249,7 +254,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=True, custom=False, augmentation_name="Brightness", augmentation_severity=29, augmentation_sign=True
+        random_cropping=True, aggressive_augmentation=True, custom=True, augmentation_name="Brightness", augmentation_severity=29, augmentation_sign=True
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -259,7 +264,5 @@ if __name__ == "__main__":
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=False
     )
-
     images, labels, confidences = next(iter(trainloader))
-    print(transforms_augmentation)
-    display_image_grid(images, labels, confidences, batch_size=batch_size)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size)

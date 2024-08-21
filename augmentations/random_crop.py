@@ -80,6 +80,10 @@ class RandomCrop:
         if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
             confidence_aa = image[1]
             image = image[0]
+        elif isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], list):
+            confidence_aa = image[1][1]
+            image = image[0]
+
         to_tensor = transforms.ToTensor()
         image = to_tensor(image)
         dim1, dim2 = image.size(1), image.size(2)
@@ -108,12 +112,12 @@ class RandomCrop:
 
         # combine confidence scores if available
         if confidence_aa is not None:
-            confidence_aa = torch.tensor(confidence_aa, dtype=torch.float32)
+            # confidence_aa = torch.tensor(confidence_aa, dtype=torch.float32)
             confidences = (confidence_aa, confidence_rc)
         else:
             confidences = confidence_rc
 
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
-
+        print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')    
         return cropped_image, confidences
