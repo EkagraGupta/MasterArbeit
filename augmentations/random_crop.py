@@ -119,5 +119,5 @@ class RandomCrop:
 
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
-        print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')    
+        # print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')    
         return cropped_image, confidences
