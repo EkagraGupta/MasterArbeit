@@ -32,7 +32,13 @@ class AugmentedDataset(torch.utils.data.Dataset):
         if dataset is not None:
             self.dataset = dataset
         else:
-            self.dataset = datasets.CIFAR10(
+            # CIFAR-10
+            # self.dataset = datasets.CIFAR10(
+            #     root="./data/train", train=True, download=True
+            # )
+
+            # CIFAR-100
+            self.dataset = datasets.CIFAR100(
                 root="./data/train", train=True, download=True
             )
         self.preprocess = transforms_preprocess
@@ -159,8 +165,12 @@ def load_data(
     Returns:
         Optional[tuple]: The training and testing datasets.
     """
-    base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
-    base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
+    # base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
+    # base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
+
+    # CIFAR-100
+    base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
+    base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
 
     """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
     if dataset_split != "full":
