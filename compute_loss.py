@@ -13,7 +13,7 @@ def soft_loss(pred, label, confidence):
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
     # print(f"\nOnehot: {one_hot}\n")
     one_hot.scatter_(dim=1, index=label, src=confidence)
-    # print(f"\nSoftened: {one_hot}\nSum: {torch.sum(one_hot)}")
+    print(f"\nSoftened: {one_hot}\nSum: {torch.sum(one_hot)}")
 
     # Compute weighted KL loss
     kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
@@ -359,7 +359,7 @@ if __name__ == "__main__":
             0.9,
         ]
     )
-    # confidence = torch.ones(labels.shape[0])
+    confidence = torch.ones(labels.shape[0])
     # print(f'outputs: {outputs.shape}\nlables: {labels.shape}\nconf: {confidence.shape}')
 
     # soft loss computation
