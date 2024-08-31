@@ -165,6 +165,7 @@ def load_data(
     Returns:
         Optional[tuple]: The training and testing datasets.
     """
+    # CIFAR-10
     # base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
     # base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
@@ -196,13 +197,13 @@ def load_data(
             transforms_augmentation=transforms_augmentation,
         )
     else:
-        trainset = datasets.CIFAR10(
+        trainset = datasets.CIFAR100(
             root="./data/train",
             train=True,
             download=True,
             transform=transforms_preprocess,
         )
-        testset = datasets.CIFAR10(
+        testset = datasets.CIFAR100(
             root="./data/test",
             train=False,
             transform=transforms_preprocess,
