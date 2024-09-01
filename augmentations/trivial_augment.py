@@ -23,8 +23,8 @@ class CustomTrivialAugmentWide:
         self.augmentation_name = augmentation_name
         self.severity = severity
         self.get_signed = get_signed
-        # self.chance = 1 / 10  # cifar10
-        self.chance = 1 / 100  # cifar100
+        self.chance = 1 / 10  # cifar10
+        # self.chance = 1 / 100  # cifar100
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
         """Applies the augmentation to the given image.
@@ -53,17 +53,6 @@ class CustomTrivialAugmentWide:
         Returns:
             tuple: The augmented image and the computed confidence score.
         """
-        pixelwise_augs = [
-            "Invert",
-            "Equalize",
-            "AutoContrast",
-            "Posterize",
-            "Solarize",
-            "Color",
-            "Contrast",
-            "Brightness",
-            "Sharpness",
-        ]
 
         trivial_augment = CTrivialAugmentWide(
             augmentation_name=self.augmentation_name, severity=self.severity, get_signed=self.get_signed
@@ -129,6 +118,10 @@ class CustomTrivialAugmentWide:
         elif augmentation_type == 'Sharpness':
             confidence_aa = comparison_metrics.sigmoid(
                 augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678)
+        elif augmentation_type == 'Posterize':
+            confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
+        elif augmentation_type == 'Solarize':
+            confidence_aa == comparison_metrics.spatial_correlation_coefficient(im, augment_im)
         else:
             confidence_aa = 1.0
 
