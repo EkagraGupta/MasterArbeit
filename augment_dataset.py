@@ -34,14 +34,14 @@ class AugmentedDataset(torch.utils.data.Dataset):
             self.dataset = dataset
         else:
             # CIFAR-10
-            # self.dataset = datasets.CIFAR10(
-            #     root="./data/train", train=True, download=True
-            # )
-
-            # CIFAR-100
-            self.dataset = datasets.CIFAR100(
+            self.dataset = datasets.CIFAR10(
                 root="./data/train", train=True, download=True
             )
+
+            # CIFAR-100
+            # self.dataset = datasets.CIFAR100(
+            #     root="./data/train", train=True, download=True
+            # )
         self.preprocess = transforms_preprocess
         self.transforms_augmentation = transforms_augmentation
         self.transforms_generated = (
@@ -167,12 +167,12 @@ def load_data(
         Optional[tuple]: The training and testing datasets.
     """
     # CIFAR-10
-    # base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
-    # base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
+    base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
+    base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
 
     # CIFAR-100
-    base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
-    base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
+    # base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
+    # base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
 
     """MODIFICATION: Truncate the dataset to a smaller size for faster testing"""
     if dataset_split != "full":
@@ -198,30 +198,30 @@ def load_data(
             transforms_augmentation=transforms_augmentation,
         )
     else:
-        # trainset = datasets.CIFAR10(
-        #     root="./data/train",
-        #     train=True,
-        #     download=True,
-        #     transform=transforms_preprocess,
-        # )
-        # testset = datasets.CIFAR10(
-        #     root="./data/test",
-        #     train=False,
-        #     transform=transforms_preprocess,
-        #     download=True,
-        # )
-        trainset = datasets.CIFAR100(
+        trainset = datasets.CIFAR10(
             root="./data/train",
             train=True,
             download=True,
             transform=transforms_preprocess,
         )
-        testset = datasets.CIFAR100(
+        testset = datasets.CIFAR10(
             root="./data/test",
             train=False,
             transform=transforms_preprocess,
             download=True,
         )
+        # trainset = datasets.CIFAR100(
+        #     root="./data/train",
+        #     train=True,
+        #     download=True,
+        #     transform=transforms_preprocess,
+        # )
+        # testset = datasets.CIFAR100(
+        #     root="./data/test",
+        #     train=False,
+        #     transform=transforms_preprocess,
+        #     download=True,
+        # )
 
     return trainset, testset
 

@@ -43,21 +43,6 @@ def structural_similarity_calculation(im1: Image.Image, im2: Image.Image):
 
     return ssim_index
 
-
-# def psnr_hvs_calculation(im1: Image.Image, im2: Image.Image, scaling_factor: int = 100):
-#     if not isinstance(im1, torch.Tensor) or not isinstance(im2, torch.Tensor):
-#         to_tensor = transforms.ToTensor()
-#         im1 = to_tensor(im1)
-#         im2 = to_tensor(im2)
-
-#     im1_y, *_ = bt601ycbcr(im1)
-#     im2_y, *_ = bt601ycbcr(im2)
-
-#     psnr_hvs, psnr_hvsm = psnr_hvs_hvsm(im1_y, im2_y)
-#     psnr_normalized = psnr_hvsm / scaling_factor
-#     return min(psnr_normalized, 1.0)
-
-
 def histogram_comparison(im1: Image.Image, im2: Image.Image):
     im1_np = np.array(im1)
     im2_np = np.array(im2)

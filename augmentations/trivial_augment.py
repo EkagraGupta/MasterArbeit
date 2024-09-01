@@ -23,8 +23,8 @@ class CustomTrivialAugmentWide:
         self.augmentation_name = augmentation_name
         self.severity = severity
         self.get_signed = get_signed
-        # self.chance = 1 / 10  # cifar10
-        self.chance = 1 / 100  # cifar100
+        self.chance = 1 / 10  # cifar10
+        # self.chance = 1 / 100  # cifar100
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
         """Applies the augmentation to the given image.
