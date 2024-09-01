@@ -118,10 +118,10 @@ class CustomTrivialAugmentWide:
         elif augmentation_type == 'Sharpness':
             confidence_aa = comparison_metrics.sigmoid(
                 augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678)
-        elif augmentation_type == 'Posterize':
-            confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
-        elif augmentation_type == 'Solarize':
-            confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
+        # elif augmentation_type == 'Posterize':
+        #     confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
+        # elif augmentation_type == 'Solarize':
+        #     confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
         else:
             confidence_aa = 1.0
 
