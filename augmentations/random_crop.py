@@ -23,8 +23,8 @@ class RandomCrop:
         bg_crop: float = 0.01,
         sigma_crop: float = 10,
     ):
-        self.n_class = n_class  # cifar10
-        # self.n_class = 100  # cifar100
+        # self.n_class = n_class  # cifar10
+        self.n_class = 100  # cifar100
         self.chance = 1 / self.n_class 
         self.k = k
         self.sigma_crop = sigma_crop
