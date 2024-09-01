@@ -125,5 +125,5 @@ class CustomTrivialAugmentWide:
         else:
             confidence_aa = 1.0
 
-        print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, list((augmentation_magnitude, confidence_aa))
