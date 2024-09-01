@@ -8,6 +8,7 @@ from typing import Optional
 
 from augmentations.trivial_augment import CustomTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
+from compute_loss import soft_loss
 
 
 class AugmentedDataset(torch.utils.data.Dataset):
@@ -290,3 +291,7 @@ if __name__ == "__main__":
     images, labels, confidences = next(iter(trainloader))
     # display_image_grid(images, labels, confidences, batch_size=batch_size)
     print(f'Conefidence: {confidences}')
+
+    # compute loss
+    # loss = soft_loss(images, labels, confidences)
+    # print(f'Loss: {loss}')
