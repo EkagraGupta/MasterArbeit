@@ -30,10 +30,13 @@ def soft_loss(pred, label, confidence):
     weight = torch.ones_like(prob).float()
     n_classes = pred.size(1)
 
-    one_hot = (torch.ones_like(pred) * (1 - confidence) / (n_classes - 1)).float()
-    one_hot.scatter_(dim=1, index=target, src=confidence)
+    # one_hot = (torch.ones_like(pred) * (1 - confidence) / (n_classes - 1)).float()
+    # one_hot.scatter_(dim=1, index=target, src=confidence)
+    one_hot = torch.zeros_like(pred).float()
+    one_hot.scatter_(dim=1, index=torch.ones_like(target)*(n_classes - 1), src=(1 - prob.float()))
+    one_hot.scatter_(dim=1, index=target, src=prob.float())
     log_prob = F.log_softmax(pred, dim=1)
-    kl = weight * F.kl_div(input=log_prob.float(), target=one_hot.float(), reduction='none').sum(-1)
+    kl = confidence * F.kl_div(input=log_prob.float(), target=one_hot.float(), reduction='none').sum(-1)
     return kl.mean()
 
 
@@ -49,4 +52,4 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     h_loss = criterion(pred, label)
 
-    # print(f'\nSoft Loss: {s_loss:.3f}\n Soft Loss2: {s_loss2:.3f}\nCross Entropy Loss: {h_loss:.3f}')
+    print(f'\nSoft Loss: {s_loss:.3f}\nCross Entropy Loss: {h_loss:.3f}')
