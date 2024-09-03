@@ -16,7 +16,7 @@ def soft_loss(pred, label, confidence):
     # Compute weighted KL loss
     kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)        # Weighted
     # kl = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)                   # Unweighted
-    print(f'KL: {kl}')
+    print(f'KL: {kl.mean()}')
     return kl.mean()
 
 
