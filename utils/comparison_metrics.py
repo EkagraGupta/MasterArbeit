@@ -59,7 +59,6 @@ def histogram_comparison(im1: Image.Image, im2: Image.Image):
                   beta=1, norm_type=cv2.NORM_MINMAX)
 
     metric_val = cv2.compareHist(im1_hist, im2_hist, cv2.HISTCMP_CORREL)
-    # print(f'Histogram Comparison Value: {metric_val:.3f}')
     return metric_val
 
 
@@ -72,9 +71,9 @@ def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
     ssim = StructuralSimilarityIndexMeasure(return_contrast_sensitivity=True)
     structural_value, contrast_value = ssim(im1, im2)
     luminance_value = structural_value / contrast_value
-    # print(f'Structural Value: {structural_value:.3f}\tContrast Value: {contrast_value:.3f}\tLuminance Value: {luminance_value:.3f}')
-    return structural_value.item()
-    # return contrast_value.item()
+    return structural_value.item()      # structural_value
+    # return contrast_value.item()      # contrast_value
+    # return luminance_value.item()     # luminance_value
 
 
 def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):

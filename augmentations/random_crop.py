@@ -22,9 +22,14 @@ class RandomCrop:
         k: int = 2,
         bg_crop: float = 0.01,
         sigma_crop: float = 10,
+        dataset_name: str = 'CIFAR10'
     ):
-        # self.n_class = n_class  # cifar10
-        self.n_class = 100  # cifar100
+        if dataset_name == 'CIFAR10':
+            self.n_class = 10
+        elif dataset_name == 'CIFAR100':
+            self.n_class = 100
+        else:
+            raise ValueError(f"Dataset name {dataset_name} not supported")
         self.chance = 1 / self.n_class 
         self.k = k
         self.sigma_crop = sigma_crop

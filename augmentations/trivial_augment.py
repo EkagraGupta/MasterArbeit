@@ -17,14 +17,18 @@ class CustomTrivialAugmentWide:
     """
 
     def __init__(
-        self, custom: bool = False, augmentation_name: str = None, severity: int = 0, get_signed: bool = False
+        self, custom: bool = False, augmentation_name: str = None, severity: int = 0, get_signed: bool = False, dataset_name: str = 'CIFAR10'
     ):
         self.custom = custom
         self.augmentation_name = augmentation_name
         self.severity = severity
         self.get_signed = get_signed
-        # self.chance = 1 / 10  # cifar10
-        self.chance = 1 / 100  # cifar100
+        if dataset_name == 'CIFAR10':
+            self.chance = 1 / 10
+        elif dataset_name == 'CIFAR100':
+            self.chance = 1 / 100
+        else:
+            raise ValueError(f"Dataset name {dataset_name} not supported")
 
     def __call__(self, im: Optional[Image.Image]) -> Optional[tuple]:
         """Applies the augmentation to the given image.
@@ -61,6 +65,7 @@ class CustomTrivialAugmentWide:
         augmentation_type = next(iter(augment_info.keys()))
         augmentation_magnitude = augment_info[augmentation_type]
 
+        # Testing different image comparison metrics
         # SSIM Calculation
         # confidence_aa = comparison_metrics.structural_similarity_calculation(
         #     im, augment_im)
