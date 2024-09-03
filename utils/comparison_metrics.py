@@ -22,7 +22,7 @@ def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     ncc_matrix = correlate2d(im1_np, im2_np, mode="valid")
     ncc_value = np.max(ncc_matrix) / (im1_np.size)
 
-    return (ncc_value + 1) / 2
+    return (ncc_value + 1.0) / 2.0
 
 
 def structural_similarity_calculation(im1: Image.Image, im2: Image.Image):
@@ -84,7 +84,7 @@ def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):
     # compute the spatial correlation coefficient
     scc = SpatialCorrelationCoefficient()
     spatial_correlation_value = scc(im1, im2)
-    return spatial_correlation_value.item()
+    return (spatial_correlation_value.item() + 1.0) / 2.0
 
 
 # DNT: too slow, uses alexnet/VGG models for comparison
