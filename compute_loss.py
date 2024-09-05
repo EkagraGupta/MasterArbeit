@@ -14,9 +14,13 @@ def soft_loss(pred, label, confidence):
     one_hot.scatter_(dim=1, index=label, src=confidence)
 
     # Compute weighted KL loss
-    kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)        # Weighted
+    kl = confidence * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(
+        -1
+    )  # Weighted
     # kl = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)                   # Unweighted
-    print(f'KL: {kl.mean()}\nconfidence: {confidence}\nlog_prob: {log_prob}\none_hot: {one_hot}')
+    print(
+        f"KL: {kl.mean()}\nconfidence: {confidence}\nlog_prob: {log_prob}\none_hot: {one_hot}"
+    )
     return kl.mean()
 
 
@@ -50,4 +54,4 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     h_loss = criterion(pred, label)
 
-    print(f'\nSoft Loss: {s_loss:.3f}\nCross Entropy Loss: {h_loss:.3f}')
+    print(f"\nSoft Loss: {s_loss:.3f}\nCross Entropy Loss: {h_loss:.3f}")

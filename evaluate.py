@@ -31,16 +31,21 @@ if __name__ == "__main__":
     # net.load_state_dict(torch.load(net_path, map_location=torch.device("cpu")))
 
     # Load the saved model weights
-    net = wideresnet.WideResNet_28_4(10, 'CIFAR10', normalized=True, block=wideresnet.WideBasic, activation_function='silu')
+    net = wideresnet.WideResNet_28_4(
+        10,
+        "CIFAR10",
+        normalized=True,
+        block=wideresnet.WideBasic,
+        activation_function="silu",
+    )
     state_dict_key = "model_state_dict"
-    PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust.pth'
+    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/robust.pth"
 
     net = torch.nn.DataParallel(net)
-    state_dict = torch.load(PATH, map_location=torch.device('cpu'))
+    state_dict = torch.load(PATH, map_location=torch.device("cpu"))
     net.load_state_dict(state_dict[state_dict_key], strict=False)
 
     # net.eval()
-
 
     # Prepare the DataLoader
     transforms_preprocess, transforms_augmentation = create_transforms(

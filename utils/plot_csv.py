@@ -16,13 +16,12 @@ def plot_mean_and_accuracy(file_paths, out_path, augmentation_type):
     for k, file_path in enumerate(file_paths, start=1):
         severity, mean, acc = read_csv(file_path)
         data[k] = {"Severity": severity, "Mean": mean}
-        accuracies[k] = {'Severity': severity, 'Accuracy': acc}
+        accuracies[k] = {"Severity": severity, "Accuracy": acc}
         # if accuracy is None:
         #     accuracy = acc  # Store accuracy from the first file
 
-
     for k in range(1, len(data)):
-        mean_acc += accuracies[k]['Accuracy']
+        mean_acc += accuracies[k]["Accuracy"]
     mean_acc /= len(data) - 1
 
     # for k, values in data.items():
@@ -37,12 +36,13 @@ def plot_mean_and_accuracy(file_paths, out_path, augmentation_type):
     # plt.plot(data[6]["Severity"], data[6]["Mean"], label="Custom Function")
     # plt.plot(data[7]["Severity"], data[7]["Mean"], label="VIF")
 
-    plt.plot(severity, mean_acc, label="Model Accuracy",
-             linestyle="--", color="black")
+    plt.plot(severity, mean_acc, label="Model Accuracy", linestyle="--", color="black")
 
     plt.xlabel("Severity")
     plt.ylabel("Confidence")
-    plt.title(f"Mean for Different Comparison Metrics of {augmentation_type} Augmentation")
+    plt.title(
+        f"Mean for Different Comparison Metrics of {augmentation_type} Augmentation"
+    )
     plt.legend()
     plt.savefig(out_path)
     plt.show()
@@ -50,7 +50,7 @@ def plot_mean_and_accuracy(file_paths, out_path, augmentation_type):
 
 # Example usage
 if __name__ == "__main__":
-    augmentation_type = 'Contrast'
+    augmentation_type = "Contrast"
     file_paths = [
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_contrast_ssim_results.csv",
         # f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_luminance_ssim_results.csv",

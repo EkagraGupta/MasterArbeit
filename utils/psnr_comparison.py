@@ -4,7 +4,8 @@ from torchvision import transforms
 import numpy as np
 import torch
 
-def psnr_operation(im1, im2, scaling_factor=100.):
+
+def psnr_operation(im1, im2, scaling_factor=100.0):
     if not isinstance(im1, torch.Tensor) or not isinstance(im2, torch.Tensor):
         to_tensor = transforms.ToTensor()
         im1 = to_tensor(im1)
@@ -18,11 +19,12 @@ def psnr_operation(im1, im2, scaling_factor=100.):
     return min(psnr_normalized, 1.0)
     # return psnr_hvs
 
-if __name__=='__main__':
-    im1_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png'
-    im2_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png'
+
+if __name__ == "__main__":
+    im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
+    im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
 
     psnr_value = psnr_operation(im1, im2)
-    print(f'PSNR Value: {psnr_value}')
+    print(f"PSNR Value: {psnr_value}")

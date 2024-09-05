@@ -28,7 +28,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
         transforms_preprocess,
         transforms_augmentation,
         transforms_generated=None,
-        robust_samples=0
+        robust_samples=0,
     ):
         if dataset is not None:
             self.dataset = dataset
@@ -86,7 +86,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
         )
 
         augment_x = augment(x)
-    
+
         if isinstance(augment_x, tuple):
             confidences = augment_x[1]
             augment_x = augment_x[0]
@@ -117,7 +117,7 @@ def create_transforms(
     augmentation_name: str = None,
     augmentation_severity: int = 0,
     augmentation_sign: bool = False,
-    dataset_name: str = 'CIFAR10'
+    dataset_name: str = "CIFAR10",
 ) -> Optional[tuple]:
     """Creates preprocessing and augmentation transformations.
 
@@ -150,10 +150,10 @@ def create_transforms(
                 augmentation_name=augmentation_name,
                 severity=augmentation_severity,
                 get_signed=augmentation_sign,
-                dataset_name=dataset_name
+                dataset_name=dataset_name,
             )
         )
-        
+
     if random_cropping:
         augmentations.append(RandomCrop(dataset_name=dataset_name))
 
@@ -166,8 +166,8 @@ def create_transforms(
 def load_data(
     transforms_preprocess,
     transforms_augmentation=None,
-    dataset_split: Optional[int] = 'full',
-    dataset_name: Optional[str] = 'CIFAR10'
+    dataset_split: Optional[int] = "full",
+    dataset_name: Optional[str] = "CIFAR10",
 ) -> Optional[tuple]:
     """Loads and prepares the CIFAR-10 dataset with specified transformations.
 
@@ -179,13 +179,15 @@ def load_data(
     Returns:
         Optional[tuple]: The training and testing datasets.
     """
-    if dataset_name == 'CIFAR10':
+    if dataset_name == "CIFAR10":
         # CIFAR-10
         base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
         base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
-    elif dataset_name == 'CIFAR100':
+    elif dataset_name == "CIFAR100":
         # CIFAR-100
-        base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
+        base_trainset = datasets.CIFAR100(
+            root="./data/train", train=True, download=True
+        )
         base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
     else:
         raise ValueError(f"Dataset {dataset_name} not supported")
@@ -295,7 +297,12 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False, aggressive_augmentation=True, custom=True, augmentation_name="AutoContrast", augmentation_severity=None, augmentation_sign=False
+        random_cropping=False,
+        aggressive_augmentation=True,
+        custom=True,
+        augmentation_name="Rotate",
+        augmentation_severity=30,
+        augmentation_sign=False,
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -307,7 +314,7 @@ if __name__ == "__main__":
     )
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size)
-    print(f'Conefidence: {confidences}')
+    print(f"Conefidence: {confidences}")
 
     # compute loss
     # loss = soft_loss(images, labels, confidences)

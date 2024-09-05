@@ -5,8 +5,19 @@ import cv2
 from scipy.signal import correlate2d
 from skimage.metrics import structural_similarity
 from torchvision import transforms
+
 # from psnr_hvsm.torch import psnr_hvs_hvsm, bt601ycbcr
-from torchmetrics.image import VisualInformationFidelity, StructuralSimilarityIndexMeasure, SpatialCorrelationCoefficient, LearnedPerceptualImagePatchSimilarity, PeakSignalNoiseRatio, RelativeAverageSpectralError, PeakSignalNoiseRatioWithBlockedEffect, SpectralAngleMapper, UniversalImageQualityIndex
+from torchmetrics.image import (
+    VisualInformationFidelity,
+    StructuralSimilarityIndexMeasure,
+    SpatialCorrelationCoefficient,
+    LearnedPerceptualImagePatchSimilarity,
+    PeakSignalNoiseRatio,
+    RelativeAverageSpectralError,
+    PeakSignalNoiseRatioWithBlockedEffect,
+    SpectralAngleMapper,
+    UniversalImageQualityIndex,
+)
 
 
 def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
@@ -32,31 +43,34 @@ def structural_similarity_calculation(im1: Image.Image, im2: Image.Image):
 
     # compute the structural similarity index
     # ssim_index, _ = structural_similarity(im1_np, im2_np, full=True, channel_axis=2, gaussian_weights=True, sigma=1.5, use_sample_covariance=False, data_range=1.0)
-    ssim_index, _ = structural_similarity(im1=im1_np,
-                                          im2=im2_np,
-                                          gaussian_weights=True,
-                                          sigma=1.5,
-                                          use_sample_covariance=False,
-                                          full=True,
-                                          channel_axis=2,
-                                          data_range=1.0)
+    ssim_index, _ = structural_similarity(
+        im1=im1_np,
+        im2=im2_np,
+        gaussian_weights=True,
+        sigma=1.5,
+        use_sample_covariance=False,
+        full=True,
+        channel_axis=2,
+        data_range=1.0,
+    )
 
     return ssim_index
+
 
 def histogram_comparison(im1: Image.Image, im2: Image.Image):
     im1_np = np.array(im1)
     im2_np = np.array(im2)
 
-    im1_hist = cv2.calcHist([im1_np], [0, 1, 2], None, [
-                            256, 256, 256], [0, 256, 0, 256, 0, 256])
+    im1_hist = cv2.calcHist(
+        [im1_np], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256]
+    )
     im1_hist[255, 255, 255] = 0
-    cv2.normalize(im1_hist, im1_hist, alpha=0,
-                  beta=1, norm_type=cv2.NORM_MINMAX)
-    im2_hist = cv2.calcHist([im2_np], [0, 1, 2], None, [
-                            256, 256, 256], [0, 256, 0, 256, 0, 256])
+    cv2.normalize(im1_hist, im1_hist, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
+    im2_hist = cv2.calcHist(
+        [im2_np], [0, 1, 2], None, [256, 256, 256], [0, 256, 0, 256, 0, 256]
+    )
     im2_hist[255, 255, 255] = 0
-    cv2.normalize(im2_hist, im2_hist, alpha=0,
-                  beta=1, norm_type=cv2.NORM_MINMAX)
+    cv2.normalize(im2_hist, im2_hist, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
 
     metric_val = cv2.compareHist(im1_hist, im2_hist, cv2.HISTCMP_CORREL)
     return metric_val
@@ -71,8 +85,9 @@ def multiscale_structural_similarity(im1: Image.Image, im2: Image.Image):
     ssim = StructuralSimilarityIndexMeasure(return_contrast_sensitivity=True)
     structural_value, contrast_value = ssim(im1, im2)
     luminance_value = structural_value / contrast_value
-    return structural_value.item()      # structural_value
+    return structural_value.item()  # structural_value
     # return luminance_value.item()     # luminance_value
+
 
 def multiscale_contrast_similarity(im1: Image.Image, im2: Image.Image):
     to_tensor = transforms.ToTensor()
@@ -82,7 +97,7 @@ def multiscale_contrast_similarity(im1: Image.Image, im2: Image.Image):
     # compute the structural similarity index
     ssim = StructuralSimilarityIndexMeasure(return_contrast_sensitivity=True)
     structural_value, contrast_value = ssim(im1, im2)
-    return contrast_value.item()      # contrast_value
+    return contrast_value.item()  # contrast_value
 
 
 def spatial_correlation_coefficient(im1: Image.Image, im2: Image.Image):
@@ -183,24 +198,27 @@ def visual_information_fidelity(im1: Image.Image, im2: Image.Image):
     vif_value = vif(im1, im2)
     return vif_value.item()
 
-def gaussian(x, a, b, c):
-    gauss = a * np.exp(-0.5 * ((x - b) / c) ** 2)
-    if np.any(gauss>1.0):
-        gauss.where(gauss>1.0, 1.0, inplace=True)
+
+def gaussian(x, a, b, c, d):
+    gauss = d + a * np.exp(-0.5 * ((x - b) / c) ** 2)
+    if np.any(gauss > 1.0):
+        gauss.where(gauss > 1.0, 1.0, inplace=True)
     return gauss
+
 
 def custom_function(x, a, b, c, d, e):
     # best values: [ 1.2438093   7.18937766 -0.87255438 -0.0573816  -0.2456411 ]
     result = a / (1.0 + np.exp(-b * (x - c))) + d * x + e
-    if np.any(result>1.0):
-        result.where(result>1.0, 1.0, inplace=True)
-        
+    if np.any(result > 1.0):
+        result.where(result > 1.0, 1.0, inplace=True)
+
     return result
+
 
 def sigmoid(x, a, b, c):
     result = a / (1.0 + np.exp(-b * (x - c)))
-    if np.any(result>1.0):
-        result.where(result>1.0, 1.0, inplace=True)
+    if np.any(result > 1.0):
+        result.where(result > 1.0, 1.0, inplace=True)
     return result
 
 

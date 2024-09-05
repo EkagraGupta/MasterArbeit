@@ -1,5 +1,10 @@
 from augment_dataset import create_transforms, load_data
-from utils.plot_non_linear_curve import plot_mean_std, get_mean_std, save_to_csv, plot_mean_std_from_csv
+from utils.plot_non_linear_curve import (
+    plot_mean_std,
+    get_mean_std,
+    save_to_csv,
+    plot_mean_std_from_csv,
+)
 from wideresnet import WideResNet_28_4
 from evaluate import evaluate_model
 import torch
@@ -21,15 +26,14 @@ def get_plot(augmentation_type, model, dataset_split=100):
 
         for severity in range(0, 31):
             total_time = 0
-            print(
-                f"Processing severity: {severity} with sign: {enable_sign}\n")
+            print(f"Processing severity: {severity} with sign: {enable_sign}\n")
             preprocess, augmentation = create_transforms(
                 random_cropping=False,
                 aggressive_augmentation=True,
                 custom=True,
                 augmentation_name=augmentation_type,
                 augmentation_severity=severity,
-                augmentation_sign=enable_sign
+                augmentation_sign=enable_sign,
             )
             trainset, _ = load_data(
                 transforms_preprocess=preprocess,
@@ -69,14 +73,20 @@ def get_plot(augmentation_type, model, dataset_split=100):
             if model is not None:
                 accuracy = evaluate_model(model=model, dataloader=dataloader)
                 accuracy_list.append(accuracy)
-                print(f'Accuracy: {accuracy*100:.2f}%')
+                print(f"Accuracy: {accuracy*100:.2f}%")
             else:
                 print(f"\nModel not provided. Skipping model evaluation.\n")
 
     # plot_mean_std(mean_list, std_list, accuracy_list,
     #               augmentation_type, augmentation_magnitudes_list)
-    csv_filename = save_to_csv(mean_list, std_list, accuracy_list,
-                augmentation_type, augmentation_magnitudes_list, time_list)
+    csv_filename = save_to_csv(
+        mean_list,
+        std_list,
+        accuracy_list,
+        augmentation_type,
+        augmentation_magnitudes_list,
+        time_list,
+    )
     plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
 
     print(
@@ -104,10 +114,10 @@ if __name__ == "__main__":
 
     # Load the saved model weights
     net = WideResNet_28_4(num_classes=10)
-    PATH = '/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth'
+    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth"
     net = torch.nn.DataParallel(net)
-    state_dict = torch.load(PATH, map_location=torch.device('cpu'))
+    state_dict = torch.load(PATH, map_location=torch.device("cpu"))
     net.load_state_dict(state_dict["model_state_dict"], strict=False)
- 
+
     for augmentation_type in augmentation_types:
         get_plot(augmentation_type, model=net, dataset_split=500)

@@ -444,7 +444,7 @@ class CTrivialAugmentWide(torch.nn.Module):
         fill: Optional[List[float]] = None,
         severity: int = 0,
         augmentation_name: str = "None",
-        get_signed: bool = False
+        get_signed: bool = False,
     ) -> None:
         super().__init__()
         self.num_magnitude_bins = num_magnitude_bins
@@ -552,7 +552,6 @@ class CTrivialAugmentWide(torch.nn.Module):
         # if self.get_signed and op_name not in ['Solarize', 'Posterize']:
         #     magnitude *= -1.0
         """MODIFICATION: Set magnitude and remove signed"""
-
 
         # return _apply_op(
         #     img, op_name, magnitude, interpolation=self.interpolation, fill=fill

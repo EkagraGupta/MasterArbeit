@@ -22,15 +22,15 @@ class RandomCrop:
         k: int = 2,
         bg_crop: float = 0.01,
         sigma_crop: float = 10,
-        dataset_name: str = 'CIFAR10'
+        dataset_name: str = "CIFAR10",
     ):
-        if dataset_name == 'CIFAR10':
+        if dataset_name == "CIFAR10":
             self.n_class = 10
-        elif dataset_name == 'CIFAR100':
+        elif dataset_name == "CIFAR100":
             self.n_class = 100
         else:
             raise ValueError(f"Dataset name {dataset_name} not supported")
-        self.chance = 1 / self.n_class 
+        self.chance = 1 / self.n_class
         self.k = k
         self.sigma_crop = sigma_crop
         self.bg_crop = bg_crop
@@ -86,7 +86,9 @@ class RandomCrop:
         if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
             confidence_aa = image[1]
             image = image[0]
-        elif isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], list):
+        elif (
+            isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], list)
+        ):
             confidence_aa = image[1][1]
             image = image[0]
 
@@ -125,5 +127,5 @@ class RandomCrop:
 
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
-        # print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')    
+        # print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')
         return cropped_image, confidences

@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 from scipy.signal import correlate2d
 
+
 def normalized_cross_correlation(im1: Image.Image, im2: Image.Image):
     # Convert images to grayscale numpy arrays
     im1_np = np.array(im1.convert("L"), dtype=np.float32)
