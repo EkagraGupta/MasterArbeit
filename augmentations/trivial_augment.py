@@ -447,22 +447,26 @@ class CombinedTrivialAugmentWide(torch.nn.Module):
             confidence_aa = comparison_metrics.spatial_correlation_coefficient(
                 im, augment_im
             )
-        # elif augmentation_type == "Equalize":
-        #     confidence_aa = comparison_metrics.multiscale_structural_similarity(
-        #         im, augment_im
-        #     )
-        # elif augmentation_type == "AutoContrast":
-        #     confidence_aa = comparison_metrics.multiscale_contrast_similarity(
-        #         im, augment_im
-        #     )
-        # elif augmentation_type == "Rotate":
-        #     confidence_aa = comparison_metrics.gaussian(
-        #         augmentation_magnitude,
-        #         a=5.83337531e-01,
-        #         b=-5.36740882e-03,
-        #         c=2.16250254e01,
-        #         d=4.16662431e-01,
-        #     )
+        elif augmentation_type == "Equalize":
+            confidence_aa = comparison_metrics.multiscale_structural_similarity(
+                im, augment_im
+            )
+            if confidence_aa<0.0:
+                print(f'CONFICENCE_AA IS NEGATIVE FOR {augmentation_type}: {confidence_aa}')
+        elif augmentation_type == "AutoContrast":
+            confidence_aa = comparison_metrics.multiscale_contrast_similarity(
+                im, augment_im
+            )
+            if confidence_aa<0.0:
+                print(f'CONFICENCE_AA IS NEGATIVE FOR {augmentation_type}: {confidence_aa}')
+        elif augmentation_type == "Rotate":
+            confidence_aa = comparison_metrics.gaussian(
+                augmentation_magnitude,
+                a=5.83337531e-01,
+                b=-5.36740882e-03,
+                c=2.16250254e01,
+                d=4.16662431e-01,
+            )
         else:
             confidence_aa = 1.0
 
