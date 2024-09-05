@@ -18,9 +18,9 @@ def soft_loss(pred, label, confidence):
         -1
     )  # Weighted
     # kl = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)                   # Unweighted
-    print(
-        f"KL: {kl.mean()}\nconfidence: {confidence}\nlog_prob: {log_prob}\none_hot: {one_hot}"
-    )
+    # print(
+    #     f"KL: {kl.mean()}\nconfidence: {confidence}\nlog_prob: {log_prob}\none_hot: {one_hot}"
+    # )
     return kl.mean()
 
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # Test the soft loss function
     pred = torch.randn(1, 10)
     label = torch.tensor([3])
-    confidence = torch.tensor([1.0])
+    confidence = torch.tensor([0.0])
     s_loss = soft_loss(pred, label, confidence)
     # s_loss2 = soft_loss2(pred, label, confidence)
 
