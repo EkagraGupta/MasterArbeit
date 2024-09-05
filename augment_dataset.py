@@ -294,7 +294,7 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 10
+    batch_size = 1000
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -313,8 +313,10 @@ if __name__ == "__main__":
         trainset, batch_size=batch_size, shuffle=False
     )
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size)
-    print(f"Conefidence: {confidences}")
+    # display_image_grid(images, labels, confidences, batch_size=batch_size)
+    print(f"Confidence: {confidences}")
+    
+    print(len(confidences[1]))
 
     # compute loss
     # loss = soft_loss(images, labels, confidences)
