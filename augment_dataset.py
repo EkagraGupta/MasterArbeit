@@ -294,7 +294,7 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 1000
+    batch_size = 50000
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -314,10 +314,18 @@ if __name__ == "__main__":
     )
     images, labels, confidences = next(iter(trainloader))
     # display_image_grid(images, labels, confidences, batch_size=batch_size)
-    print(f"Confidence: {confidences}")
-    
-    print(len(confidences[1]))
+    # print(f"Confidence: {confidences}")
+    confidence = confidences[1]
 
+    import torch
+    conf = torch.sigmoid((-1) * confidence)
+    
+    for i in range(len(confidence)):
+        # if confidence[i] < 0.0:
+        #     print(f'Confidence is negative at index {i}: {confidence[i]}\nMagnitude: {confidences[0][i]}')
+
+        if confidence[i] < 0.0:
+            print(f'Confidence is negative at index {i}: {confidence[i]}\nMagnitude: {confidences[0][i]}')
     # compute loss
     # loss = soft_loss(images, labels, confidences)
     # print(f'Loss: {loss}')
