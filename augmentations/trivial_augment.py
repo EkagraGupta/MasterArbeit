@@ -486,9 +486,6 @@ class CombinedTrivialAugmentWide(torch.nn.Module):
             f", num_magnitude_bins={self.num_magnitude_bins}"
             f", interpolation={self.interpolation}"
             f", fill={self.fill}"
-            f", severity={self.severity}"
-            f", augmentation_name={self.augmentation_name}"
-            f", get_signed={self.get_signed}"
             f")"
         )
 
