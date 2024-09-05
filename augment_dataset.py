@@ -314,12 +314,7 @@ if __name__ == "__main__":
     )
     images, labels, confidences = next(iter(trainloader))
     # display_image_grid(images, labels, confidences, batch_size=batch_size)
-    print(f"Confidence: {confidences}")
-    confidences = confidences[1]
-
-    for i in range(len(confidences)):
-        if confidences[i]<0.0:
-            print(confidences[i])
+    print(f"Confidence: {confidences[1]}")
 
     # compute loss
     # loss = soft_loss(labels, labels, confidences)

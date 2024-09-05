@@ -440,23 +440,29 @@ class CombinedTrivialAugmentWide(torch.nn.Module):
                 augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
             )
         elif augmentation_type == "Posterize":
+            if augmentation_magnitude==0.0:
+                confidence_aa = 1.0
             confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
         elif augmentation_type == "Solarize":
+            if augmentation_magnitude==0.0:
+                confidence_aa = 1.0
             confidence_aa = comparison_metrics.spatial_correlation_coefficient(
                 im, augment_im
             )
         elif augmentation_type == "Equalize":
+            if augmentation_magnitude==0.0:
+                confidence_aa = 1.0
             confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
         elif augmentation_type == "AutoContrast":
+            if augmentation_magnitude==0.0:
+                confidence_aa = 1.0
             confidence_aa = comparison_metrics.multiscale_contrast_similarity(
                 im, augment_im
             )
-            if confidence_aa==0.0:
-                confidence_aa += 1e-3
         elif augmentation_type == "Rotate":
             confidence_aa = comparison_metrics.gaussian(
                 augmentation_magnitude,
@@ -468,7 +474,7 @@ class CombinedTrivialAugmentWide(torch.nn.Module):
         else:
             confidence_aa = 1.0
 
-        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
