@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # Test the soft loss function
     pred = torch.randn(1, 10)
     label = torch.tensor([3])
-    confidence = torch.tensor([0.5])
+    confidence = torch.tensor([1.0])
     s_loss = soft_loss(pred, label, confidence)
     # s_loss2 = soft_loss2(pred, label, confidence)
 

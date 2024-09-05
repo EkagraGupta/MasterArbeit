@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Optional
 
-from augmentations.trivial_augment import CustomTrivialAugmentWide
+from augmentations.trivial_augment import CombinedTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
 from compute_loss import soft_loss
 
@@ -136,8 +136,16 @@ def create_transforms(
     ]
 
     if aggressive_augmentation:
+        # augmentations.append(
+        #     CustomTrivialAugmentWide(
+        #         custom=custom,
+        #         augmentation_name=augmentation_name,
+        #         severity=augmentation_severity,
+        #         get_signed=augmentation_sign,
+        #         dataset_name=dataset_name
+        #     )
         augmentations.append(
-            CustomTrivialAugmentWide(
+            CombinedTrivialAugmentWide(
                 custom=custom,
                 augmentation_name=augmentation_name,
                 severity=augmentation_severity,
@@ -145,6 +153,7 @@ def create_transforms(
                 dataset_name=dataset_name
             )
         )
+        
     if random_cropping:
         augmentations.append(RandomCrop(dataset_name=dataset_name))
 
@@ -286,7 +295,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True, aggressive_augmentation=True, custom=True, augmentation_name="Brightness", augmentation_severity=29, augmentation_sign=True
+        random_cropping=False, aggressive_augmentation=True, custom=True, augmentation_name="AutoContrast", augmentation_severity=None, augmentation_sign=False
     )
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -297,8 +306,8 @@ if __name__ == "__main__":
         trainset, batch_size=batch_size, shuffle=False
     )
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size)
-    # print(f'Conefidence: {confidences}')
+    display_image_grid(images, labels, confidences, batch_size=batch_size)
+    print(f'Conefidence: {confidences}')
 
     # compute loss
     # loss = soft_loss(images, labels, confidences)
