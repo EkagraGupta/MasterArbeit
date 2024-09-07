@@ -25,23 +25,6 @@ def custom_function(x, a, b, c, d, e):
 
     return result
 
-def poly_2(x, a, b):
-    y = a * x + b
-    if np.any(y > 1.0):
-        y.where(y > 1.0, 1.0, inplace=True)
-    return y
-
-# i want a poly function that gives out minimum value of 0.5 and maximum value of 1.0 on different severity values
-def poly_3(x, a, b, c, d):
-    y = a * x**3 + b * x**2 + c * x + d
-    if np.any(y > 1.0):
-        y.where(y > 1.0, 1.0, inplace=True)
-    return y
-
-def fit_poly_3(function, x, y):
-    initial_guess = [1, 0, 1, np.mean(y)]
-    popt, pcov = curve_fit(function, x, y, p0=initial_guess)
-    return popt, pcov
 
 def fit_custom(function, x, y):
     initial_guess = [1, 0, 0, 0, 0]
@@ -67,6 +50,16 @@ def sigmoid(x, a, b, c):
 
 def fit_sigmoid(function, x, y):
     popt, pcov = curve_fit(function, x, y, p0=[1, 1, 1])
+    return popt, pcov
+
+def poly_2(x, a, b):
+    y = a * x**2 + b
+    y = np.where(y > 1.0, 1.0, y)
+    return y
+
+def fit_poly_2(function, x, y):
+    initial_guess = [1, np.mean(y)]
+    popt, pcov = curve_fit(function, x, y, p0=initial_guess)
     return popt, pcov
 
 
@@ -118,13 +111,16 @@ if __name__ == "__main__":
     model_accuracy = data["Accuracy"]
 
     # Fit the gaussian function to the data
-    popt, pcov = fit_poly_3(poly_3, augmentation_magnitude, model_accuracy)
-    print(f"Fitted Gaussian Parameters: {popt}")
-    plot_curves(
-        gaussian,
-        augmentation_magnitude,
-        model_accuracy,
-        augmentation_mean,
-        augmentation_std,
-        popt,
-    )
+    # popt, pcov = fit_poly_3(poly_3, augmentation_magnitude, model_accuracy)
+    # print(f"Fitted Gaussian Parameters: {popt}")
+    # plot_curves(
+    #     gaussian,
+    #     augmentation_magnitude,
+    #     model_accuracy,
+    #     augmentation_mean,
+    #     augmentation_std,
+    #     popt,
+    # )
+
+    severity = np.arange(0, 31, 1)
+    

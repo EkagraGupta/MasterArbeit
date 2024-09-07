@@ -358,7 +358,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         visibility = comparison_metrics.custom_poly_common(severity=augmentation_severity, max_severity=self.num_magnitude_bins)
 
         confidence_aa = (1 - (1 - self.chance) * (1 - visibility) ** self.k)  # The non-linear function
-        print(f'\nAugmentation type: {augmentation_type}\tMagnitude: {augmentation_magnitude}\tSeverity: {augmentation_severity}\tvisibility: {visibility}\tConfidence: {confidence_aa}\n')
+        # print(f'\nAugmentation type: {augmentation_type}\tMagnitude: {augmentation_magnitude}\tSeverity: {augmentation_severity}\tvisibility: {visibility}\tConfidence: {confidence_aa}\n')
 
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
