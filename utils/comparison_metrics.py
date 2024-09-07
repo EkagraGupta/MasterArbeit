@@ -221,6 +221,10 @@ def sigmoid(x, a, b, c):
         result.where(result > 1.0, 1.0, inplace=True)
     return result
 
+def custom_poly_common(severity, max_severity=30):
+    return 1.0 - (0.5 / max_severity) * severity
+
+
 
 if __name__ == "__main__":
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"

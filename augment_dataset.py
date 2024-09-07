@@ -286,7 +286,7 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 5
+    batch_size = 500
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,

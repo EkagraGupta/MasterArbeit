@@ -31,6 +31,18 @@ def poly_2(x, a, b):
         y.where(y > 1.0, 1.0, inplace=True)
     return y
 
+# i want a poly function that gives out minimum value of 0.5 and maximum value of 1.0 on different severity values
+def poly_3(x, a, b, c, d):
+    y = a * x**3 + b * x**2 + c * x + d
+    if np.any(y > 1.0):
+        y.where(y > 1.0, 1.0, inplace=True)
+    return y
+
+def fit_poly_3(function, x, y):
+    initial_guess = [1, 0, 1, np.mean(y)]
+    popt, pcov = curve_fit(function, x, y, p0=initial_guess)
+    return popt, pcov
+
 def fit_custom(function, x, y):
     initial_guess = [1, 0, 0, 0, 0]
     popt, pcov = curve_fit(function, x, y, p0=initial_guess)
@@ -104,11 +116,9 @@ if __name__ == "__main__":
     augmentation_mean = data["Mean"]
     augmentation_std = data["Std"]
     model_accuracy = data["Accuracy"]
-    # set a lower constraint on the model accuracy
-    # model_accuracy.where(model_accuracy > 0.4, 0.42, inplace=True)
 
     # Fit the gaussian function to the data
-    popt, pcov = fit_gaussian(gaussian, augmentation_magnitude, model_accuracy)
+    popt, pcov = fit_poly_3(poly_3, augmentation_magnitude, model_accuracy)
     print(f"Fitted Gaussian Parameters: {popt}")
     plot_curves(
         gaussian,
@@ -118,17 +128,3 @@ if __name__ == "__main__":
         augmentation_std,
         popt,
     )
-    # popt_fit = [ 5.83337531e-01, -5.36740882e-03, 2.16250254e+01, 4.16662431e-01]
-    # gaussian_rotation = gaussian(augmentation_magnitude, *popt_fit)
-    # plot_curves(gaussian_rotation, augmentation_magnitude,
-    #             model_accuracy, augmentation_mean, augmentation_std, popt_fit)
-
-    # Fit the two_poly function to the data
-    # popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
-    # print(f'Fitted Two Poly Parameters: {popt}')
-    # plot_curves(sigmoid, augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
-
-    # fit the sigmoid function to the data
-    # popt, pcov = fit_sigmoid(sigmoid, augmentation_magnitude, model_accuracy)
-    # print(f'Fitted Sigmoid Parameters: {popt}')
-    # plot_curves(augmentation_magnitude, model_accuracy, augmentation_mean, augmentation_std, popt)
