@@ -97,16 +97,16 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        # "ShearY",
-        # "ShearY",
-        # "TranslateX",
-        # "TranslateY",
-        # "Rotate",
-        # "Brightness",
-        # "Color",
-        # "Contrast",
-        # "Sharpness",
-        # "Posterize",
+        "ShearY",
+        "ShearY",
+        "TranslateX",
+        "TranslateY",
+        "Rotate",
+        "Brightness",
+        "Color",
+        "Contrast",
+        "Sharpness",
+        "Posterize",
         "Solarize",
         # "AutoContrast",
         # "Equalize",
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     # Load the saved model weights
     net = WideResNet_28_4(num_classes=10)
-    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth"
+    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/standard.pth"
     net = torch.nn.DataParallel(net)
     state_dict = torch.load(PATH, map_location=torch.device("cpu"))
     net.load_state_dict(state_dict["model_state_dict"], strict=False)

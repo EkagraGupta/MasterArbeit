@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Optional
 
-from augmentations.trivial_augment import CombinedTrivialAugmentWide
+from augmentations.trivial_augment import CustomTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
 from compute_loss import soft_loss
 
@@ -136,16 +136,8 @@ def create_transforms(
     ]
 
     if aggressive_augmentation:
-        # augmentations.append(
-        #     CustomTrivialAugmentWide(
-        #         custom=custom,
-        #         augmentation_name=augmentation_name,
-        #         severity=augmentation_severity,
-        #         get_signed=augmentation_sign,
-        #         dataset_name=dataset_name
-        #     )
         augmentations.append(
-            CombinedTrivialAugmentWide(
+            CustomTrivialAugmentWide(
                 custom=custom,
                 augmentation_name=augmentation_name,
                 severity=augmentation_severity,

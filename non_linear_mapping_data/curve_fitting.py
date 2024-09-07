@@ -25,6 +25,11 @@ def custom_function(x, a, b, c, d, e):
 
     return result
 
+def poly_2(x, a, b):
+    y = a * x + b
+    if np.any(y > 1.0):
+        y.where(y > 1.0, 1.0, inplace=True)
+    return y
 
 def fit_custom(function, x, y):
     initial_guess = [1, 0, 0, 0, 0]
