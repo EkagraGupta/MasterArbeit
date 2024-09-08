@@ -8,7 +8,7 @@ from typing import Optional
 
 from augmentations.trivial_augment import CustomTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
-from augmentations.random_augment import RandomChoiceTransforms
+from augmentations.random_choice import RandomChoiceTransforms
 from compute_loss import soft_loss
 
 
