@@ -121,7 +121,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         # self.severity = severity
         # self.augmentation_name = augmentation_name
         # self.get_signed = get_signed
-        self.k = 2
+        # self.k = 2
         """MODIFICATION: Add severity"""
 
         if dataset_name == "CIFAR10":
@@ -325,10 +325,10 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
-        elif augmentation_type == "AutoContrast":
-            confidence_aa = comparison_metrics.multiscale_structural_similarity(
-                im, augment_im
-            )
+        # elif augmentation_type == "AutoContrast":
+        #     confidence_aa = comparison_metrics.multiscale_structural_similarity(
+        #         im, augment_im
+        #     )
         # elif augmentation_type == "Rotate":
         #     confidence_aa = comparison_metrics.gaussian(
         #         augmentation_magnitude,
