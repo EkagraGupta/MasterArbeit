@@ -188,8 +188,8 @@ def load_data(
     """
     if dataset_name == "CIFAR10":
         # CIFAR-10
-        base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
-        base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
+        base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=False)
+        base_testset = datasets.CIFAR10(root="./data/test", train=False, download=False)
     elif dataset_name == "CIFAR100":
         # CIFAR-100
         base_trainset = datasets.CIFAR100(
@@ -301,10 +301,10 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 10
+    batch_size = 1
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
+        random_cropping=True,
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Equalize",
