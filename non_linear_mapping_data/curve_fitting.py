@@ -52,13 +52,15 @@ def fit_sigmoid(function, x, y):
     popt, pcov = curve_fit(function, x, y, p0=[1, 1, 1])
     return popt, pcov
 
+
 def poly_2(x, a, b):
     y = a * x**2 + b
     y = np.where(y > 1.0, 1.0, y)
     return y
 
+
 def fit_poly_2(function, x, y):
-    initial_guess = [1, np.mean(y)]
+    initial_guess = [1.0, 1.0]
     popt, pcov = curve_fit(function, x, y, p0=initial_guess)
     return popt, pcov
 
@@ -122,5 +124,11 @@ if __name__ == "__main__":
     #     popt,
     # )
 
-    severity = np.arange(0, 31, 1)
-    
+    severity = np.array([0, 15, 30])
+    visibility = np.array([1.0, 0.8, 0.5])
+
+    popt, pcov = fit_poly_2(poly_2, severity, visibility)
+    print(f"Fitted Parameters: {popt}")
+
+    y_fit = poly_2(15, *popt)
+    print(y_fit)
