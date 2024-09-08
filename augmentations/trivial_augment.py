@@ -245,7 +245,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         augment_im, augment_info = self.apply_standard_augmentation(im)
         augmentation_type = next(iter(augment_info.keys()))
         augmentation_magnitude = augment_info[augmentation_type]
-        visibility = 1.0  # Default value
+        confidence_aa = 1.0  # Default value
 
         # Testing different image comparison metrics
         # SSIM Calculation
