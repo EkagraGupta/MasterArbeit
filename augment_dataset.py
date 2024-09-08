@@ -149,16 +149,20 @@ def create_transforms(
     #         )
     #     )
 
-    custom_trivial_augment = CustomTrivialAugmentWide(custom=custom,
-                                                      augmentation_name=augmentation_name,
-                                                      severity=augmentation_severity,
-                                                      get_signed=augmentation_sign,
-                                                      dataset_name=dataset_name)
+    custom_trivial_augment = CustomTrivialAugmentWide(
+        custom=custom,
+        augmentation_name=augmentation_name,
+        severity=augmentation_severity,
+        get_signed=augmentation_sign,
+        dataset_name=dataset_name,
+    )
     random_crop_augment = RandomCrop(dataset_name=dataset_name)
 
     if aggressive_augmentation:
         augmentations.append(
-            RandomChoiceTransforms([custom_trivial_augment, random_crop_augment], [0.5, 0.5])
+            RandomChoiceTransforms(
+                [custom_trivial_augment, random_crop_augment], [0.5, 0.5]
+            )
         )
 
     if random_cropping:
@@ -188,8 +192,8 @@ def load_data(
     """
     if dataset_name == "CIFAR10":
         # CIFAR-10
-        base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=False)
-        base_testset = datasets.CIFAR10(root="./data/test", train=False, download=False)
+        base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
+        base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
     elif dataset_name == "CIFAR100":
         # CIFAR-100
         base_trainset = datasets.CIFAR100(
@@ -319,7 +323,7 @@ if __name__ == "__main__":
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=False
     )
-    
+
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size)
 
