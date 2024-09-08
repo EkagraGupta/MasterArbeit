@@ -272,11 +272,11 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     augmentation_magnitude, a=1.0, b=0.0, c=0.56)
 
         if augmentation_type == "ShearX":
-            visibility = 1.0 - comparison_metrics.gaussian(
+            confidence_aa = comparison_metrics.gaussian(
                 augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
             )
         elif augmentation_type == "ShearY":
-            visibility = 1.0 - comparison_metrics.gaussian(
+            confidence_aa = comparison_metrics.gaussian(
                 augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
             )
         elif augmentation_type == "TranslateX":
@@ -287,7 +287,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 dim1=dim1, dim2=dim2, tx=tx, ty=0
             )
             k = 3
-            # confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         elif augmentation_type == "TranslateY":
             dim1, dim2 = im.size[0], im.size[1]
             ty = augment_info[augmentation_type]
@@ -296,33 +296,33 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 dim1=dim1, dim2=dim2, tx=0, ty=ty
             )
             k = 2
-            # confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         elif augmentation_type == "Brightness":
-            visibility = 1.0 - comparison_metrics.sigmoid(
+            confidence_aa = comparison_metrics.sigmoid(
                 augmentation_magnitude, 0.9753, 17.0263, -0.8297
             )
         elif augmentation_type == "Contrast":
-            visibility = 1.0 - comparison_metrics.sigmoid(
+            confidence_aa = comparison_metrics.sigmoid(
                 augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
             )
         elif augmentation_type == "Color":
-            confidence_aa = 1.0 - comparison_metrics.sigmoid(
+            confidence_aa = comparison_metrics.sigmoid(
                 augmentation_magnitude, 1.0, 4.93537641, -1.5837580
             )
         elif augmentation_type == "Sharpness":
-            visibility = 1.0 - comparison_metrics.sigmoid(
+            confidence_aa = comparison_metrics.sigmoid(
                 augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
             )
         elif augmentation_type == "Posterize":
-            visibility = 1.0 - comparison_metrics.multiscale_structural_similarity(
+            confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
         elif augmentation_type == "Solarize":
-            visibility = 1.0 - comparison_metrics.spatial_correlation_coefficient(
+            confidence_aa = comparison_metrics.spatial_correlation_coefficient(
                 im, augment_im
             )
         elif augmentation_type == "Equalize":
-            visibility = 1.0 - comparison_metrics.multiscale_structural_similarity(
+            confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
         elif augmentation_type == "AutoContrast":
@@ -359,9 +359,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
 
         # visibility = comparison_metrics.custom_poly_common(severity=augmentation_severity, max_severity=self.num_magnitude_bins)
 
-        confidence_aa = (
-            1 - (1 - self.chance) * (1 - visibility) ** self.k
-        )  # The non-linear function
+        # confidence_aa = (
+        #     1 - (1 - self.chance) * (1 - visibility) ** self.k
+        # )  # The non-linear function
         # print(f'\nAugmentation type: {augmentation_type}\tMagnitude: {augmentation_magnitude}\tvisibility: {visibility}\tConfidence: {confidence_aa}\n')
         # confidence_aa = np.float32(confidence_aa)
         confidence_aa = np.where(confidence_aa < 0.2, 0.2, confidence_aa)
