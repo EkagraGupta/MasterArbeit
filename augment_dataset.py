@@ -8,6 +8,7 @@ from typing import Optional
 
 from augmentations.trivial_augment import CustomTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
+from augmentations.random_augment import RandomChoiceTransforms
 from compute_loss import soft_loss
 
 
@@ -86,12 +87,14 @@ class AugmentedDataset(torch.utils.data.Dataset):
         )
 
         augment_x = augment(x)
-
+        # print(f'Augment_x: {augment_x}')
         if isinstance(augment_x, tuple):
             confidences = augment_x[1]
             augment_x = augment_x[0]
             if isinstance(confidences, tuple):
                 combined_confidence = self.get_confidence(confidences)
+            elif isinstance(confidences, list):
+                combined_confidence = confidences[1]
             else:
                 combined_confidence = confidences
 
@@ -135,15 +138,27 @@ def create_transforms(
         transforms.RandomCrop(32, padding=4),
     ]
 
+    # if aggressive_augmentation:
+    #     augmentations.append(
+    #         CustomTrivialAugmentWide(
+    #             custom=custom,
+    #             augmentation_name=augmentation_name,
+    #             severity=augmentation_severity,
+    #             get_signed=augmentation_sign,
+    #             dataset_name=dataset_name,
+    #         )
+    #     )
+
+    custom_trivial_augment = CustomTrivialAugmentWide(custom=custom,
+                                                      augmentation_name=augmentation_name,
+                                                      severity=augmentation_severity,
+                                                      get_signed=augmentation_sign,
+                                                      dataset_name=dataset_name)
+    random_crop_augment = RandomCrop(dataset_name=dataset_name)
+
     if aggressive_augmentation:
         augmentations.append(
-            CustomTrivialAugmentWide(
-                custom=custom,
-                augmentation_name=augmentation_name,
-                severity=augmentation_severity,
-                get_signed=augmentation_sign,
-                dataset_name=dataset_name,
-            )
+            RandomChoiceTransforms([custom_trivial_augment, random_crop_augment], [0.5, 0.5])
         )
 
     if random_cropping:
@@ -286,7 +301,7 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 500
+    batch_size = 1000
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -304,10 +319,8 @@ if __name__ == "__main__":
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=False
     )
+    
     images, labels, confidences = next(iter(trainloader))
     # display_image_grid(images, labels, confidences, batch_size=batch_size)
-    print(f"Confidence: {confidences[1]}")
 
-    # compute loss
-    # loss = soft_loss(labels, labels, confidences)
-    # print(f'Loss: {loss}')
+    # print(confidences)
