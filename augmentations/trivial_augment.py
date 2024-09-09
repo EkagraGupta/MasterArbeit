@@ -362,7 +362,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         )  # The non-linear function
 
         confidence_aa = np.where(confidence_aa < 0.2, 0.2, confidence_aa)
-        print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
