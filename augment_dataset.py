@@ -295,18 +295,18 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 1
+    batch_size = 1000
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
+        random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        # augmentation_name="Equalize",
-        # augmentation_severity=None,
-        # augmentation_sign=False,
+        augmentation_name="Equalize",
+        augmentation_severity=None,
+        augmentation_sign=False,
     )
 
-    print(f'Transforms preprocess: {transforms_preprocess}\ntransforms_augmentation: {transforms_augmentation}')
+    # print(f'Transforms preprocess: {transforms_preprocess}\ntransforms_augmentation: {transforms_augmentation}')
 
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -318,6 +318,6 @@ if __name__ == "__main__":
     )
 
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size)
 
-    # print(confidences)
+    # print(f'Confidences: {confidences}')

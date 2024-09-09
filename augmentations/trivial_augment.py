@@ -325,20 +325,18 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
+        elif augmentation_type == "Rotate":
+            confidence_aa = comparison_metrics.gaussian(
+                augmentation_magnitude,
+                a=5.83337531e-01,
+                b=-5.36740882e-03,
+                c=2.16250254e01,
+                d=4.16662431e-01,
+            )
         # elif augmentation_type == "AutoContrast":
-        #     confidence_aa = comparison_metrics.multiscale_structural_similarity(
+        #     confidence_aa = comparison_metrics.multiscale_contrast_similarity(
         #         im, augment_im
         #     )
-        # elif augmentation_type == "Rotate":
-        #     confidence_aa = comparison_metrics.gaussian(
-        #         augmentation_magnitude,
-        #         a=5.83337531e-01,
-        #         b=-5.36740882e-03,
-        #         c=2.16250254e01,
-        #         d=4.16662431e-01,
-        #     )
-        # else:
-        #     confidence_aa = 1.0
 
         # if augmentation_type in ['ShearX', 'ShearY', 'Brightness', 'Color', 'Contrast', 'Sharpness']:
         #     max_magnitude = 0.99
@@ -364,7 +362,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         # )  # The non-linear function
         # print(f'\nAugmentation type: {augmentation_type}\tMagnitude: {augmentation_magnitude}\tvisibility: {visibility}\tConfidence: {confidence_aa}\n')
         # confidence_aa = np.float32(confidence_aa)
-        confidence_aa = np.where(confidence_aa < 0.2, 0.2, confidence_aa)
+        confidence_aa = np.where(confidence_aa < 0.5, 0.5, confidence_aa)
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
