@@ -33,16 +33,6 @@ class AugmentedDataset(torch.utils.data.Dataset):
     ):
         if dataset is not None:
             self.dataset = dataset
-        elif dataset.__class__.__name__ == "CIFAR10":
-            # CIFAR-10
-            self.dataset = datasets.CIFAR10(
-                root="./data/train", train=True, download=True
-            )
-        elif dataset.__class__.__name__ == "CIFAR100":
-            # CIFAR-100
-            self.dataset = datasets.CIFAR100(
-                root="./data/train", train=True, download=True
-            )
 
         self.preprocess = transforms_preprocess
         self.transforms_augmentation = transforms_augmentation
@@ -161,7 +151,7 @@ def create_transforms(
     if aggressive_augmentation:
         augmentations.append(
             RandomChoiceTransforms(
-                [custom_trivial_augment, random_crop_augment], [0.5, 0.5]
+                [custom_trivial_augment, random_crop_augment], [0.93, 0.07]
             )
         )
 
@@ -308,13 +298,16 @@ if __name__ == "__main__":
     batch_size = 1
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
+        random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        augmentation_name="Equalize",
-        augmentation_severity=None,
-        augmentation_sign=False,
+        # augmentation_name="Equalize",
+        # augmentation_severity=None,
+        # augmentation_sign=False,
     )
+
+    print(f'Transforms preprocess: {transforms_preprocess}\ntransforms_augmentation: {transforms_augmentation}')
+
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
         transforms_augmentation=transforms_augmentation,
@@ -327,4 +320,4 @@ if __name__ == "__main__":
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size)
 
-    print(confidences)
+    # print(confidences)
