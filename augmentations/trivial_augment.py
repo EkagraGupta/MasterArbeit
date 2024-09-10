@@ -271,15 +271,15 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         # confidence_aa = comparison_metrics.gaussian(
         #     augmentation_magnitude, a=1.0, b=0.0, c=0.56)
 
-        if augmentation_type == "ShearX":
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
-            )
-        elif augmentation_type == "ShearY":
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
-            )
-        elif augmentation_type == "TranslateX":
+        # if augmentation_type == "ShearX":
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
+        #     )
+        # elif augmentation_type == "ShearY":
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
+        #     )
+        if augmentation_type == "TranslateX":
             dim1, dim2 = im.size[0], im.size[1]
             tx = augment_info[augmentation_type]
             random_crop = RandomCrop()
@@ -297,42 +297,42 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             )
             k = 2
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
-        elif augmentation_type == "Brightness":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9753, 17.0263, -0.8297
-            )
-        elif augmentation_type == "Contrast":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
-            )
-        elif augmentation_type == "Color":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 1.0, 4.93537641, -1.5837580
-            )
-        elif augmentation_type == "Sharpness":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
-            )
-        elif augmentation_type == "Posterize":
-            confidence_aa = comparison_metrics.multiscale_structural_similarity(
-                im, augment_im
-            )
-        elif augmentation_type == "Solarize":
-            confidence_aa = comparison_metrics.spatial_correlation_coefficient(
-                im, augment_im
-            )
-        elif augmentation_type == "Equalize":
-            confidence_aa = comparison_metrics.multiscale_structural_similarity(
-                im, augment_im
-            )
-        elif augmentation_type == "Rotate":
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude,
-                a=5.83337531e-01,
-                b=-5.36740882e-03,
-                c=2.16250254e01,
-                d=4.16662431e-01,
-            )
+        # elif augmentation_type == "Brightness":
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 0.9753, 17.0263, -0.8297
+        #     )
+        # elif augmentation_type == "Contrast":
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
+        #     )
+        # elif augmentation_type == "Color":
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 1.0, 4.93537641, -1.5837580
+        #     )
+        # elif augmentation_type == "Sharpness":
+        #     confidence_aa = comparison_metrics.sigmoid(
+        #         augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
+        #     )
+        # elif augmentation_type == "Posterize":
+        #     confidence_aa = comparison_metrics.multiscale_structural_similarity(
+        #         im, augment_im
+        #     )
+        # elif augmentation_type == "Solarize":
+        #     confidence_aa = comparison_metrics.spatial_correlation_coefficient(
+        #         im, augment_im
+        #     )
+        # elif augmentation_type == "Equalize":
+        #     confidence_aa = comparison_metrics.multiscale_structural_similarity(
+        #         im, augment_im
+        #     )
+        # elif augmentation_type == "Rotate":
+        #     confidence_aa = comparison_metrics.gaussian(
+        #         augmentation_magnitude,
+        #         a=5.83337531e-01,
+        #         b=-5.36740882e-03,
+        #         c=2.16250254e01,
+        #         d=4.16662431e-01,
+        #     )
         # elif augmentation_type == "AutoContrast":
         #     confidence_aa = comparison_metrics.multiscale_contrast_similarity(
         #         im, augment_im
