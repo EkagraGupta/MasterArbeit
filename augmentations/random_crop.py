@@ -97,7 +97,7 @@ class RandomCrop:
         dim1, dim2 = image.size(1), image.size(2)
 
         # Create background
-        bg = torch.ones((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
+        bg = torch.zeros((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
         bg[:, dim1 : dim1 * 2, dim2 : dim2 * 2] = image  # Put image at the center
 
         # calculate random offsets.
