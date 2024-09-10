@@ -151,7 +151,7 @@ def create_transforms(
     if aggressive_augmentation:
         augmentations.append(
             RandomChoiceTransforms(
-                [custom_trivial_augment, random_crop_augment], [0.93, 0.07]
+                [custom_trivial_augment, random_crop_augment], [0.8, 0.2]
             )
         )
 
