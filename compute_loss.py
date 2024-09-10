@@ -102,6 +102,24 @@ def soft_loss(pred, label, confidence):
     print(f"kl: {kl.shape}")
     return kl.mean()
 
+def soft_ce(pred, label, confidence):
+    log_prob = F.log_softmax(pred, dim=1)
+    print(f"log_prob: {log_prob.shape}")
+    n_class = pred.size(1)
+    
+    label = label.unsqueeze(1)
+    print(f"label: {label.shape}")
+    confidence = confidence.unsqueeze(1).float()
+    print(f"confidence: {confidence.shape}")
+    one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
+    print(f"one_hot: {one_hot.shape}\n{one_hot}")
+    one_hot.scatter_(dim=1, index=label, src=confidence)
+    print(f"one_hot_soft: {one_hot.shape}\n{one_hot}")
+    loss = -torch.sum(one_hot * log_prob, dim=1)
+    print(f"loss: {loss.shape}")
+    loss = loss.mean()
+    print(f"loss: {loss.item()}")
+    return loss
 
 if __name__ == "__main__":
     # Test the soft loss function
@@ -170,11 +188,13 @@ if __name__ == "__main__":
             ],
         ]
     )
-    confidences = torch.tensor([0.9994, 0.9919, 1.0000, 1.0000, 0.9804])
+    confidences = torch.tensor([0.9994, 0.9919, 1.0, 1.0, 0.9804])
 
     # Compute the soft loss
-    loss = soft_loss(outputs, labels, confidences)
-    print(f"Soft loss: {loss.item()}")
+    # loss = soft_loss(outputs, labels, confidences)
+    # print(f"Soft loss: {loss.item()}")
+    loss = soft_ce(outputs, labels, confidences)
+    # print(f"Soft loss: {loss.item()}")
 
     # Cross-entropy loss
     loss2 = F.cross_entropy(outputs, labels)
