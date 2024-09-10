@@ -333,10 +333,10 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 c=2.16250254e01,
                 d=4.16662431e-01,
             )
-        elif augmentation_type == "AutoContrast":
-            confidence_aa = comparison_metrics.multiscale_contrast_similarity(
-                im, augment_im
-            )
+        # elif augmentation_type == "AutoContrast":
+        #     confidence_aa = comparison_metrics.multiscale_contrast_similarity(
+        #         im, augment_im
+        #     )
 
         # if augmentation_type in ['ShearX', 'ShearY', 'Brightness', 'Color', 'Contrast', 'Sharpness']:
         #     max_magnitude = 0.99
@@ -361,7 +361,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     1 - (1 - self.chance) * (1 - visibility) ** self.k
         # )  # The non-linear function
 
-        confidence_aa = np.where(confidence_aa < 0.1, 0.1, confidence_aa)
+        # confidence_aa = np.where(confidence_aa < 0.1, 0.1, confidence_aa)
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
