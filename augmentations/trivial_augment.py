@@ -192,11 +192,11 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     )
 
     def forward(self, im: torch.Tensor) -> Tensor:
-        if self.custom:
-            augment_im, augment_info = self.apply_custom_augmentation(im)
-            return augment_im, augment_info
-        else:
-            return self.apply_standard_augmentation(im)
+        # if self.custom:
+        augment_im, augment_info = self.apply_custom_augmentation(im)
+        return augment_im, augment_info
+        # else:
+        #     return self.apply_standard_augmentation(im)
 
     def apply_standard_augmentation(
         self, im: Tensor
@@ -246,6 +246,10 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         augmentation_type = next(iter(augment_info.keys()))
         augmentation_magnitude = augment_info[augmentation_type]
         confidence_aa = 1.0  # Default value
+
+        if self.custom==False:
+            # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+            return augment_im, [augmentation_magnitude, torch.tensor(confidence_aa)]
 
         # Testing different image comparison metrics
         # SSIM Calculation
@@ -361,19 +365,19 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     1 - (1 - self.chance) * (1 - visibility) ** self.k
         # )  # The non-linear function
 
-        confidence_aa = torch.tensor(np.where(confidence_aa < self.chance, self.chance, confidence_aa))
-        # print(f"\nAugmentation info: {augment_info}\tconf: {type(confidence_aa)}\n")
+        confidence_aa = torch.from_numpy(np.where(confidence_aa < self.chance, self.chance, confidence_aa))
+        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
         self, im: Optional[Image.Image]
     ) -> Optional[Tuple[Image.Image, List[float]]]:
-        if self.custom:
-            augment_im, augment_info = self.apply_custom_augmentation(im)
-            return augment_im, augment_info
-        else:
-            augment_im, _ = self.apply_standard_augmentation(im)
-            return augment_im, 1.0
+        # if self.custom:
+        augment_im, augment_info = self.apply_custom_augmentation(im)
+        return augment_im, augment_info
+        # else:
+        #     augment_im, _ = self.apply_standard_augmentation(im)
+        #     return augment_im 
 
     def __repr__(self):
         s = (

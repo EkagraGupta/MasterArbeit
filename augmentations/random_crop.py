@@ -122,7 +122,7 @@ class RandomCrop:
                 1 - (1 - self.chance) * (1 - visibility) ** self.k
             )  # The non-linear function
         else:
-            confidence_rc = 1.0
+            confidence_rc = torch.tensor(1.0)
 
         # combine confidence scores if available
         if confidence_aa is not None:
@@ -134,5 +134,5 @@ class RandomCrop:
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
         confidences = torch.tensor(confidences, dtype=torch.float32)
-        # print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {type(confidences)}')
+        # print(f'confidence_rc: {type(confidence_rc)}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')
         return cropped_image, confidences

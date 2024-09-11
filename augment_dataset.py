@@ -292,10 +292,11 @@ def display_image_grid(images, labels, confidences, batch_size):
         )
         ax.axis("off")
     plt.show()
+    
 
 
 if __name__ == "__main__":
-    batch_size = 50000
+    batch_size = 1000
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -304,6 +305,7 @@ if __name__ == "__main__":
         augmentation_name="Equalize",
         augmentation_severity=None,
         augmentation_sign=False,
+        dataset_name="CIFAR10",
     )
 
     # print(f'Transforms preprocess: {transforms_preprocess}\ntransforms_augmentation: {transforms_augmentation}')
@@ -319,5 +321,5 @@ if __name__ == "__main__":
 
     images, labels, confidences = next(iter(trainloader))
     # display_image_grid(images, labels, confidences, batch_size=batch_size)
-
+    print(f'Confidence type: {type(confidences)}\nSingle conf: {type(confidences[0])}')
     print(f'transfroms_augmentation: {transforms_augmentation}\n\nConfidences: {confidences}')
