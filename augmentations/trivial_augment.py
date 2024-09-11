@@ -290,8 +290,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=tx, ty=0
             )
-            k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+            # k = 2
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
         elif augmentation_type == "TranslateY":
             dim1, dim2 = im.size[0], im.size[1]
             ty = augment_info[augmentation_type]
@@ -299,8 +299,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=0, ty=ty
             )
-            k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
+            # k = 2
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
         # elif augmentation_type == "Brightness":
         #     confidence_aa = comparison_metrics.sigmoid(
         #         augmentation_magnitude, 0.9753, 17.0263, -0.8297
@@ -372,12 +372,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
     def __call__(
         self, im: Optional[Image.Image]
     ) -> Optional[Tuple[Image.Image, List[float]]]:
-        # if self.custom:
         augment_im, augment_info = self.apply_custom_augmentation(im)
         return augment_im, augment_info
-        # else:
-        #     augment_im, _ = self.apply_standard_augmentation(im)
-        #     return augment_im 
 
     def __repr__(self):
         s = (

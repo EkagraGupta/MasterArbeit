@@ -126,13 +126,12 @@ class RandomCrop:
 
         # combine confidence scores if available
         if confidence_aa is not None:
-            # confidence_aa = torch.tensor(confidence_aa, dtype=torch.float32)
             confidences = (confidence_aa, confidence_rc)
         else:
             confidences = confidence_rc
 
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
-        confidences = torch.tensor(confidences, dtype=torch.float32)
+        confidences = confidences.to(torch.float32)
         # print(f'confidence_rc: {type(confidence_rc)}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')
         return cropped_image, confidences
