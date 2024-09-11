@@ -5,7 +5,6 @@ import numpy as np
 
 def soft_loss(pred, label, confidence, reweight=False):
     log_prob = F.log_softmax(pred, dim=1)
-    print(f"log_prob: {log_prob.shape}")
     n_class = pred.size(1)
 
     # Make soft one-hot target
