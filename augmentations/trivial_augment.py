@@ -286,7 +286,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=tx, ty=0
             )
-            k = 3
+            k = 2
             confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
         elif augmentation_type == "TranslateY":
             dim1, dim2 = im.size[0], im.size[1]
