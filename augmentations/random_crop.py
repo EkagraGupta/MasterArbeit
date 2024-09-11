@@ -3,6 +3,8 @@ from torchvision import transforms
 from typing import Optional
 from PIL import Image
 
+from utils.compute_prob import ComputeProb
+
 
 class RandomCrop:
     """A class to apply a random crop transformation to an image. This class
@@ -20,7 +22,7 @@ class RandomCrop:
         self,
         n_class: int = 10,
         k: int = 2,
-        bg_crop: float = 0.01,
+        bg_crop: float = 1.0,
         sigma_crop: float = 10,
         dataset_name: str = "CIFAR10",
         custom: bool = False
@@ -57,9 +59,9 @@ class RandomCrop:
             x = torch.randn((1)) * sigma
             if abs(x) <= limit:
                 return int(x)
-        return 0
+        return int(0)
 
-    def compute_visibility(self, dim1: int, dim2: int, tx: int, ty: int) -> float:
+    def compute_visibility(self, dim1: int, dim2: int, tx: float, ty: float) -> float:
         """Computes the visibility of the cropped uimage within the background.
 
         Args:
@@ -84,7 +86,6 @@ class RandomCrop:
             Optional[tuple]: The cropped image and the computed confidence values.
         """
         confidence_aa = None
-
         if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
             confidence_aa = image[1]
             image = image[0]
@@ -103,9 +104,7 @@ class RandomCrop:
         bg[:, dim1 : dim1 * 2, dim2 : dim2 * 2] = image  # Put image at the center
 
         # calculate random offsets.
-        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(
-            self.sigma_crop, dim2
-        )
+        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(self.sigma_crop, dim2)
 
         # define the cropping boundaries.
         left, right = tx + dim1, tx + dim1 * 2
@@ -117,6 +116,9 @@ class RandomCrop:
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
 
+        # prob_crop = ComputeProb(self.bg_crop, max_prob=1.0, pow=4.0, n_classes=self.n_class)
+        # print(f'prob_crop: {prob_crop}')
+
         if self.custom:
             # compute visibility and confidence score
             visibility = self.compute_visibility(dim1, dim2, tx, ty)
@@ -125,15 +127,14 @@ class RandomCrop:
             )  # The non-linear function
         else:
             confidence_rc = torch.tensor(1.0)
-
         if confidence_aa is not None:
             # Sequential application of the RandomCrop
             # REPAIR NEED TO BE DONE
             confidences = (confidence_aa, confidence_rc)
-            # confidences = confidences.clone()
             return cropped_image, confidences
         else:
             # Parallel application of the RandomCrop
             if isinstance(confidence_rc, float):
                 confidence_rc = torch.tensor(confidence_rc)
+            # print(f'confidence_rc: {(confidence_rc)}')
             return cropped_image, confidence_rc

@@ -87,7 +87,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
                 combined_confidence = confidences[1]
             else:
                 combined_confidence = confidences
-
+                
         augment_x = self.preprocess(augment_x)
 
         if self.robust_samples == 0:
@@ -156,7 +156,7 @@ def create_transforms(
         )
 
     if random_cropping:
-        augmentations.append(RandomCrop(dataset_name=dataset_name))
+        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
@@ -186,9 +186,7 @@ def load_data(
         base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
     elif dataset_name == "CIFAR100":
         # CIFAR-100
-        base_trainset = datasets.CIFAR100(
-            root="./data/train", train=True, download=True
-        )
+        base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
         base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
     else:
         raise ValueError(f"Dataset {dataset_name} not supported")
@@ -285,26 +283,27 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
 
 if __name__ == "__main__":
     batch_size = 10
-
+    DATASET_NAME = "CIFAR100"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=False,
+        random_cropping=False,
+        aggressive_augmentation=True,
         custom=True,
-        # augmentation_name="Equalize",
-        # augmentation_severity=None,
-        # augmentation_sign=False,
-        dataset_name="CIFAR10",
+        augmentation_name="TranslateX",
+        augmentation_severity=25,
+        augmentation_sign=False,
+        dataset_name=DATASET_NAME,
     )
 
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
         transforms_augmentation=transforms_augmentation,
+        dataset_name=DATASET_NAME
     )
 
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=True
     )
-
+    print(transforms_augmentation)
     classes = trainset.dataset.classes
 
     images, labels, confidences = next(iter(trainloader))
