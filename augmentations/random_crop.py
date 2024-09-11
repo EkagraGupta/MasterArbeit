@@ -23,6 +23,7 @@ class RandomCrop:
         bg_crop: float = 0.01,
         sigma_crop: float = 10,
         dataset_name: str = "CIFAR10",
+        custom: bool = False
     ):
         if dataset_name == "CIFAR10":
             self.n_class = 10
@@ -34,6 +35,7 @@ class RandomCrop:
         self.k = k
         self.sigma_crop = sigma_crop
         self.bg_crop = bg_crop
+        self.custom = custom
 
     def draw_offset(
         self,
@@ -81,7 +83,7 @@ class RandomCrop:
         Returns:
             Optional[tuple]: The cropped image and the computed confidence values.
         """
-        confidence_aa = None
+        confidence_aa = 1.0
 
         if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
             confidence_aa = image[1]
@@ -112,11 +114,15 @@ class RandomCrop:
         # crop the image
         cropped_image = bg[:, left:right, top:bottom]
 
-        # compute visibility and confidence score
-        visibility = self.compute_visibility(dim1, dim2, tx, ty)
-        confidence_rc = (
-            1 - (1 - self.chance) * (1 - visibility) ** self.k
-        )  # The non-linear function
+
+        if self.custom:
+            # compute visibility and confidence score
+            visibility = self.compute_visibility(dim1, dim2, tx, ty)
+            confidence_rc = (
+                1 - (1 - self.chance) * (1 - visibility) ** self.k
+            )  # The non-linear function
+        else:
+            confidence_rc = 1.0
 
         # combine confidence scores if available
         if confidence_aa is not None:

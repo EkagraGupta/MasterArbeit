@@ -146,7 +146,7 @@ def create_transforms(
         get_signed=augmentation_sign,
         dataset_name=dataset_name,
     )
-    random_crop_augment = RandomCrop(dataset_name=dataset_name)
+    random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
 
     if aggressive_augmentation:
         augmentations.append(
@@ -298,8 +298,8 @@ if __name__ == "__main__":
     batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=False,
+        random_cropping=False,
+        aggressive_augmentation=True,
         custom=True,
         augmentation_name="Equalize",
         augmentation_severity=None,
@@ -320,4 +320,4 @@ if __name__ == "__main__":
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size)
 
-    # print(f'Confidences: {confidences}')
+    print(f'transfroms_augmentation: {transforms_augmentation}\n\nConfidences: {confidences}')
