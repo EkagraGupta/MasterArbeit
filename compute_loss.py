@@ -3,123 +3,34 @@ from torch.nn import functional as F
 import torch.nn as nn
 import numpy as np
 
-
-def soft_loss2(pred, label, confidence):
-    n_class = pred.size(1)
-    print(f"label: {label.shape}\nconfidence: {confidence.shape}\npred: {pred.shape}")
-    one_hot = torch.full_like(pred, fill_value=(confidence / (n_class - 1)).item())
-    one_hot.scatter_(dim=1, index=label.unsqueeze(1), src=confidence.unsqueeze(1))
-    log_prob = F.log_softmax(pred, dim=1)
-    print(f"one_hot: {one_hot}\nlog_prob: {log_prob.shape}")
-
-    return F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1).mean()
-
-
-def smooth_crossentropy(pred, gold, smoothing=0.1):
-    n_class = pred.size(1)
-
-    one_hot = torch.full_like(pred, fill_value=smoothing / (n_class - 1))
-    one_hot.scatter_(dim=1, index=gold.unsqueeze(1), value=1.0 - smoothing)
-    log_prob = F.log_softmax(pred, dim=1)
-    print(f"one_hot: {one_hot}")
-    return F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1).mean()
-
-
-def soft_loss_paper(pred, label, confidence):
-    label = label.unsqueeze(1)
-    target = label.long()
-    prob = 1 - (label - target)
-    n_class = pred.size(1)
-    weight = torch.clone(prob).float()
-    weight = confidence.unsqueeze(1)
-
-    one_hot = torch.zeros_like(pred)
-    one_hot.scatter_(
-        dim=1,
-        index=torch.ones_like(target) * (n_class - 1),
-        src=(1 - prob.float()) * 1.0,
-    )
-    one_hot.scatter_(dim=1, index=target, src=prob.float())
-    log_prob = F.log_softmax(pred, dim=1)
-    kl = weight * F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
-    return kl.mean()
-
-
-def ECE(y_true, y_pred, num_bins=11):
-    y_pred = torch.nn.functional.softmax(y_pred)
-    # print(y_pred.shape)
-    y_p = np.squeeze(y_pred.cpu().numpy())
-    y_t = np.squeeze(y_true.cpu().numpy())
-    pred_y = np.argmax(y_p, axis=-1)
-    # print(pred_y)
-    correct = (pred_y == y_t).astype(np.float32)
-    prob_y = np.max(y_p, axis=-1)
-    # print(prob_y.shape)
-    # print(y_t.shape)
-    bins = np.linspace(start=0, stop=1.0, num=num_bins)
-    binned = np.digitize(prob_y, bins=bins, right=True)
-
-    errors = np.zeros(num_bins)
-    confs = np.zeros(num_bins)
-    counts = np.zeros(num_bins)
-    corrects = np.zeros(num_bins)
-    accs = np.zeros(num_bins)
-    o = 0
-    for b in range(num_bins):
-        mask = binned == b
-        # if np.any(mask):
-        count = np.sum(mask)
-        counts[b] = count
-        corrects[b] = np.sum(correct[mask])
-        if count > 0:
-            accs[b] = corrects[b] / counts[b]
-            confs[b] = np.mean(prob_y[mask])
-            errors[b] = np.abs(accs[b] - np.mean(prob_y[mask])) * counts[b]
-
-    return np.sum(errors) / y_pred.shape[0], confs, accs, np.array(counts)
-
-
-def soft_loss(pred, label, confidence):
+def soft_loss(pred, label, confidence, reweight=False):
     log_prob = F.log_softmax(pred, dim=1)
     print(f"log_prob: {log_prob.shape}")
     n_class = pred.size(1)
 
     # Make soft one-hot target
     label = label.unsqueeze(1)
-    print(f"label: {label.shape}")
     confidence = confidence.unsqueeze(1).float()
-    print(f"confidence: {confidence}")
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
-    print(f"one_hot: {one_hot.shape}")
     one_hot.scatter_(dim=1, index=label, src=confidence)
-    print(f"one_hot: {one_hot}")
 
     # Compute weighted KL loss
-    kl_uw = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
-    kl_uw = kl_uw.unsqueeze(1)
-    print(f"kl_unweighted: {kl_uw.shape}")  # Unweighted
-    kl = confidence * kl_uw  # Weighted
-    print(f"kl: {kl.shape}")
+    kl = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
+    kl = kl.unsqueeze(1)  # Unweighted
+    if reweight:
+        kl = confidence * kl  # Weighted
     return kl.mean()
 
-def soft_ce(pred, label, confidence):
+def cross_entropy_loss(pred, label):
     log_prob = F.log_softmax(pred, dim=1)
-    print(f"log_prob: {log_prob.shape}")
     n_class = pred.size(1)
-    
+
     label = label.unsqueeze(1)
-    print(f"label: {label.shape}")
-    confidence = confidence.unsqueeze(1).float()
-    print(f"confidence: {confidence.shape}")
-    one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
-    print(f"one_hot: {one_hot.shape}\n{one_hot}")
-    one_hot.scatter_(dim=1, index=label, src=confidence)
-    print(f"one_hot_soft: {one_hot.shape}\n{one_hot}")
-    loss = -torch.sum(one_hot * log_prob, dim=1)
-    print(f"loss: {loss.shape}")
-    loss = loss.mean()
-    print(f"loss: {loss.item()}")
-    return loss
+    one_hot = torch.zeros_like(pred).scatter_(dim=1, index=label, value=1.0)
+    kl_uw = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
+    kl_uw = kl_uw.unsqueeze(1)
+
+    return kl_uw.mean()
 
 if __name__ == "__main__":
     # Test the soft loss function
@@ -189,13 +100,15 @@ if __name__ == "__main__":
         ]
     )
     confidences = torch.tensor([0.9994, 0.9919, 1.0, 1.0, 0.9804])
+    # confidences = torch.ones(outputs.size(0), dtype=torch.float32)
 
     # Compute the soft loss
-    # loss = soft_loss(outputs, labels, confidences)
-    # print(f"Soft loss: {loss.item()}")
-    loss = soft_ce(outputs, labels, confidences)
-    # print(f"Soft loss: {loss.item()}")
+    loss = soft_loss(outputs, labels, confidences, reweight=True)
+    print(f"Soft loss: {loss.item()}")
 
     # Cross-entropy loss
-    loss2 = F.cross_entropy(outputs, labels)
+    # loss2 = F.cross_entropy(outputs, labels)
+    loss2 = cross_entropy_loss(outputs, labels)
     print(f"Cross-entropy loss: {loss2.item()}")
+
+    print(f'Soft loss and CE are equal?\t{bool(loss == loss2)}')

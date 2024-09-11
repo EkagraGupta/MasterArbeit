@@ -114,6 +114,8 @@ class RandomCrop:
         # crop the image
         cropped_image = bg[:, left:right, top:bottom]
 
+        to_pil = transforms.ToPILImage()
+        cropped_image = to_pil(cropped_image)
 
         if self.custom:
             # compute visibility and confidence score
@@ -124,14 +126,14 @@ class RandomCrop:
         else:
             confidence_rc = torch.tensor(1.0)
 
-        # combine confidence scores if available
         if confidence_aa is not None:
+            # Sequential application of the RandomCrop
+            # REPAIR NEED TO BE DONE
             confidences = (confidence_aa, confidence_rc)
+            # confidences = confidences.clone()
+            return cropped_image, confidences
         else:
-            confidences = confidence_rc
-
-        to_pil = transforms.ToPILImage()
-        cropped_image = to_pil(cropped_image)
-        confidences = confidences.to(torch.float32)
-        # print(f'confidence_rc: {type(confidence_rc)}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')
-        return cropped_image, confidences
+            # Parallel application of the RandomCrop
+            if isinstance(confidence_rc, float):
+                confidence_rc = torch.tensor(confidence_rc)
+            return cropped_image, confidence_rc

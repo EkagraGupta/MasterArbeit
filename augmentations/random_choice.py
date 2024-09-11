@@ -2,7 +2,7 @@ import random
 
 
 class RandomChoiceTransforms:
-    def __init__(self, transforms, p, custom=False):
+    def __init__(self, transforms, p):
         assert len(transforms) == len(
             p
         ), "The number of transforms and probabilities must match."

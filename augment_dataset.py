@@ -246,7 +246,7 @@ def load_data(
     return trainset, testset
 
 
-def display_image_grid(images, labels, confidences, batch_size):
+def display_image_grid(images, labels, confidences, batch_size, classes):
     """
     Displays a grid of images with labels and confidence scores.
 
@@ -256,24 +256,12 @@ def display_image_grid(images, labels, confidences, batch_size):
         confidences (torch.Tensor): Corresponding confidence scores for the images.
         batch_size (int): Number of images to display in the grid.
     """
-    classes = [
-        "airplane",
-        "automobile",
-        "bird",
-        "cat",
-        "deer",
-        "dog",
-        "frog",
-        "horse",
-        "ship",
-        "truck",
-    ]
 
     if isinstance(confidences, list):
         confidences = confidences[1]
 
     # Convert images to a grid
-    grid_img = torchvision.utils.make_grid(images, nrow=batch_size)
+    grid_img = torchvision.utils.make_grid(images, nrow=batch_size // 10)
 
     # Convert from tensor to numpy for display
     npimg = grid_img.numpy()
@@ -296,19 +284,17 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 1000
+    batch_size = 10
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
+        random_cropping=True,
+        aggressive_augmentation=False,
         custom=True,
-        augmentation_name="Equalize",
-        augmentation_severity=None,
-        augmentation_sign=False,
+        # augmentation_name="Equalize",
+        # augmentation_severity=None,
+        # augmentation_sign=False,
         dataset_name="CIFAR10",
     )
-
-    # print(f'Transforms preprocess: {transforms_preprocess}\ntransforms_augmentation: {transforms_augmentation}')
 
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
@@ -319,7 +305,8 @@ if __name__ == "__main__":
         trainset, batch_size=batch_size, shuffle=True
     )
 
+    classes = trainset.dataset.classes
+
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size)
-    print(f'Confidence type: {type(confidences)}\nSingle conf: {type(confidences[0])}')
+    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     print(f'transfroms_augmentation: {transforms_augmentation}\n\nConfidences: {confidences}')
