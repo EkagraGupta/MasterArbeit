@@ -361,8 +361,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     1 - (1 - self.chance) * (1 - visibility) ** self.k
         # )  # The non-linear function
 
-        confidence_aa = np.where(confidence_aa < self.chance, self.chance, confidence_aa)
-        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        confidence_aa = torch.tensor(np.where(confidence_aa < self.chance, self.chance, confidence_aa))
+        print(f"\nAugmentation info: {augment_info}\tconf: {type(confidence_aa)}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
@@ -373,7 +373,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             return augment_im, augment_info
         else:
             augment_im, _ = self.apply_standard_augmentation(im)
-            return augment_im
+            return augment_im, 1.0
 
     def __repr__(self):
         s = (

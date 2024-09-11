@@ -300,7 +300,7 @@ if __name__ == "__main__":
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
         aggressive_augmentation=True,
-        custom=False,
+        custom=True,
         augmentation_name="Equalize",
         augmentation_severity=None,
         augmentation_sign=False,
