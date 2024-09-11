@@ -295,12 +295,12 @@ def display_image_grid(images, labels, confidences, batch_size):
 
 
 if __name__ == "__main__":
-    batch_size = 10
+    batch_size = 50000
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
         aggressive_augmentation=True,
-        custom=True,
+        custom=False,
         augmentation_name="Equalize",
         augmentation_severity=None,
         augmentation_sign=False,
@@ -314,10 +314,10 @@ if __name__ == "__main__":
     )
 
     trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=batch_size, shuffle=False
+        trainset, batch_size=batch_size, shuffle=True
     )
 
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size)
 
     print(f'transfroms_augmentation: {transforms_augmentation}\n\nConfidences: {confidences}')

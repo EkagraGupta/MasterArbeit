@@ -83,7 +83,7 @@ class RandomCrop:
         Returns:
             Optional[tuple]: The cropped image and the computed confidence values.
         """
-        confidence_aa = 1.0
+        confidence_aa = None
 
         if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
             confidence_aa = image[1]
@@ -133,5 +133,6 @@ class RandomCrop:
 
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
-        # print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {confidences}')
+        confidences = torch.tensor(confidences, dtype=torch.float32)
+        # print(f'confidence_rc: {confidence_rc}\tconfidence_aa: {confidence_aa}\tconfidences: {type(confidences)}')
         return cropped_image, confidences
