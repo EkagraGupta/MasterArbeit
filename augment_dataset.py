@@ -77,7 +77,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
         )
 
         augment_x = augment(x)
-        # print(f'Augment_x: {augment_x}')
+
         if isinstance(augment_x, tuple):
             confidences = augment_x[1]
             augment_x = augment_x[0]
@@ -156,6 +156,7 @@ def create_transforms(
         )
 
     if random_cropping:
+        augmentations.pop(-1)
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
 
     transforms_preprocess = transforms.Compose(t)
@@ -283,10 +284,10 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
 
 if __name__ == "__main__":
     batch_size = 10
-    DATASET_NAME = "CIFAR100"
+    DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
+        random_cropping=True,
+        aggressive_augmentation=False,
         custom=True,
         # augmentation_name="TranslateX",
         # augmentation_severity=25,

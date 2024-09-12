@@ -3,8 +3,10 @@ from torchvision import transforms
 from typing import Optional
 from PIL import Image
 
+from compute_prob import ComputeProb
 
-class RandomCrop:
+
+class SoftCrop:
     """A class to apply a random crop transformation to an image. This class
     is intended for use with images and can also compute confidence scores for
     the transformed image.
@@ -73,7 +75,7 @@ class RandomCrop:
         """
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
-    def __call__(self, image: Optional[Image.Image]) -> Optional[tuple]:
+    def __call__(self, image: Optional[Image.Image], label: Optional[float]) -> Optional[tuple]:
         """Applies the random crop transformation to the given image.
 
         Args:
@@ -93,8 +95,8 @@ class RandomCrop:
             confidence_aa = image[1][1]
             image = image[0]
 
-        to_tensor = transforms.ToTensor()
-        image = to_tensor(image)
+        # to_tensor = transforms.ToTensor()
+        # image = to_tensor(image)
         dim1, dim2 = image.size(1), image.size(2)
 
         # Create background
@@ -114,15 +116,16 @@ class RandomCrop:
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
 
-        # prob_crop = ComputeProb(self.bg_crop, max_prob=1.0, pow=4.0, n_classes=self.n_class)
-        # print(f'prob_crop: {prob_crop}')
-
         if self.custom:
             # compute visibility and confidence score
             visibility = self.compute_visibility(dim1, dim2, tx, ty)
             confidence_rc = (
                 1 - (1 - self.chance) * (1 - visibility) ** self.k
             )  # The non-linear function
+            print(f'confidence_rc: {confidence_rc}')
+            prob_crop = ComputeProb(confidence_rc, max_prob=1.0, pow=4.0, n_classes=self.n_class)
+            new_label = label + 1 - prob_crop
+            print(f'prob_crop: {prob_crop}\tlabel: {label}\tNew_label: {new_label}')
         else:
             confidence_rc = torch.tensor(1.0)
         if confidence_aa is not None:
@@ -136,3 +139,20 @@ class RandomCrop:
                 confidence_rc = torch.tensor(confidence_rc)
             # print(f'confidence_rc: {(confidence_rc)}')
             return cropped_image, confidence_rc
+
+
+if __name__ == "__main__":
+    
+    import torch
+    from torchvision import datasets, transforms
+    
+    base_transform = transforms.Compose([transforms.ToTensor()])
+    base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True, transform=base_transform)
+    base_trainloader = torch.utils.data.DataLoader(base_trainset, batch_size=100, shuffle=True)
+
+    custom_transform = SoftCrop(custom=True)
+
+    images, labels = next(iter(base_trainloader))
+    for i, (images, labels) in enumerate(base_trainloader):
+        augmented_images, confidence_rc = custom_transform(images[i], labels[i])
+        print(f"Confidence: {confidence_rc}")

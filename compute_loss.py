@@ -20,16 +20,37 @@ def soft_loss(pred, label, confidence, reweight=False):
         kl = confidence * kl  # Weighted
     return kl.mean()
 
-def cross_entropy_loss(pred, label):
-    log_prob = F.log_softmax(pred, dim=1)
-    n_class = pred.size(1)
+# def cross_entropy_loss(pred, label):
+#     log_prob = F.log_softmax(pred, dim=1)
+#     n_class = pred.size(1)
 
-    label = label.unsqueeze(1)
-    one_hot = torch.zeros_like(pred).scatter_(dim=1, index=label, value=1.0)
-    kl_uw = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
-    kl_uw = kl_uw.unsqueeze(1)
+#     label = label.unsqueeze(1)
+#     one_hot = torch.zeros_like(pred).scatter_(dim=1, index=label, value=1.0)
+#     kl_uw = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
+#     kl_uw = kl_uw.unsqueeze(1)
 
-    return kl_uw.mean()
+#     return kl_uw.mean()
+
+# import numpy as np
+
+def cross_entropy_loss(y_pred, label):
+    n_class = y_pred.size(1)
+
+    # Convert the label to one-hot encoding
+    y_true = torch.zeros(label.size(0), n_class)
+    y_true.scatter_(1, label.unsqueeze(1), 1)
+    
+    # If y_pred are logits, apply softmax to get probabilities
+    y_pred = F.softmax(y_pred, dim=1)
+    
+    # Clipping predictions to avoid log(0)
+    y_pred = torch.clamp(y_pred, 1e-12, 1. - 1e-12)
+    
+    # Calculating the cross-entropy loss
+    loss = -torch.sum(y_true * torch.log(y_pred)) / y_true.size(0)
+    
+    return loss
+
 
 if __name__ == "__main__":
     # Test the soft loss function
@@ -98,16 +119,17 @@ if __name__ == "__main__":
             ],
         ]
     )
-    confidences = torch.tensor([0.9994, 0.9919, 1.0, 1.0, 0.9804])
+    confidences = torch.tensor([0.9994, 0.9919, 0.1, 1.0, 0.9804])
     # confidences = torch.ones(outputs.size(0), dtype=torch.float32)
 
     # Compute the soft loss
-    loss = soft_loss(outputs, labels, confidences, reweight=True)
+    # loss = soft_loss(outputs, labels, confidences, reweight=True)
+    loss = cross_entropy_loss(outputs, labels)
     print(f"Soft loss: {loss.item()}")
 
     # Cross-entropy loss
-    # loss2 = F.cross_entropy(outputs, labels)
-    loss2 = cross_entropy_loss(outputs, labels)
+    loss2 = F.cross_entropy(outputs, labels)
+    # loss2 = cross_entropy_loss(outputs, labels)
     print(f"Cross-entropy loss: {loss2.item()}")
 
     print(f'Soft loss and CE are equal?\t{bool(loss == loss2)}')
