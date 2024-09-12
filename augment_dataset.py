@@ -288,9 +288,9 @@ if __name__ == "__main__":
         random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        augmentation_name="TranslateX",
-        augmentation_severity=25,
-        augmentation_sign=False,
+        # augmentation_name="TranslateX",
+        # augmentation_severity=25,
+        # augmentation_sign=False,
         dataset_name=DATASET_NAME,
     )
 
