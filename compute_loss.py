@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
     # Cross-entropy loss
     loss2 = F.cross_entropy(outputs, labels)
-    loss2 = cross_entropy_loss(outputs, labels, confidence=confidences)
+    # loss2 = cross_entropy_loss(outputs, labels, confidence=confidences)
     print(f"Cross-entropy loss: {loss2.item()}")
 
     print(f'Soft loss and CE are equal?\t{bool(loss == loss2)}')
