@@ -10,9 +10,13 @@ def soft_loss(pred, label, confidence, reweight=False):
     # Make soft one-hot target
     label = label.unsqueeze(1)
     confidence = confidence.unsqueeze(1).float()
+    # soft one_hot
     one_hot = torch.ones_like(pred) * (1 - confidence) / (n_class - 1)
     one_hot.scatter_(dim=1, index=label, src=confidence)
-
+    # print(f'soft one_hot: {one_hot}')
+    # hard one_hot
+    # one_hot = torch.zeros_like(pred)
+    # one_hot.scatter_(dim=1, index=label, value=1.0)
     # Compute weighted KL loss
     kl = F.kl_div(input=log_prob, target=one_hot, reduction="none").sum(-1)
     kl = kl.unsqueeze(1)  # Unweighted
@@ -125,11 +129,11 @@ if __name__ == "__main__":
             ],
         ]
     )
-    confidences = torch.tensor([0.9994, 0.9919, 0.1, 1.0, 0.9804])
-    # confidences = torch.ones(outputs.size(0), dtype=torch.float32)
+    # confidences = torch.tensor([0.9994, 0.9919, 0.1, 1.0, 0.9804])
+    confidences = torch.ones(outputs.size(0), dtype=torch.float32)
 
     # Compute the soft loss
-    loss = soft_loss(outputs, labels, confidences, reweight=False)
+    loss = soft_loss(outputs, labels, confidences, reweight=True)
     # loss = cross_entropy_loss(outputs, labels)
     print(f"Soft loss: {loss.item()}")
 
