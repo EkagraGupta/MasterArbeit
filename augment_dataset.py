@@ -283,11 +283,11 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
 
 
 if __name__ == "__main__":
-    batch_size = 10
+    batch_size = 20
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=False,
+        random_cropping=False,
+        aggressive_augmentation=True,
         custom=True,
         # augmentation_name="TranslateX",
         # augmentation_severity=25,
