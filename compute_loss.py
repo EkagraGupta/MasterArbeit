@@ -33,12 +33,18 @@ def soft_loss(pred, label, confidence, reweight=False):
 
 # import numpy as np
 
-def cross_entropy_loss(y_pred, label):
+def cross_entropy_loss(y_pred, label, confidence=None):
     n_class = y_pred.size(1)
 
     # Convert the label to one-hot encoding
-    y_true = torch.zeros(label.size(0), n_class)
-    y_true.scatter_(1, label.unsqueeze(1), 1)
+    if confidence is not None:
+        confidence = confidence.unsqueeze(1).float()
+        label = label.unsqueeze(1)
+        y_true = torch.ones_like(y_pred) * (1 - confidence) / (n_class - 1)
+        y_true.scatter_(dim=1, index=label, src=confidence)
+    else:
+        y_true = torch.zeros(label.size(0), n_class)
+        y_true.scatter_(1, label.unsqueeze(1), 1)
     
     # If y_pred are logits, apply softmax to get probabilities
     y_pred = F.softmax(y_pred, dim=1)
@@ -123,13 +129,13 @@ if __name__ == "__main__":
     # confidences = torch.ones(outputs.size(0), dtype=torch.float32)
 
     # Compute the soft loss
-    # loss = soft_loss(outputs, labels, confidences, reweight=True)
-    loss = cross_entropy_loss(outputs, labels)
+    loss = soft_loss(outputs, labels, confidences, reweight=False)
+    # loss = cross_entropy_loss(outputs, labels)
     print(f"Soft loss: {loss.item()}")
 
     # Cross-entropy loss
     loss2 = F.cross_entropy(outputs, labels)
-    # loss2 = cross_entropy_loss(outputs, labels)
+    loss2 = cross_entropy_loss(outputs, labels, confidence=confidences)
     print(f"Cross-entropy loss: {loss2.item()}")
 
     print(f'Soft loss and CE are equal?\t{bool(loss == loss2)}')
