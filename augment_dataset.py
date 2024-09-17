@@ -128,32 +128,32 @@ def create_transforms(
         transforms.RandomCrop(32, padding=4),
     ]
 
-    if aggressive_augmentation:
-        augmentations.append(
-            CustomTrivialAugmentWide(
-                custom=custom,
-                augmentation_name=augmentation_name,
-                severity=augmentation_severity,
-                get_signed=augmentation_sign,
-                dataset_name=dataset_name,
-            )
-        )
-
-    # custom_trivial_augment = CustomTrivialAugmentWide(
-    #     custom=custom,
-    #     augmentation_name=augmentation_name,
-    #     severity=augmentation_severity,
-    #     get_signed=augmentation_sign,
-    #     dataset_name=dataset_name,
-    # )
-    # random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
-
     # if aggressive_augmentation:
     #     augmentations.append(
-    #         RandomChoiceTransforms(
-    #             [custom_trivial_augment, random_crop_augment], [0.8, 0.2]
+    #         CustomTrivialAugmentWide(
+    #             custom=custom,
+    #             augmentation_name=augmentation_name,
+    #             severity=augmentation_severity,
+    #             get_signed=augmentation_sign,
+    #             dataset_name=dataset_name,
     #         )
     #     )
+
+    custom_trivial_augment = CustomTrivialAugmentWide(
+        custom=custom,
+        augmentation_name=augmentation_name,
+        severity=augmentation_severity,
+        get_signed=augmentation_sign,
+        dataset_name=dataset_name,
+    )
+    random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
+
+    if aggressive_augmentation:
+        augmentations.append(
+            RandomChoiceTransforms(
+                [custom_trivial_augment, random_crop_augment], [0.8, 0.2]
+            )
+        )
 
     if random_cropping:
         augmentations.pop(-1)
