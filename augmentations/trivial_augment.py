@@ -341,30 +341,30 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #         im, augment_im
         #     )
 
-        # if augmentation_type in ['ShearX', 'ShearY', 'Brightness', 'Color', 'Contrast', 'Sharpness']:
-        #     max_magnitude = 0.99
-        # elif augmentation_type in ['TranslateX', 'TranslateY']:
-        #     max_magnitude = 32.0
-        # elif augmentation_type == 'Rotate':
-        #     max_magnitude = 135.0
-        # elif augmentation_type == 'Posterize':
-        #     max_magnitude = 8
-        # elif augmentation_type == 'Solarize':
-        #     max_magnitude = 255.0
-        # else:
-        #     max_magnitude = 1.0
+        if augmentation_type in ['ShearX', 'ShearY', 'Brightness', 'Color', 'Contrast', 'Sharpness']:
+            max_magnitude = 0.99
+        elif augmentation_type in ['TranslateX', 'TranslateY']:
+            max_magnitude = 32.0
+        elif augmentation_type == 'Rotate':
+            max_magnitude = 135.0
+        elif augmentation_type == 'Posterize':
+            max_magnitude = 8
+        elif augmentation_type == 'Solarize':
+            max_magnitude = 255.0
+        else:
+            max_magnitude = 1.0
 
-        # augmentation_severity = abs(int(augmentation_magnitude / max_magnitude * self.num_magnitude_bins))
-        # if augmentation_type=='Solarize':
-        #     augmentation_severity = self.num_magnitude_bins - augmentation_severity
+        augmentation_severity = abs(int(augmentation_magnitude / max_magnitude * self.num_magnitude_bins))
+        if augmentation_type=='Solarize':
+            augmentation_severity = self.num_magnitude_bins - augmentation_severity
 
-        # visibility = comparison_metrics.custom_poly_common(severity=augmentation_severity, max_severity=self.num_magnitude_bins)
+        visibility = comparison_metrics.custom_poly_common(severity=augmentation_severity, max_severity=self.num_magnitude_bins)
 
-        # confidence_aa = (
-        #     1 - (1 - self.chance) * (1 - visibility) ** self.k
-        # )  # The non-linear function
+        confidence_aa = (
+            1 - (1 - self.chance) * (1 - visibility) ** self.k
+        )  # The non-linear function
 
-        confidence_aa = torch.from_numpy(np.where(confidence_aa < self.chance, self.chance, confidence_aa))
+        confidence_aa = torch.from_numpy(np.where(confidence_aa < 0.5, 0.5, confidence_aa))
         # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
         return augment_im, [augmentation_magnitude, confidence_aa]
 
