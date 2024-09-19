@@ -157,6 +157,8 @@ def create_transforms(
 
     if random_cropping:
         augmentations.pop(-1)
+        # for testing
+        augmentations.append(transforms.TrivialAugmentWide())
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
 
     transforms_preprocess = transforms.Compose(t)
