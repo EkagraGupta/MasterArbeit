@@ -156,7 +156,7 @@ def create_transforms(
     #     )
 
     if random_cropping:
-        augmentations.pop(-1)
+        augmentations.pop(-2)       # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
@@ -288,7 +288,7 @@ if __name__ == "__main__":
     batch_size = 10
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
+        random_cropping=True,
         aggressive_augmentation=True,
         custom=True,
         # augmentation_name="TranslateX",

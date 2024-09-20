@@ -38,15 +38,18 @@ if __name__ == "__main__":
     confidence_values2 = [0.98, .99, .94, .94, .88]
 
     k = 2
-    confidence_values2 = []
+    fitted_values = []
     for i in range(len(rotation_values2)):
         rot_val = rotation_values2[i]
-        visibility = rot_val / 180
+        visibility = rot_val / 360
         confidence_val = 1 - (1 - 0.1) * visibility ** k
-        confidence_values2.append(confidence_val)
+        fitted_values.append(confidence_val)
     print(f'rotation_values: {rotation_values2}')
+    print(f'fitted_values: {fitted_values}')
     print(f'confidence_values: {confidence_values2}')
 
-    plot_data(visibility_values=rotation_values2,
-              confidence_rc_values=confidence_values2)
-    # plot_data(visibility_values=rotation_values1, confidence_rc_values=confidence_values1)
+    plt.figure(figsize=(10, 5))
+    plt.plot(rotation_values2, fitted_values, label='Confidence vs Rotation')
+    plt.plot(rotation_values2, confidence_values2, marker='o')
+    plt.plot(rotation_values2, confidence_values2, label='Confidence vs Rotation')
+    plt.show()
