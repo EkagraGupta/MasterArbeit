@@ -306,7 +306,6 @@ if __name__ == "__main__":
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=True
     )
-    print(transforms_augmentation)
     classes = trainset.dataset.classes
 
     images, labels, confidences = next(iter(trainloader))
