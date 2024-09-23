@@ -2,6 +2,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Optional
 
 
 def poly(x, a, b, c, d):
@@ -100,13 +101,24 @@ def plot_curves(
     plt.legend()
     plt.show()
 
+def model_accuracy_mapping(augmentation_magnitude:Optional[float], augmentation_type:Optional[str])->Optional[float]:
+    data = pd.read_csv(f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv')
+    augmentation_magnitude_list = data["Severity"]
+    model_accuracy_list = data["Accuracy"]
+
+    # idx = np.where(augmentation_magnitude_list == augmentation_magnitude)
+    for i in range(len(augmentation_magnitude_list)):
+        mag = augmentation_magnitude_list[i]
+        if round(mag, 5)==round(augmentation_magnitude, 5):
+            return model_accuracy_list[i]
+    
 
 if __name__ == "__main__":
-    augmentation_type = "Rotate"
+    augmentation_type = "Brightness"
     data = pd.read_csv(
-        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_ncc_results.csv"
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv"
     )
-    data = data.sort_values(by="Severity")
+    # data = data.sort_values(by="Severity")
     augmentation_magnitude = data["Severity"]
     augmentation_mean = data["Mean"]
     augmentation_std = data["Std"]
@@ -124,11 +136,21 @@ if __name__ == "__main__":
     #     popt,
     # )
 
-    severity = np.array([0, 15, 30])
-    visibility = np.array([1.0, 0.8, 0.5])
+    # severity = np.array([0, 15, 30])
+    # visibility = np.array([1.0, 0.8, 0.5])
 
-    popt, pcov = fit_poly_2(poly_2, severity, visibility)
-    print(f"Fitted Parameters: {popt}")
+    # popt, pcov = fit_poly_2(poly_2, severity, visibility)
+    # print(f"Fitted Parameters: {popt}")
 
-    y_fit = poly_2(15, *popt)
-    print(y_fit)
+    # y_fit = poly_2(15, *popt)
+    # print(y_fit)
+
+    # print(f'Augmentation Magnitude: {augmentation_magnitude}\nModel Accuracy: {model_accuracy}')
+
+    augmentation_value = augmentation_magnitude[25]
+    augmentation_type = "Brightness"
+    print(augmentation_value)
+    model_accuracy_value = model_accuracy_mapping(augmentation_value, augmentation_type)
+    print(f'Model Accuracy: {model_accuracy_value}')
+    
+

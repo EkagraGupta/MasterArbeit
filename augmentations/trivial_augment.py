@@ -13,7 +13,7 @@ import torch
 from torch import Tensor
 
 from torchvision.transforms import functional as F, InterpolationMode
-
+from non_linear_mapping_data import curve_fitting as cf
 
 def _apply_op(
     im: Tensor,
@@ -277,65 +277,79 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     augmentation_magnitude, a=1.0, b=0.0, c=0.56)
 
         if augmentation_type == "ShearX":
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
-            )
+            # confidence_aa = comparison_metrics.gaussian(
+            #     augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "ShearY":
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
-            )
+            # confidence_aa = comparison_metrics.gaussian(
+            #     augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "TranslateX":
-            dim1, dim2 = im.size[0], im.size[1]
-            tx = augment_info[augmentation_type]
-            visibility = random_crop.compute_visibility(
-                dim1=dim1, dim2=dim2, tx=tx, ty=0
-            )
-            # k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
+            # dim1, dim2 = im.size[0], im.size[1]
+            # tx = augment_info[augmentation_type]
+            # visibility = random_crop.compute_visibility(
+            #     dim1=dim1, dim2=dim2, tx=tx, ty=0
+            # )
+            # # k = 2
+            # confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "TranslateY":
-            dim1, dim2 = im.size[0], im.size[1]
-            ty = augment_info[augmentation_type]
-            visibility = random_crop.compute_visibility(
-                dim1=dim1, dim2=dim2, tx=0, ty=ty
-            )
-            # k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
+            # dim1, dim2 = im.size[0], im.size[1]
+            # ty = augment_info[augmentation_type]
+            # visibility = random_crop.compute_visibility(
+            #     dim1=dim1, dim2=dim2, tx=0, ty=ty
+            # )
+            # # k = 2
+            # confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Brightness":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9753, 17.0263, -0.8297
-            )
+            # confidence_aa = comparison_metrics.sigmoid(
+            #     augmentation_magnitude, 0.9753, 17.0263, -0.8297
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Contrast":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
-            )
+            # confidence_aa = comparison_metrics.sigmoid(
+            #     augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Color":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 1.0, 4.93537641, -1.5837580
-            )
+            # confidence_aa = comparison_metrics.sigmoid(
+            #     augmentation_magnitude, 1.0, 4.93537641, -1.5837580
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Sharpness":
-            confidence_aa = comparison_metrics.sigmoid(
-                augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
-            )
+            # confidence_aa = comparison_metrics.sigmoid(
+            #     augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Posterize":
-            confidence_aa = comparison_metrics.multiscale_structural_similarity(
-                im, augment_im
-            )
+            # confidence_aa = comparison_metrics.multiscale_structural_similarity(
+            #     im, augment_im
+            # )
+            confidence_aa = 1.0
+            # confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Solarize":
-            confidence_aa = comparison_metrics.spatial_correlation_coefficient(
-                im, augment_im
-            )
+            # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
+            #     im, augment_im
+            # )
+            confidence_aa = 1.0
+            # confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Equalize":
             confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im
             )
+            # confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Rotate":
-            confidence_aa = comparison_metrics.gaussian(
-                augmentation_magnitude,
-                a=5.83337531e-01,
-                b=-5.36740882e-03,
-                c=2.16250254e01,
-                d=4.16662431e-01,
-            )
+            # confidence_aa = comparison_metrics.gaussian(
+            #     augmentation_magnitude,
+            #     a=5.83337531e-01,
+            #     b=-5.36740882e-03,
+            #     c=2.16250254e01,
+            #     d=4.16662431e-01,
+            # )
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         # elif augmentation_type == "AutoContrast":
         #     confidence_aa = comparison_metrics.multiscale_contrast_similarity(
         #         im, augment_im
@@ -364,8 +378,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     1 - (1 - self.chance) * (1 - visibility) ** self.k
         # )  # The non-linear function
 
-        # confidence_aa = torch.from_numpy(np.where(confidence_aa < 0.6, 0.6, confidence_aa))
-        # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
+        confidence_aa = torch.from_numpy(np.where(confidence_aa < self.chance, self.chance, confidence_aa))
+        # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(

@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = "dummy"
+COMPARISON_METRIC = "MAPPING"
 
 
 def get_mean_std(confidences_tensor):
@@ -113,7 +113,7 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
 
     # Plot Mean and Std against Augmentation Magnitudes
     augmentation_magnitudes.sort()
-    print(augmentation_magnitudes)
+    # print(augmentation_magnitudes)
     plt.figure(figsize=(8, 6))
     plt.plot(
         augmentation_magnitudes, mean, "-", color="red", label="Comparison Confidence"
@@ -147,6 +147,6 @@ if __name__ == "__main__":
     # augmentation_magnitudes = [1, 2, 3, 4, 5]
     # plot_mean_std(mean, std, model_confidences, "Brightness", augmentation_magnitudes)
     plot_mean_std_from_csv(
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_ncc_results.csv",
+        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_MAPPING_results.csv",
         "Solarize",
     )

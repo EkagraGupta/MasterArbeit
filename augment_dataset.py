@@ -67,6 +67,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
         """
         x, y = self.dataset[i]
         confidences = None
+        augmentation_magnitude = None
         combined_confidence = torch.tensor(1.0, dtype=torch.float32)
         original = True  # for now "original" is set to True rather than returning from base_dataset
 
@@ -85,12 +86,16 @@ class AugmentedDataset(torch.utils.data.Dataset):
                 combined_confidence = self.get_confidence(confidences)
             elif isinstance(confidences, list):
                 combined_confidence = confidences[1]
+                augmentation_magnitude = confidences[0]
             else:
                 combined_confidence = confidences
                 
         augment_x = self.preprocess(augment_x)
 
+
         if self.robust_samples == 0:
+            if augmentation_magnitude is not None:
+                return augment_x, y, [augmentation_magnitude, combined_confidence]
             return augment_x, y, combined_confidence
         # elif self.robust_samples == 1:
         #     im_tuple = (self.preprocess(x), augment(x))
@@ -257,7 +262,6 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
         confidences (torch.Tensor): Corresponding confidence scores for the images.
         batch_size (int): Number of images to display in the grid.
     """
-
     if isinstance(confidences, list):
         confidences = confidences[1]
 
@@ -288,12 +292,12 @@ if __name__ == "__main__":
     batch_size = 10
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
+        random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        # augmentation_name="TranslateX",
-        # augmentation_severity=25,
-        # augmentation_sign=False,
+        augmentation_name="Contrast",
+        augmentation_severity=18,
+        augmentation_sign=True,
         dataset_name=DATASET_NAME,
     )
 
@@ -307,7 +311,7 @@ if __name__ == "__main__":
         trainset, batch_size=batch_size, shuffle=True
     )
     classes = trainset.dataset.classes
-
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    print(f'transfroms_augmentation: {transforms_augmentation}\n\nConfidences: {confidences}')
+
+    print(f'augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}')

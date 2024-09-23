@@ -57,14 +57,16 @@ def get_plot(augmentation_type, model, dataset_split=100):
             # Confidence Calculation
             start_time = time.time()
             _, _, confidences = next(iter(dataloader))
-            augmentation_magnitude = confidences[0][0]
-            confidences = confidences[1]
+            augmentation_magnitude = confidences[1][0]
+            confidences = confidences[0]
             # print(f'Augmentation Magnitudes: {augmentation_magnitude}\n Confidence Scores: {confidences}')
             end_time = time.time()
             mean, std = get_mean_std(confidences)
             mean_list.append(mean.item())
             std_list.append(std.item())
             augmentation_magnitudes_list.append(augmentation_magnitude)
+
+            # print(f'augmentation_magnitude: {augmentation_magnitude}\tmean: {mean}\tstd: {std}')
 
             total_time += end_time - start_time
             print(f"Time taken: {total_time:.2f} seconds\n")
@@ -87,7 +89,7 @@ def get_plot(augmentation_type, model, dataset_split=100):
         augmentation_magnitudes_list,
         time_list,
     )
-    plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
+    # plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
 
     print(
         f"\n============================ Finished: {augmentation_type} ============================\n"
@@ -97,15 +99,15 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        "ShearY",
-        "ShearY",
-        "TranslateX",
-        "TranslateY",
-        "Rotate",
-        "Brightness",
-        "Color",
-        "Contrast",
-        "Sharpness",
+        # "ShearX",
+        # "ShearY",
+        # "TranslateX",
+        # "TranslateY",
+        # "Rotate",
+        # "Brightness",
+        # "Color",
+        # "Contrast",
+        # "Sharpness",
         "Posterize",
         "Solarize",
         # "AutoContrast",
@@ -114,7 +116,7 @@ if __name__ == "__main__":
 
     # Load the saved model weights
     net = WideResNet_28_4(num_classes=10)
-    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/standard.pth"
+    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth"
     net = torch.nn.DataParallel(net)
     state_dict = torch.load(PATH, map_location=torch.device("cpu"))
     net.load_state_dict(state_dict["model_state_dict"], strict=False)
