@@ -13,7 +13,7 @@ import torch
 from torch import Tensor
 
 from torchvision.transforms import functional as F, InterpolationMode
-from non_linear_mapping_data import curve_fitting as cf
+from augmentations.model_confidence_mapping import model_accuracy_mapping as cf
 
 def _apply_op(
     im: Tensor,
