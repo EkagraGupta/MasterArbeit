@@ -125,25 +125,25 @@ if __name__ == "__main__":
     model_accuracy = data["Accuracy"]
 
     # Fit the gaussian function to the data
-    popt, pcov = fit_poly_3(poly_3, augmentation_magnitude, model_accuracy)
-    print(f"Fitted Gaussian Parameters: {popt}")
-    plot_curves(
-        gaussian,
-        augmentation_magnitude,
-        model_accuracy,
-        augmentation_mean,
-        augmentation_std,
-        popt,
-    )
+    # popt, pcov = fit_poly_3(poly_3, augmentation_magnitude, model_accuracy)
+    # print(f"Fitted Gaussian Parameters: {popt}")
+    # plot_curves(
+    #     gaussian,
+    #     augmentation_magnitude,
+    #     model_accuracy,
+    #     augmentation_mean,
+    #     augmentation_std,
+    #     popt,
+    # )
 
-    severity = np.array([0, 15, 30])
-    visibility = np.array([1.0, 0.8, 0.5])
+    # severity = np.array([0, 15, 30])
+    # visibility = np.array([1.0, 0.8, 0.5])
 
-    popt, pcov = fit_poly_2(poly_2, severity, visibility)
-    print(f"Fitted Parameters: {popt}")
+    # popt, pcov = fit_poly_2(poly_2, severity, visibility)
+    # print(f"Fitted Parameters: {popt}")
 
-    y_fit = poly_2(15, *popt)
-    print(y_fit)
+    # y_fit = poly_2(15, *popt)
+    # print(y_fit)
 
-    print(f'Augmentation Magnitude: {augmentation_magnitude}\nModel Accuracy: {model_accuracy}')
+    # print(f'Augmentation Magnitude: {augmentation_magnitude}\nModel Accuracy: {model_accuracy}')
 
