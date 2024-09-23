@@ -328,14 +328,14 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = comparison_metrics.multiscale_structural_similarity(
             #     im, augment_im
             # )
-            confidence_aa = 1.0
-            # confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+            # confidence_aa = 1.0
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Solarize":
             # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
             #     im, augment_im
             # )
-            confidence_aa = 1.0
-            # confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+            # confidence_aa = 1.0
+            confidence_aa = cf.model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Equalize":
             confidence_aa = comparison_metrics.multiscale_structural_similarity(
                 im, augment_im

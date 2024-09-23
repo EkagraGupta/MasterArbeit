@@ -102,7 +102,7 @@ def plot_curves(
     plt.show()
 
 def model_accuracy_mapping(augmentation_magnitude:Optional[float], augmentation_type:Optional[str])->Optional[float]:
-    data = pd.read_csv(f'/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv')
+    data = pd.read_csv(f'non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv')
     augmentation_magnitude_list = data["Severity"]
     model_accuracy_list = data["Accuracy"]
 
@@ -114,9 +114,9 @@ def model_accuracy_mapping(augmentation_magnitude:Optional[float], augmentation_
     
 
 if __name__ == "__main__":
-    augmentation_type = "Brightness"
+    augmentation_type = "Posterize"
     data = pd.read_csv(
-        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv"
+        f"non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv"
     )
     # data = data.sort_values(by="Severity")
     augmentation_magnitude = data["Severity"]
@@ -148,7 +148,6 @@ if __name__ == "__main__":
     # print(f'Augmentation Magnitude: {augmentation_magnitude}\nModel Accuracy: {model_accuracy}')
 
     augmentation_value = augmentation_magnitude[25]
-    augmentation_type = "Brightness"
     print(augmentation_value)
     model_accuracy_value = model_accuracy_mapping(augmentation_value, augmentation_type)
     print(f'Model Accuracy: {model_accuracy_value}')
