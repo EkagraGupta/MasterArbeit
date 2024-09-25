@@ -25,7 +25,7 @@ class SoftCrop:
         bg_crop: float = 1.0,
         sigma_crop: float = 10,
         dataset_name: str = "CIFAR10",
-        custom: bool = False
+        custom: bool = False,
     ):
         if dataset_name == "CIFAR10":
             self.n_class = 10
@@ -75,7 +75,9 @@ class SoftCrop:
         """
         return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
-    def __call__(self, image: Optional[Image.Image], label: Optional[float]) -> Optional[tuple]:
+    def __call__(
+        self, image: Optional[Image.Image], label: Optional[float]
+    ) -> Optional[tuple]:
         """Applies the random crop transformation to the given image.
 
         Args:
@@ -100,11 +102,15 @@ class SoftCrop:
         dim1, dim2 = image.size(1), image.size(2)
 
         # Create background
-        bg = torch.zeros((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
+        bg = (
+            torch.zeros((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
+        )
         bg[:, dim1 : dim1 * 2, dim2 : dim2 * 2] = image  # Put image at the center
 
         # calculate random offsets.
-        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(self.sigma_crop, dim2)
+        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(
+            self.sigma_crop, dim2
+        )
 
         # define the cropping boundaries.
         left, right = tx + dim1, tx + dim1 * 2
@@ -122,10 +128,12 @@ class SoftCrop:
             confidence_rc = (
                 1 - (1 - self.chance) * (1 - visibility) ** self.k
             )  # The non-linear function
-            print(f'confidence_rc: {confidence_rc}')
-            prob_crop = ComputeProb(confidence_rc, max_prob=1.0, pow=4.0, n_classes=self.n_class)
+            print(f"confidence_rc: {confidence_rc}")
+            prob_crop = ComputeProb(
+                confidence_rc, max_prob=1.0, pow=4.0, n_classes=self.n_class
+            )
             new_label = label + 1 - prob_crop
-            print(f'prob_crop: {prob_crop}\tlabel: {label}\tNew_label: {new_label}')
+            print(f"prob_crop: {prob_crop}\tlabel: {label}\tNew_label: {new_label}")
         else:
             confidence_rc = torch.tensor(1.0)
         if confidence_aa is not None:
@@ -142,13 +150,17 @@ class SoftCrop:
 
 
 if __name__ == "__main__":
-    
+
     import torch
     from torchvision import datasets, transforms
-    
+
     base_transform = transforms.Compose([transforms.ToTensor()])
-    base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True, transform=base_transform)
-    base_trainloader = torch.utils.data.DataLoader(base_trainset, batch_size=100, shuffle=True)
+    base_trainset = datasets.CIFAR10(
+        root="./data/train", train=True, download=True, transform=base_transform
+    )
+    base_trainloader = torch.utils.data.DataLoader(
+        base_trainset, batch_size=100, shuffle=True
+    )
 
     custom_transform = SoftCrop(custom=True)
 

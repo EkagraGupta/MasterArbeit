@@ -23,7 +23,7 @@ class RandomCrop:
         bg_crop: float = 1.0,
         sigma_crop: float = 10,
         dataset_name: str = "CIFAR10",
-        custom: bool = False
+        custom: bool = False,
     ):
         if dataset_name == "CIFAR10":
             self.n_class = 10
@@ -98,11 +98,15 @@ class RandomCrop:
         dim1, dim2 = image.size(1), image.size(2)
 
         # Create background
-        bg = torch.zeros((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
+        bg = (
+            torch.zeros((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
+        )
         bg[:, dim1 : dim1 * 2, dim2 : dim2 * 2] = image  # Put image at the center
 
         # calculate random offsets.
-        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(self.sigma_crop, dim2)
+        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(
+            self.sigma_crop, dim2
+        )
 
         # define the cropping boundaries.
         left, right = tx + dim1, tx + dim1 * 2

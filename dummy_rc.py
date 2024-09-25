@@ -14,14 +14,16 @@ def get_data(visibility_values: list, k: int = 2, chance: float = 0.1):
 
 def plot_data(visibility_values: list, confidence_rc_values: list):
     plt.plot(visibility_values, confidence_rc_values)
-    plt.xlabel('Visibility')
-    plt.ylabel('Confidence')
-    plt.title('Confidence vs Visibility')
+    plt.xlabel("Visibility")
+    plt.ylabel("Confidence")
+    plt.title("Confidence vs Visibility")
     plt.show()
+
 
 def rotation_func(rotation_angle, chance, k):
     visibility = rotation_angle / 360
-    return 1 - (1 - chance) * visibility ** k
+    return 1 - (1 - chance) * visibility**k
+
 
 def contrast_func(contrast, k1, k2):
     chance = 0.1  # Fixed chance
@@ -58,25 +60,27 @@ if __name__ == "__main__":
 
     """Contrast"""
     contrast_values = np.array([1, 4, 6, 10, 100])
-    confidence_values = [0., 0.1, 0.6, 0.95, 0.99]
+    confidence_values = [0.0, 0.1, 0.6, 0.95, 0.99]
 
     # plt.figure(figsize=(10, 5))
     # plt.plot(contrast_values, confidence_values, marker='o', label='Confidence vs Contrast')
     # plt.xlabel('Contrast %')
     # plt.ylabel('Recognition Confidence')
     # plt.show()
-    
+
     popt, pcov = curve_fit(contrast_func, contrast_values, confidence_values)
     k1_opt = popt[0]
     k2_opt = popt[1]
-    print(f'k_opt: {(k1_opt, k2_opt)}')
+    print(f"k_opt: {(k1_opt, k2_opt)}")
 
     fitted_values = contrast_func(contrast_values, k1_opt, k2_opt)
-    print(f'fitted_values: {fitted_values}')
+    print(f"fitted_values: {fitted_values}")
 
     plt.figure(figsize=(10, 5))
-    plt.plot(contrast_values, confidence_values, marker='o', label='Confidence vs Contrast')
-    plt.plot(contrast_values, fitted_values, label='Fitted Curve')
-    plt.xlabel('Contrast %')
-    plt.ylabel('Recognition Confidence')
+    plt.plot(
+        contrast_values, confidence_values, marker="o", label="Confidence vs Contrast"
+    )
+    plt.plot(contrast_values, fitted_values, label="Fitted Curve")
+    plt.xlabel("Contrast %")
+    plt.ylabel("Recognition Confidence")
     plt.show()

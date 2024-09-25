@@ -89,9 +89,8 @@ class AugmentedDataset(torch.utils.data.Dataset):
                 augmentation_magnitude = confidences[0]
             else:
                 combined_confidence = confidences
-                
-        augment_x = self.preprocess(augment_x)
 
+        augment_x = self.preprocess(augment_x)
 
         if self.robust_samples == 0:
             if augmentation_magnitude is not None:
@@ -161,7 +160,7 @@ def create_transforms(
     #     )
 
     if random_cropping:
-        augmentations.pop(-2)       # -1, -2(if sequential)
+        augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
@@ -194,7 +193,9 @@ def load_data(
         base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
     elif dataset_name == "CIFAR100":
         # CIFAR-100
-        base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
+        base_trainset = datasets.CIFAR100(
+            root="./data/train", train=True, download=True
+        )
         base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
     else:
         raise ValueError(f"Dataset {dataset_name} not supported")
@@ -285,11 +286,10 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
         )
         ax.axis("off")
     plt.show()
-    
 
 
 if __name__ == "__main__":
-    batch_size = 10
+    batch_size = 40
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -304,7 +304,7 @@ if __name__ == "__main__":
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
         transforms_augmentation=transforms_augmentation,
-        dataset_name=DATASET_NAME
+        dataset_name=DATASET_NAME,
     )
 
     trainloader = torch.utils.data.DataLoader(
@@ -312,6 +312,6 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
 
-    print(f'augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}')
+    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
