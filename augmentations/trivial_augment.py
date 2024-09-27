@@ -253,30 +253,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # print(f"\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n")
             return augment_im, [augmentation_magnitude, torch.tensor(confidence_aa)]
 
-        # Testing different image comparison metrics
-        # SSIM Calculation
-        # confidence_aa = comparison_metrics.structural_similarity_calculation(
-        #     im, augment_im)
-
-        # Structural SSIM calculation
-        # confidence_aa = comparison_metrics.multiscale_structural_similarity(im, augment_im)
-
-        # # Normalized Cross Correlation calculation
-        # confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
-
-        # # Spatial Correlation Coefficient calculation
-        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
-
-        # # Universal Image Quality Index calculation
-        # confidence_aa = comparison_metrics.universal_image_quality_index(im, augment_im)
-
-        # # Visual Information Fidelity calculation
-        # confidence_aa = comparison_metrics.visual_information_fidelity(im, augment_im)
-
-        # Custom Gaussian
-        # confidence_aa = comparison_metrics.gaussian(
-        #     augmentation_magnitude, a=1.0, b=0.0, c=0.56)
-
         # if augmentation_type == "ShearX":
         #     # confidence_aa = comparison_metrics.gaussian(
         #     #     augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
@@ -391,9 +367,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         )  # The non-linear function
 
         confidence_aa = torch.from_numpy(
-            np.where(confidence_aa < 0.5, 0.5, confidence_aa)
+            np.where(confidence_aa < self.chance, self.chance, confidence_aa)
         )
-        # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
+        print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
