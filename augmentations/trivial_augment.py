@@ -362,6 +362,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             severity=augmentation_severity, max_severity=self.num_magnitude_bins
         )
 
+        # Update self.chance
+        self.chance = 0.5
+
         confidence_aa = (
             1 - (1 - self.chance) * (1 - visibility) ** self.k
         )  # The non-linear function
