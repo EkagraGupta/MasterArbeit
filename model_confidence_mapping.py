@@ -6,7 +6,7 @@ def model_accuracy_mapping(
     augmentation_magnitude: Optional[float], augmentation_type: Optional[str]
 ) -> Optional[float]:
     data = pd.read_csv(
-        f"{augmentation_type}_MAPPING_results.csv"
+        f"/kaggle/working/{augmentation_type}_MAPPING_results.csv"
     )
     augmentation_magnitude_list = data["Severity"]
     model_accuracy_list = data["Accuracy"]
