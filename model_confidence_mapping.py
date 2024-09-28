@@ -4,7 +4,7 @@ import os
 
 
 def model_accuracy_mapping(
-    augmentation_magnitude: Optional[float], augmentation_type: Optional[str], root_path: Optional[str] = "/kaggle/working"
+    augmentation_magnitude: Optional[float], augmentation_type: Optional[str], root_path: Optional[str] = "/kaggle/working/MasterArbeit"
 ) -> Optional[float]:
     filename = os.path.join(root_path, f"{augmentation_type}_MAPPING_results.csv")
     data = pd.read_csv(filename)
@@ -16,8 +16,8 @@ def model_accuracy_mapping(
         mag = augmentation_magnitude_list[i]
         if round(mag, 5) == round(augmentation_magnitude, 5):
             return model_accuracy_list[i]
-
-
+        
+        
 if __name__ == "__main__":
 
     augmentation_type = "Posterize"
