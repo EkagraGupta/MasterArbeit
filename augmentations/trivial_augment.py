@@ -363,8 +363,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         )
 
         # Update self.chance
-        # self.chance = 0.5
-        
+        self.chance = 0.5
+
         confidence_aa = (
             1 - (1 - self.chance) * (1 - visibility) ** self.k
         )  # The non-linear function

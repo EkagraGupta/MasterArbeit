@@ -119,13 +119,13 @@ def model_accuracy_mapping(
 
 def get_nl_curve(visibility_values: list, k: int = 2, chance: float = 0.1):
     confidence_rc_values = []
-    for i in range(len(visibility_values)):
-        visibility = visibility_values[i]
-        confidence_rc = 1 - (1 - chance) * (1 - visibility) ** k
-        confidence_rc_values.append(confidence_rc)
-        print(f"Visibility: {visibility}, Confidence: {confidence_rc}")
+    # for i in range(len(visibility_values)):
+    #     visibility = visibility_values[i]
+    #     confidence_rc = 1 - (1 - chance) * (1 - visibility) ** k
+    #     confidence_rc_values.append(confidence_rc)
+    #     print(f"Visibility: {visibility}, Confidence: {confidence_rc}")
 
-    # confidence_rc_values = 1 - (1 - chance) * (1 - np.array(visibility_values)) ** k
+    confidence_rc_values = 1 - (1 - chance) * (1 - np.array(visibility_values)) ** k
     confidence_rc_values = np.array(confidence_rc_values)
     confidence_rc_values = np.where(confidence_rc_values < chance, chance, confidence_rc_values)
     confidence_rc_values = np.where(confidence_rc_values > 1.0, 1.0, confidence_rc_values)
@@ -146,7 +146,7 @@ def compute_visibility(dim1: int, dim2: int, tx: float, ty: float) -> float:
     return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
 
 if __name__ == "__main__":
-    augmentation_type = "Sharpness"
+    augmentation_type = "TranslateX"
     data = pd.read_csv(
         f"non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv"
     )
