@@ -119,19 +119,14 @@ def model_accuracy_mapping(
 
 def get_nl_curve(visibility_values: list, k: int = 2, chance: float = 0.1):
     confidence_rc_values = []
-    # for i in range(len(visibility_values)):
-    #     visibility = visibility_values[i]
-    #     confidence_rc = 1 - (1 - chance) * (1 - visibility) ** k
-    #     confidence_rc_values.append(confidence_rc)
-    #     print(f"Visibility: {visibility}, Confidence: {confidence_rc}")
 
-    confidence_rc_values = 1 - (1 - chance) * (1 - np.array(visibility_values)) ** k
-    confidence_rc_values = np.array(confidence_rc_values)
-    confidence_rc_values = np.where(confidence_rc_values < chance, chance, confidence_rc_values)
-    confidence_rc_values = np.where(confidence_rc_values > 1.0, 1.0, confidence_rc_values)
+    confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
+    # confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
+    confidence_rc_values = np.clip(confidence_rc_values, chance, 1.0)
+
     return confidence_rc_values
 
-def compute_visibility(dim1: int, dim2: int, tx: float, ty: float) -> float:
+def compute_visibility(dim1: int, dim2: int, t: float) -> float:
     """Computes the visibility of the cropped uimage within the background.
 
     Args:
@@ -143,68 +138,42 @@ def compute_visibility(dim1: int, dim2: int, tx: float, ty: float) -> float:
     Returns:
         float: Visibility ratio of the cropped image.
     """
-    return (dim1 - abs(tx)) * (dim2 - abs(ty)) / (dim1 * dim2)
+    return (dim1 - t) * dim2 / (dim1 * dim2)
 
 if __name__ == "__main__":
-    augmentation_type = "TranslateX"
+    augmentation_type = "Color"
     data = pd.read_csv(
-        f"non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv"
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
+    # data = data[data["Severity"] < 0.0]
     data = data.sort_values(by="Severity")
+    data.reset_index(drop=True, inplace=True)
     augmentation_magnitude = data["Severity"]
     augmentation_mean = data["Mean"]
     augmentation_std = data["Std"]
     model_accuracy = data["Accuracy"]
-
+    
     # visibility = compute_visibility(
-    #     dim1=32.0, dim2=32.0, tx=0.0, ty=augmentation_magnitude
+    #     dim1=32.0, dim2=32.0, t=augmentation_magnitude
     # )
-    confidence_rc_values1 = get_nl_curve(augmentation_magnitude, k=2.0, chance=min(model_accuracy))
-    confidence_rc_values2 = get_nl_curve(augmentation_magnitude, k=3.0, chance=min(model_accuracy))
-    confidence_rc_values3 = get_nl_curve(augmentation_magnitude, k=5.0, chance=min(model_accuracy))
-    confidence_rc_values4 = get_nl_curve(augmentation_magnitude, k=10.0, chance=min(model_accuracy))
-    confidence_rc_values5 = get_nl_curve(augmentation_magnitude, k=15.0, chance=min(model_accuracy))
-    confidence_rc_values6 = get_nl_curve(augmentation_magnitude, k=18.0, chance=min(model_accuracy))
-    confidence_rc_values7 = get_nl_curve(augmentation_magnitude, k=20.0, chance=min(model_accuracy))
+    visibility = augmentation_magnitude
 
-    # plot the data
+    chance = min(model_accuracy)
+    print(f'Minimum Chance: {chance}')
+    k1, k2 = 2, 6
+
+    confidence_rc_values1 = get_nl_curve(visibility, k=k1, chance=chance)
+    confidence_rc_values2 = get_nl_curve(visibility, k=k2, chance=chance)
+    confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
+    confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
+
+    # idx = 5
+    # print(f"Augmentation Magnitude: {augmentation_magnitude[idx]}\tModel Accuracy: {model_accuracy[idx]}\tConfidence RC Values: {confidence_rc_values1[idx]}")
+
+    # # plot the curves
     plt.figure(figsize=(10, 6))
-    plt.plot(augmentation_magnitude, model_accuracy, "ko--", label="Model Outputs", color="red")
-    plt.plot(augmentation_magnitude, confidence_rc_values1, "b-", label=f"k={2}", color="blue")
-    plt.plot(augmentation_magnitude, confidence_rc_values2, "b-", label=f"k={3}", color="green")
-    plt.plot(augmentation_magnitude, confidence_rc_values3, "b-", label=f"k={5}", color="orange")
-    plt.plot(augmentation_magnitude, confidence_rc_values4, "b-", label=f"k={10}", color="purple")
-    plt.plot(augmentation_magnitude, confidence_rc_values5, "b-", label=f"k={15}", color="black")
-    plt.plot(augmentation_magnitude, confidence_rc_values6, "b-", label=f"k={18}", color="brown")
-    plt.plot(augmentation_magnitude, confidence_rc_values7, "b-", label=f"k={20}", color="olive")
-    # plt.plot(augmentation_magnitude, visibility, "b-", label="Fitted Curve")
-    plt.xlabel("Severity")
-    plt.ylabel("Confidence")
-    plt.title(f"Non Linear Mapping for {augmentation_type}")
+    plt.plot(augmentation_magnitude, model_accuracy, "--", label="Model Outputs", color="red")
+    plt.plot(augmentation_magnitude, confidence_rc_values1, "-", label=f"k={k1}", color="blue")
+    plt.plot(augmentation_magnitude, confidence_rc_values2, "-", label=f"k={k2}", color="green")
     plt.legend()
-    plt.savefig(f"non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.png")
     plt.show()
-
-
-    # Fit the gaussian function to the data
-    # popt, pcov = fit_poly_3(poly_3, augmentation_magnitude, model_accuracy)
-    # print(f"Fitted Gaussian Parameters: {popt}")
-    # plot_curves(
-    #     gaussian,
-    #     augmentation_magnitude,
-    #     model_accuracy,
-    #     augmentation_mean,
-    #     augmentation_std,
-    #     popt,
-    # )
-
-    # severity = np.array([0, 15, 30])
-    # visibility = np.array([1.0, 0.8, 0.5])
-
-    # popt, pcov = fit_poly_2(poly_2, severity, visibility)
-    # print(f"Fitted Parameters: {popt}")
-
-    # y_fit = poly_2(15, *popt)
-    # print(y_fit)
-
-    # print(f'Augmentation Magnitude: {augmentation_magnitude}\nModel Accuracy: {model_accuracy}')
