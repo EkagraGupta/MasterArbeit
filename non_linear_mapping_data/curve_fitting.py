@@ -138,10 +138,10 @@ def compute_visibility(dim1: int, dim2: int, t: float) -> float:
     Returns:
         float: Visibility ratio of the cropped image.
     """
-    return (dim1 - t) * dim2 / (dim1 * dim2)
+    return (dim1 - abs(t)) * dim2 / (dim1 * dim2)
 
 if __name__ == "__main__":
-    augmentation_type = "ShearX"
+    augmentation_type = "Brightness"
     data = pd.read_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
@@ -157,15 +157,16 @@ if __name__ == "__main__":
     #     dim1=32.0, dim2=32.0, t=augmentation_magnitude
     # )
     visibility = augmentation_magnitude
+    visibility_abs = abs(augmentation_magnitude)
 
     chance = min(model_accuracy)
     print(f'Minimum Chance: {chance}')
-    k1, k2 = 2, 4
+    k1, k2 = 3, 3
 
     confidence_rc_values1 = get_nl_curve(visibility, k=k1, chance=chance)
-    confidence_rc_values2 = get_nl_curve(visibility, k=k2, chance=chance)
-    # confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
-    # confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
+    confidence_rc_values2 = get_nl_curve(visibility_abs, k=k2, chance=chance)
+    confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
+    confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
 
     # idx = 5
     # print(f"Augmentation Magnitude: {augmentation_magnitude[idx]}\tModel Accuracy: {model_accuracy[idx]}\tConfidence RC Values: {confidence_rc_values1[idx]}")

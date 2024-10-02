@@ -100,8 +100,8 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     model_confidences = df["Accuracy"].tolist()
     augmentation_magnitudes = df["Severity"].tolist()
 
-    # if augmentation_type=='Solarize':
-    #     augmentation_magnitudes.reverse()
+    if augmentation_type=='Solarize':
+        augmentation_magnitudes.reverse()
 
     # Create folder if it doesn't exist
     folder_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}"
@@ -113,6 +113,7 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
 
     # Plot Mean and Std against Augmentation Magnitudes
     augmentation_magnitudes.sort()
+    print(augmentation_magnitudes)
     # print(augmentation_magnitudes)
     plt.figure(figsize=(8, 6))
     plt.plot(
@@ -136,7 +137,7 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
     plt.legend()
     plt.savefig(filename)
-    plt.show()
+    # plt.show()
 
 
 # Example usage:
@@ -146,7 +147,10 @@ if __name__ == "__main__":
     # model_confidences = [0.9, 0.8, 0.7, 0.6, 0.5]
     # augmentation_magnitudes = [1, 2, 3, 4, 5]
     # plot_mean_std(mean, std, model_confidences, "Brightness", augmentation_magnitudes)
+    
+    augmentation_type = "Brightness"
+
     plot_mean_std_from_csv(
-        "/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/Solarize/Solarize_MAPPING_results.csv",
-        "Solarize",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv",
+        f"{augmentation_type}",
     )

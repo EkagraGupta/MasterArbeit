@@ -20,9 +20,9 @@ def get_plot(augmentation_type, model, dataset_split=100):
 
     for enable_sign in range(0, 2):
         if enable_sign == 1:
-            enable_sign = True
-        else:
             enable_sign = False
+        else:
+            enable_sign = True
 
         for severity in range(0, 31):
             total_time = 0
@@ -57,8 +57,8 @@ def get_plot(augmentation_type, model, dataset_split=100):
             # Confidence Calculation
             start_time = time.time()
             _, _, confidences = next(iter(dataloader))
-            augmentation_magnitude = confidences[1][0]
-            confidences = confidences[0]
+            augmentation_magnitude = confidences[0][0]
+            confidences = confidences[1]
             # print(f'Augmentation Magnitudes: {augmentation_magnitude}\n Confidence Scores: {confidences}')
             end_time = time.time()
             mean, std = get_mean_std(confidences)
@@ -89,7 +89,7 @@ def get_plot(augmentation_type, model, dataset_split=100):
         augmentation_magnitudes_list,
         time_list,
     )
-    # plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
+    plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
 
     print(
         f"\n============================ Finished: {augmentation_type} ============================\n"
@@ -99,17 +99,17 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        # "ShearX",
-        # "ShearY",
-        # "TranslateX",
-        # "TranslateY",
+        "ShearX",
+        "ShearY",
+        "TranslateX",
+        "TranslateY",
         # "Rotate",
-        # "Brightness",
-        # "Color",
+        "Brightness",
+        "Color",
         # "Contrast",
-        # "Sharpness",
-        "Posterize",
-        "Solarize",
+        "Sharpness",
+        # "Posterize",
+        # "Solarize",
         # "AutoContrast",
         # "Equalize",
     ]

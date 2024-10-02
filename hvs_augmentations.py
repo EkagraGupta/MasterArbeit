@@ -15,8 +15,8 @@ import numpy as np
 def get_data(visibility_values: list, k: int = 2, chance: float = 0.1):
     confidence_rc_values = []
 
+    # confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
     confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
-    # confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
     confidence_rc_values = np.clip(confidence_rc_values, chance, 1.0)
 
     return confidence_rc_values
@@ -114,33 +114,33 @@ if __name__=='__main__':
     # plt.show()
 
     """Contrast"""
-    # augmentation_type = 'Contrast'
-    # min_val, max_val = 0.0, 0.99
-    # k = 5
-    # num_bins = 31
-    # # contrast_values = np.linspace(min_val, max_val, num_bins)
-    # contrast_values1 = [0.04, 0.06, 0.1, 1.0]
-    # confidence_values1 = [0.0, 0.28, 0.96, 1.0]
-    # confidence_values2 = [0.06, 0.3, 0.97, 1.0]
-    # confidence_values3 = [0.2, 0.6, 0.94, 1.0]
-    # confidence_values4 = [0.58, 0.9, 0.98, 1.0]
-    # confidence_values5 = [0.76, 0.88, 0.98, 1.0]
-    # confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
+    augmentation_type = 'Contrast'
+    min_val, max_val = 0.0, 0.99
+    k = 20
+    num_bins = 31
+    # contrast_values = np.linspace(min_val, max_val, num_bins)
+    contrast_values1 = [0.04, 0.06, 0.1, 1.0]
+    confidence_values1 = [0.0, 0.28, 0.96, 1.0]
+    confidence_values2 = [0.06, 0.3, 0.97, 1.0]
+    confidence_values3 = [0.2, 0.6, 0.94, 1.0]
+    confidence_values4 = [0.58, 0.9, 0.98, 1.0]
+    confidence_values5 = [0.76, 0.88, 0.98, 1.0]
+    confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
 
-    # contrast_values_lim = np.linspace(min_val, max_val, num_bins)
-    # confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
-    # chance = min(confidence_values_lim)
-    # estimated_confidence_values = get_data(visibility_values=contrast_values_lim, k=k, chance=chance)
+    contrast_values_lim = np.linspace(min_val, max_val, num_bins)
+    confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
+    chance = min(confidence_values_lim)
+    estimated_confidence_values = get_data(visibility_values=contrast_values_lim, k=k, chance=chance)
 
-    # # plot_data(visibility_values=contrast_values_lim, confidence_rc_values=confidence_values_lim, augmentation_type=augmentation_type)
+    # plot_data(visibility_values=contrast_values_lim, confidence_rc_values=confidence_values_lim, augmentation_type=augmentation_type)
 
-    # plt.plot(contrast_values_lim, confidence_values_lim, marker='o', label=f'Actual', color='red')
-    # plt.plot(contrast_values_lim, estimated_confidence_values, marker='o', label=f'Fitted', color='blue')
-    # plt.xlabel("Visibility")
-    # plt.ylabel("Confidence")
-    # plt.title(f"HVS for {augmentation_type}")
-    # plt.legend()
-    # plt.show()
+    plt.plot(contrast_values_lim, confidence_values_lim, marker='o', label=f'Actual', color='red')
+    plt.plot(contrast_values_lim, estimated_confidence_values, marker='o', label=f'Fitted', color='blue')
+    plt.xlabel("Visibility")
+    plt.ylabel("Confidence")
+    plt.title(f"HVS for {augmentation_type}")
+    plt.legend()
+    plt.show()
 
     """Brightness"""
     """Color"""
