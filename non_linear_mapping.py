@@ -18,7 +18,7 @@ def get_plot(augmentation_type, model, dataset_split=100):
     mean_list, std_list, time_list, augmentation_magnitudes_list = [], [], [], []
     accuracy_list = []
 
-    for enable_sign in range(0, 2):
+    for enable_sign in range(0, 1):
         if enable_sign == 1:
             enable_sign = False
         else:
@@ -99,11 +99,11 @@ def get_plot(augmentation_type, model, dataset_split=100):
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        "ShearX",
-        "ShearY",
-        "TranslateX",
-        "TranslateY",
-        # "Rotate",
+        # "ShearX",
+        # "ShearY",
+        # "TranslateX",
+        # "TranslateY",
+        "Rotate",
         "Brightness",
         "Color",
         # "Contrast",

@@ -117,14 +117,16 @@ def model_accuracy_mapping(
         if round(mag, 5) == round(augmentation_magnitude, 5):
             return model_accuracy_list[i]
 
+
 def get_nl_curve(visibility_values: list, k: int = 2, chance: float = 0.1):
     confidence_rc_values = []
 
-    confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
-    # confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
+    # confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
+    confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
     confidence_rc_values = np.clip(confidence_rc_values, chance, 1.0)
 
     return confidence_rc_values
+
 
 def compute_visibility(dim1: int, dim2: int, t: float) -> float:
     """Computes the visibility of the cropped uimage within the background.
@@ -140,41 +142,58 @@ def compute_visibility(dim1: int, dim2: int, t: float) -> float:
     """
     return (dim1 - abs(t)) * dim2 / (dim1 * dim2)
 
+
 if __name__ == "__main__":
-    augmentation_type = "Brightness"
+    augmentation_type = "Solarize"
     data = pd.read_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
-    # data = data[data["Severity"] < 0.0]
+
     data = data.sort_values(by="Severity")
     data.reset_index(drop=True, inplace=True)
     augmentation_magnitude = data["Severity"]
     augmentation_mean = data["Mean"]
     augmentation_std = data["Std"]
     model_accuracy = data["Accuracy"]
-    
+
     # visibility = compute_visibility(
     #     dim1=32.0, dim2=32.0, t=augmentation_magnitude
     # )
-    visibility = augmentation_magnitude
+    visibility = augmentation_magnitude / 255.0
     visibility_abs = abs(augmentation_magnitude)
 
     chance = min(model_accuracy)
-    print(f'Minimum Chance: {chance}')
-    k1, k2 = 3, 3
+    print(f"Minimum Chance: {chance}")
+    k1, k2 = 0.8, 2
 
     confidence_rc_values1 = get_nl_curve(visibility, k=k1, chance=chance)
     confidence_rc_values2 = get_nl_curve(visibility_abs, k=k2, chance=chance)
-    confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
-    confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
+    # confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
+    # confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
 
-    # idx = 5
-    # print(f"Augmentation Magnitude: {augmentation_magnitude[idx]}\tModel Accuracy: {model_accuracy[idx]}\tConfidence RC Values: {confidence_rc_values1[idx]}")
+    idx = 5
+    print(
+        f"Augmentation Magnitude: {augmentation_magnitude[idx]}\tModel Accuracy: {model_accuracy[idx]}\tConfidence RC Values: {confidence_rc_values1[idx]}"
+    )
 
     # # plot the curves
     plt.figure(figsize=(10, 6))
-    plt.plot(augmentation_magnitude, model_accuracy, "--", label="Model Outputs", color="red")
-    plt.plot(augmentation_magnitude, confidence_rc_values1, "-", label=f"k={k1}", color="blue")
-    plt.plot(augmentation_magnitude, confidence_rc_values2, "-", label=f"k={k2}", color="green")
+    plt.plot(
+        augmentation_magnitude, model_accuracy, "--", label="Model Outputs", color="red"
+    )
+    plt.plot(
+        augmentation_magnitude,
+        confidence_rc_values1,
+        "-",
+        label=f"k={k1}",
+        color="blue",
+    )
+    plt.plot(
+        augmentation_magnitude,
+        confidence_rc_values2,
+        "-",
+        label=f"k={k2}",
+        color="green",
+    )
     plt.legend()
     plt.show()

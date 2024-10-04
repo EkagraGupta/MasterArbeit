@@ -100,7 +100,7 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     model_confidences = df["Accuracy"].tolist()
     augmentation_magnitudes = df["Severity"].tolist()
 
-    if augmentation_type=='Solarize':
+    if augmentation_type == "Solarize":
         augmentation_magnitudes.reverse()
 
     # Create folder if it doesn't exist
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     # model_confidences = [0.9, 0.8, 0.7, 0.6, 0.5]
     # augmentation_magnitudes = [1, 2, 3, 4, 5]
     # plot_mean_std(mean, std, model_confidences, "Brightness", augmentation_magnitudes)
-    
+
     augmentation_type = "Brightness"
 
     plot_mean_std_from_csv(
