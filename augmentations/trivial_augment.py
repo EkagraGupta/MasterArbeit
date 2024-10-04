@@ -435,9 +435,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         # )  # The non-linear function
         """K-model for All Augmentations"""
 
-        # confidence_aa = torch.from_numpy(
-        #     np.where(confidence_aa < self.chance, self.chance, confidence_aa)
-        # )
+        confidence_aa = torch.from_numpy(
+            np.where(confidence_aa < 0.5, 0.5, confidence_aa)
+        )
         # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
