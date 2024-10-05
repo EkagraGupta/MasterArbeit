@@ -260,7 +260,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
-            k = 3  # 2, 4
+            k = 2  # 2, 4
             chance = 0.224  # 0.224, 0.1
             confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
         elif augmentation_type == "ShearY":
@@ -269,7 +269,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
-            k = 3  # 2, 4
+            k = 2  # 2, 4
             chance = 0.226  # 0.226, 0.1
             confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
         elif augmentation_type == "TranslateX":  # HVS Available
@@ -295,7 +295,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     augmentation_magnitude, 0.9753, 17.0263, -0.8297
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 5
+            k = 2
             chance = 0.102  # 0.102, 0.1
             # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=0.1)
             # confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
@@ -307,7 +307,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude = (augmentation_magnitude + 1.0) / 2.0
-            k = 7
+            k = 2
             chance = 0.32
             confidence_aa = get_data(augmentation_magnitude, k=k, chance=chance)
         elif augmentation_type == "Color":
@@ -315,7 +315,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     augmentation_magnitude, 1.0, 4.93537641, -1.5837580
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 5  # 2, 6
+            k = 2  # 2, 6
             chance = 0.95  # 0.95, 0.1
             # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
             # confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
@@ -326,7 +326,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 7 
+            k = 2 
             chance = 0.884  # 0.95, 0.1
             # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
             # confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
