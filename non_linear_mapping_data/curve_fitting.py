@@ -144,7 +144,7 @@ def compute_visibility(dim1: int, dim2: int, t: float) -> float:
 
 
 if __name__ == "__main__":
-    augmentation_type = "Contrast"
+    augmentation_type = "ShearX"
     data = pd.read_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
@@ -166,11 +166,11 @@ if __name__ == "__main__":
     # augmentation_magnitudes = (augmentation_magnitude + 1.0) / 2.0
     augmentation_magnitudes = augmentation_magnitude
     k1 = 3
-    k2 = 4
+    k2 = 2
     k3 = 6
     k4 = 20
     chance = 0.102
-    confidence_scores1 = get_nl_curve(visibility_values=abs(augmentation_magnitudes), k=k1, chance=chance)
+    confidence_scores1 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k1, chance=chance)
     confidence_scores2 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k2, chance=chance)
     confidence_scores3 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k3, chance=chance)
     confidence_scores4 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k4, chance=chance)
