@@ -343,6 +343,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     im, augment_im
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+            augmentation_magnitude_normalized = float(augmentation_magnitude // 8.0)
             k=2
             chance = 0.86
             if augmentation_magnitude_normalized==0.0:
@@ -354,6 +355,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     im, augment_im
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+            augmentation_magnitude_normalized = augmentation_magnitude / 255.0
             k = 1.5
             chance = 0.512  # 0.512, 0.1
             confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
