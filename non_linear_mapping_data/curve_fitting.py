@@ -121,9 +121,9 @@ def model_accuracy_mapping(
 def get_nl_curve(visibility_values: list, k: int = 2, chance: float = 0.1):
     confidence_rc_values = []
 
-    # confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
-    confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
-    confidence_rc_values = np.clip(confidence_rc_values, chance, 1.0)
+    confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
+    # confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
+    # confidence_rc_values = np.clip(confidence_rc_values, chance, 1.0)
 
     return confidence_rc_values
 
@@ -163,17 +163,22 @@ if __name__ == "__main__":
     # visibility_abs = abs(augmentation_magnitude)
 
     """TEST"""
-    augmentation_magnitudes = (augmentation_magnitude + 1.0) / 2.0
-    # augmentation_magnitudes = augmentation_magnitude
+    # augmentation_magnitudes = (augmentation_magnitude + 1.0) / 2.0
+    augmentation_magnitudes = augmentation_magnitude
     k1 = 3
-    k2 = 7
-    k3 = 9
+    k2 = 4
+    k3 = 6
     k4 = 20
     chance = 0.102
     confidence_scores1 = get_nl_curve(visibility_values=abs(augmentation_magnitudes), k=k1, chance=chance)
     confidence_scores2 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k2, chance=chance)
     confidence_scores3 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k3, chance=chance)
     confidence_scores4 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k4, chance=chance)
+
+    confidence_scores1[augmentation_magnitudes>0.0] = 1.0
+    confidence_scores2[augmentation_magnitudes>0.0] = 1.0
+    confidence_scores3[augmentation_magnitudes>0.0] = 1.0
+    confidence_scores4[augmentation_magnitudes>0.0] = 1.0
     
     # # plot the curves
     plt.figure(figsize=(10, 6))
