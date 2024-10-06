@@ -338,16 +338,25 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 confidence_aa = 1.0
             else:
                 confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
-        # elif augmentation_type == "Posterize":
-        # confidence_aa = comparison_metrics.multiscale_structural_similarity(
-        #     im, augment_im
-        # )
-        # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-        # elif augmentation_type == "Solarize":
-        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
-        #     im, augment_im
-        # )
-        # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+        elif augmentation_type == "Posterize":
+            # confidence_aa = comparison_metrics.multiscale_structural_similarity(
+            #     im, augment_im
+            # )
+            # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+            k=2
+            chance = 0.86
+            if augmentation_magnitude_normalized==0.0:
+                confidence_aa = chance
+            else:
+                confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
+        elif augmentation_type == "Solarize":
+            # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
+            #     im, augment_im
+            # )
+            # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
+            k = 1.5
+            chance = 0.512  # 0.512, 0.1
+            confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         elif augmentation_type == "Rotate":  # HVS Available
             # confidence_aa = comparison_metrics.gaussian(
             #     augmentation_magnitude,
@@ -357,41 +366,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     d=4.16662431e-01,
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            hvs_values = [
-                1.0,
-                0.99,
-                0.99,
-                0.99,
-                0.99,
-                0.99,
-                0.99,
-                0.9895,
-                0.988,
-                0.9865,
-                0.985,
-                0.9835,
-                0.982,
-                0.9805,
-                0.979,
-                0.9775,
-                0.976,
-                0.9745,
-                0.973,
-                0.9715,
-                0.97,
-                0.964,
-                0.958,
-                0.952,
-                0.946,
-                0.94,
-                0.934,
-                0.9315,
-                0.936,
-                0.9405,
-                0.945,
-            ]
-            augmentation_magnitude_idx = int(abs(augmentation_magnitude) / 135.0)
-            confidence_aa = hvs_values[augmentation_magnitude_idx]
+            k = 2
+            chance = 0.9315 # 0.9315, 0.1
+            confidence_aa = get_data(abs(augmentation_magnitude) / 135.0, k=k, chance=chance)
         # elif augmentation_type == "Equalize":
         #     # confidence_aa = comparison_metrics.multiscale_structural_similarity(
         #     #     im, augment_im

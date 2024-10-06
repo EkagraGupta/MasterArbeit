@@ -144,7 +144,7 @@ def compute_visibility(dim1: int, dim2: int, t: float) -> float:
 
 
 if __name__ == "__main__":
-    augmentation_type = "ShearX"
+    augmentation_type = "Posterize"
     data = pd.read_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
@@ -164,29 +164,38 @@ if __name__ == "__main__":
 
     """TEST"""
     # augmentation_magnitudes = (augmentation_magnitude + 1.0) / 2.0
-    augmentation_magnitudes = augmentation_magnitude
-    k1 = 3
-    k2 = 2
-    k3 = 6
-    k4 = 20
-    chance = 0.102
-    confidence_scores1 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k1, chance=chance)
-    confidence_scores2 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k2, chance=chance)
-    confidence_scores3 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k3, chance=chance)
-    confidence_scores4 = get_nl_curve(visibility_values=augmentation_magnitudes, k=k4, chance=chance)
+    augmentation_magnitudes = augmentation_magnitude / 8.0
+    # augmentation_magnitudes = augmentation_magnitude
+    unique_augmentation_magnitudes, unique_indices = np.unique(augmentation_magnitudes, return_index=True)
+    unique_model_accuracy = model_accuracy[unique_indices]
 
-    confidence_scores1[augmentation_magnitudes>0.0] = 1.0
-    confidence_scores2[augmentation_magnitudes>0.0] = 1.0
-    confidence_scores3[augmentation_magnitudes>0.0] = 1.0
-    confidence_scores4[augmentation_magnitudes>0.0] = 1.0
+    k1 = 1
+    k2 = 2
+    k3 = 3
+    k4 = 4
+    chance = min(model_accuracy)
+    print(f"Minimum Chance: {chance}")
+    confidence_scores1 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k1
+    confidence_scores2 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k2
+    confidence_scores3 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k3
+    confidence_scores4 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k4
+    confidence_scores1[0] = chance
+    confidence_scores2[0] = chance
+    confidence_scores3[0] = chance
+    confidence_scores4[0] = chance
+
+    # confidence_scores1[augmentation_magnitudes>0.0] = 1.0
+    # confidence_scores2[augmentation_magnitudes>0.0] = 1.0
+    # confidence_scores3[augmentation_magnitudes>0.0] = 1.0
+    # confidence_scores4[augmentation_magnitudes>0.0] = 1.0
     
     # # plot the curves
     plt.figure(figsize=(10, 6))
-    plt.plot(augmentation_magnitudes, model_accuracy, "--", label="Model Outputs", color="red")
-    plt.plot(augmentation_magnitudes, confidence_scores1, "-", label=f"k={k1}", color="blue")
-    plt.plot(augmentation_magnitudes, confidence_scores2, "-", label=f"k={k2}", color="green")
-    plt.plot(augmentation_magnitudes, confidence_scores3, "-", label=f"k={k3}", color="purple")
-    plt.plot(augmentation_magnitudes, confidence_scores4, "-", label=f"k={k4}", color="magenta")
+    plt.plot(unique_augmentation_magnitudes, unique_model_accuracy, "--", label="Model Outputs", color="red")
+    plt.plot(unique_augmentation_magnitudes, confidence_scores1, "-", label=f"k={k1}", color="blue")
+    plt.plot(unique_augmentation_magnitudes, confidence_scores2, "-", label=f"k={k2}", color="green")
+    plt.plot(unique_augmentation_magnitudes, confidence_scores3, "-", label=f"k={k3}", color="purple")
+    plt.plot(unique_augmentation_magnitudes, confidence_scores4, "-", label=f"k={k4}", color="magenta")
     plt.legend()
     plt.show()
     """TEST"""
