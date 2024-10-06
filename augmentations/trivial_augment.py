@@ -295,42 +295,49 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     augmentation_magnitude, 0.9753, 17.0263, -0.8297
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 2
+            augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
+            k = 15
             chance = 0.102  # 0.102, 0.1
-            # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=0.1)
-            confidence_rc_values = 1 - (1 - chance) * (1 - abs(augmentation_magnitude)) ** k
-            confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
+            if augmentation_magnitude>0.0:
+                confidence_aa = 1.0
+            else:
+                confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         elif augmentation_type == "Contrast":  # HVS Available
             # confidence_aa = comparison_metrics.sigmoid(
             #     augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            # augmentation_magnitude = (augmentation_magnitude + 1.0) / 2.0
-            k = 2
-            chance = 0.32
-            # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
-            confidence_rc_values = 1 - (1 - chance) * (1 - abs(augmentation_magnitude)) ** k
-            confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
+            augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
+            k = 15
+            chance = 0.32   # 0.32, 0.1
+            if augmentation_magnitude>0.0:
+                confidence_aa = 1.0
+            else:
+                confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         elif augmentation_type == "Color":
             # confidence_aa = comparison_metrics.sigmoid(
             #     augmentation_magnitude, 1.0, 4.93537641, -1.5837580
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 2
+            augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
+            k = 15
             chance = 0.95  # 0.95, 0.1
-            # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
-            confidence_rc_values = 1 - (1 - chance) * (1 - abs(augmentation_magnitude)) ** k
-            confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
+            if augmentation_magnitude>0.0:
+                confidence_aa = 1.0
+            else:
+                confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         elif augmentation_type == "Sharpness":
             # confidence_aa = comparison_metrics.sigmoid(
             #     augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 2 
+            augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
+            k = 15
             chance = 0.884  # 0.95, 0.1
-            # confidence_aa = get_data(abs(augmentation_magnitude), k=k, chance=chance)
-            confidence_rc_values = 1 - (1 - chance) * (1 - abs(augmentation_magnitude)) ** k
-            confidence_aa = 1.0 if augmentation_magnitude>0.0 else confidence_aa
+            if augmentation_magnitude>0.0:
+                confidence_aa = 1.0
+            else:
+                confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         # elif augmentation_type == "Posterize":
         # confidence_aa = comparison_metrics.multiscale_structural_similarity(
         #     im, augment_im

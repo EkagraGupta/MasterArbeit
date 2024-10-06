@@ -17,31 +17,14 @@ def get_data(visibility_values: list, k: int = 2, chance: float = 0.1):
     confidence_rc_values = []
 
     confidence_rc_values = 1 - (1 - chance) * (visibility_values) ** k
-    # confidence_rc_values = 1 - (1 - chance) * (1 - visibility_values) ** k
     confidence_rc_values = np.clip(confidence_rc_values, chance, 1.0)
 
     return confidence_rc_values
 
 
-def plot_data(
-    visibility_values: list,
-    confidence_rc_values: list,
-    k: int = 2,
-    augmentation_type: str = "occlusion",
-):
-    plt.plot(visibility_values, confidence_rc_values, marker="o", label=f"k={k}")
-    plt.xlabel("Visibility")
-    plt.ylabel("Confidence")
-    plt.title(f"HVS for {augmentation_type}")
-    plt.xticks(np.arange(visibility_values[0], visibility_values[-1] + 0.1, 15))
-    # plt.legend()
-    plt.show()
-
-
 if __name__ == "__main__":
-    # """Occlusion"""
+    """Occlusion"""
     # augmentation_type = 'occlusion'
-    # k = 2
     # min_val, max_val = 0.0, 1.0
     # num_bins = 31
     # visibility_values1 = [0.0, .05, .10, .15, .20, .25, .30, .35, 1.0]
@@ -51,27 +34,20 @@ if __name__ == "__main__":
     # confidence_values4 = [0.24, 0.47, 0.6, 0.74, 0.72, 0.8, 0.86, 0.87, 1.0]
     # confidence_values5 = [0.22, 0.58, 0.64, 0.72, 0.78, 0.82, 0.76, 0.77, 1.0]
     # confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
+    
+    # k1, k2, k3 = 2, 3, 4
 
     # visibility_values_lim = np.linspace(min_val, max_val, num_bins)
     # confidence_values_lim = np.interp(visibility_values_lim, visibility_values1, confidence_values)
-    # confidence_rc_values = get_data(visibility_values=visibility_values_lim, k=k)
-    # # confidence_rc_values[0] = confidence_values_lim[0]
-    # # print(min(confidence_rc_values))
-    # # plot_data(visibility_values=visibility_values_lim, confidence_rc_values=confidence_values_lim, k=k)
-
-    # # plt.plot(visibility_values1, confidence_values1, marker='o', label=f'25 ms', color='red')
-    # # plt.plot(visibility_values1, confidence_values2, marker='o', label=f'50 ms', color='blue')
-    # # plt.plot(visibility_values1, confidence_values3, marker='o', label=f'75 ms', color='green')
-    # # plt.plot(visibility_values1, confidence_values4, marker='o', label=f'100 ms', color='yellow')
-    # # plt.plot(visibility_values1, confidence_values5, marker='o', label=f'150 ms', color='purple')
-    # # plt.xlabel("Visibility")
-    # # plt.ylabel("Confidence")
-    # # plt.title(f"HVS for {augmentation_type}")
-    # # plt.legend()
-    # # plt.show()
+    # chance = min(confidence_values_lim)
+    # estimated_confidence_values1 = 1 - (1 - chance) * (1 - visibility_values_lim) ** k1
+    # estimated_confidence_values2 = 1 - (1 - chance) * (1 - visibility_values_lim) ** k2
+    # estimated_confidence_values3 = 1 - (1 - chance) * (1 - visibility_values_lim) ** k3
 
     # plt.plot(visibility_values_lim, confidence_values_lim, marker='o', label=f'Actual', color='red')
-    # plt.plot(visibility_values_lim, confidence_rc_values, marker='o', label=f'Fitted', color='blue')
+    # plt.plot(visibility_values_lim, estimated_confidence_values1, marker='o', label=f'k={k1}', color='blue')
+    # plt.plot(visibility_values_lim, estimated_confidence_values2, marker='o', label=f'k={k2}', color='green')
+    # plt.plot(visibility_values_lim, estimated_confidence_values3, marker='o', label=f'k={k3}', color='purple')
     # plt.xlabel("Visibility")
     # plt.ylabel("Confidence")
     # plt.yticks(np.arange(0.1, 1.1, 0.1))
@@ -145,10 +121,9 @@ if __name__ == "__main__":
 
     """Contrast"""
     augmentation_type = 'Contrast'
-    min_val, max_val = 0.0, 0.99
+    min_val, max_val = 0.0, 1.0
     k = 20
     num_bins = 31
-    # contrast_values = np.linspace(min_val, max_val, num_bins)
     contrast_values1 = [0.04, 0.06, 0.1, 1.0]
     confidence_values1 = [0.0, 0.28, 0.96, 1.0]
     confidence_values2 = [0.06, 0.3, 0.97, 1.0]
@@ -159,18 +134,31 @@ if __name__ == "__main__":
 
     contrast_values_lim = np.linspace(min_val, max_val, num_bins)
     confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
+    contrast_values_lim_neg = -1 * contrast_values_lim
+    contrast_value_lim_all = np.concatenate((contrast_values_lim_neg, contrast_values_lim))
+    print(confidence_values_lim)
+    confidence_values_lim_all = np.concatenate((confidence_values_lim, np.ones(num_bins, dtype=float)))
+    print(confidence_values_lim_all)
     chance = min(confidence_values_lim)
     print(f'chance: {chance}')
-    estimated_confidence_values1 = get_data(visibility_values=contrast_values_lim, k=10, chance=chance)
-    estimated_confidence_values2 = get_data(visibility_values=contrast_values_lim, k=20, chance=chance)
-    estimated_confidence_values3 = get_data(visibility_values=contrast_values_lim, k=25, chance=chance)
 
-    # plot_data(visibility_values=contrast_values_lim, confidence_rc_values=confidence_values_lim, augmentation_type=augmentation_type)
+    k1 = 10
+    k2 = 20
+    k3 = 25
+    contrast_value_lim_all = np.sort(contrast_value_lim_all)
+    contrast_values_lim_pos = (contrast_value_lim_all + 1.0) / 2.0
+    estimated_confidence_values1 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k1
+    estimated_confidence_values2 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k2
+    estimated_confidence_values3 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k3
+    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
+    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
+    estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
+    # print(f'Estimated Confidence 1: {estimated_confidence_values1}')
 
-    plt.plot(contrast_values_lim, (confidence_values_lim), marker='o', label=f'Actual', color='red')
-    plt.plot(contrast_values_lim, estimated_confidence_values1, marker='o', label=f'k=10', color='blue')
-    plt.plot(contrast_values_lim, estimated_confidence_values2, marker='o', label=f'k=20', color='green')
-    plt.plot(contrast_values_lim, estimated_confidence_values3, marker='o', label=f'k=25', color='black')
+    plt.plot(contrast_values_lim_pos, confidence_values_lim_all, marker='o', label=f'Actual', color='red')
+    plt.plot(contrast_values_lim_pos, estimated_confidence_values1, marker='o', label=f'k={k1}', color='blue')
+    plt.plot(contrast_values_lim_pos, estimated_confidence_values2, marker='o', label=f'k={k2}', color='green')
+    plt.plot(contrast_values_lim_pos, estimated_confidence_values3, marker='o', label=f'k={k3}', color='black')
     plt.xlabel("Visibility")
     plt.ylabel("Confidence")
     plt.title(f"HVS for {augmentation_type}")
