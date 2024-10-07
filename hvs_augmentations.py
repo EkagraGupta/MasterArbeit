@@ -56,102 +56,102 @@ if __name__ == "__main__":
     # plt.show()
 
     """Rotate"""
-    augmentation_type = "Rotation"
-    k = 3
-    min_val, max_val = 0.0, 135.0
-    num_bins = 31
-
-    rotation_values1 = np.arange(0.0, 151.0, 30)
-    confidence_values1 = [0.99, 0.99, 0.98, 0.97, 0.93, 0.96]
-    confidence_values2 = [0.94, 0.96, 0.93, 0.91, 0.92, 0.86]
-    confidence_values3 = [0.97, 0.98, 0.97, 0.96, 0.96, 0.92]
-    confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
-    confidence_values = np.mean(
-        [
-            confidence_values1,
-            confidence_values2,
-            confidence_values3,
-            confidence_values4,
-        ],
-        axis=0,
-    )
-    rotation_values_another = np.arange(0.0, 181.0, 45)
-    confidence_values_another = [0.98, 0.99, 0.94, 0.94, 0.88]
-    # merge the two lists
-    rotation_values = np.concatenate(
-        (rotation_values1, rotation_values_another))
-    confidence_values = np.concatenate(
-        (confidence_values1, confidence_values_another))
-    unique_rot_vals, unique_indices = np.unique(
-        rotation_values1, return_index=True)
-    rotation_values = unique_rot_vals.tolist()
-    confidence_values = confidence_values[unique_indices].tolist()
-
-    rotation_values_lim = np.linspace(min_val, max_val, num_bins)
-    confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
-    confidence_values_lim[0] = 1.0
-    rotation_values_lim = rotation_values_lim / max_val
-
-    chance = min(confidence_values_lim)
-    print(f"chance: {chance}")
-    estimated_confidence_values = 1 - (1 - chance) * (rotation_values_lim) ** k
-    estimated_confidence_values = np.clip(estimated_confidence_values, chance, 1.0)
-    # estimated_confidence_values[0] = confidence_values_lim[0]
-    plt.plot(rotation_values_lim, confidence_values_lim,
-             marker="o", label=f"Actual", color="red")
-    plt.plot(rotation_values_lim, estimated_confidence_values,
-             marker='o', label=f'Fitted', color='blue')
-    plt.xlabel("Normalized Rotation Angle")
-    plt.ylabel("Confidence")
-    plt.title(f"HVS for {augmentation_type}")
-    plt.legend()
-    plt.show()
-
-    """Contrast"""
-    # augmentation_type = 'Contrast'
-    # min_val, max_val = 0.0, 1.0
-    # k = 20
+    # augmentation_type = "Rotation"
+    # k = 3
+    # min_val, max_val = 0.0, 135.0
     # num_bins = 31
-    # contrast_values1 = [0.04, 0.06, 0.1, 1.0]
-    # confidence_values1 = [0.0, 0.28, 0.96, 1.0]
-    # confidence_values2 = [0.06, 0.3, 0.97, 1.0]
-    # confidence_values3 = [0.2, 0.6, 0.94, 1.0]
-    # confidence_values4 = [0.58, 0.9, 0.98, 1.0]
-    # confidence_values5 = [0.76, 0.88, 0.98, 1.0]
-    # confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
 
-    # contrast_values_lim = np.linspace(min_val, max_val, num_bins)
-    # confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
-    # contrast_values_lim_neg = -1 * contrast_values_lim
-    # contrast_value_lim_all = np.concatenate((contrast_values_lim_neg, contrast_values_lim))
-    # print(confidence_values_lim)
-    # confidence_values_lim_all = np.concatenate((confidence_values_lim, np.ones(num_bins, dtype=float)))
-    # print(confidence_values_lim_all)
+    # rotation_values1 = np.arange(0.0, 151.0, 30)
+    # confidence_values1 = [0.99, 0.99, 0.98, 0.97, 0.93, 0.96]
+    # confidence_values2 = [0.94, 0.96, 0.93, 0.91, 0.92, 0.86]
+    # confidence_values3 = [0.97, 0.98, 0.97, 0.96, 0.96, 0.92]
+    # confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
+    # confidence_values = np.mean(
+    #     [
+    #         confidence_values1,
+    #         confidence_values2,
+    #         confidence_values3,
+    #         confidence_values4,
+    #     ],
+    #     axis=0,
+    # )
+    # rotation_values_another = np.arange(0.0, 181.0, 45)
+    # confidence_values_another = [0.98, 0.99, 0.94, 0.94, 0.88]
+    # # merge the two lists
+    # rotation_values = np.concatenate(
+    #     (rotation_values1, rotation_values_another))
+    # confidence_values = np.concatenate(
+    #     (confidence_values1, confidence_values_another))
+    # unique_rot_vals, unique_indices = np.unique(
+    #     rotation_values1, return_index=True)
+    # rotation_values = unique_rot_vals.tolist()
+    # confidence_values = confidence_values[unique_indices].tolist()
+
+    # rotation_values_lim = np.linspace(min_val, max_val, num_bins)
+    # confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
+    # confidence_values_lim[0] = 1.0
+    # rotation_values_lim = rotation_values_lim / max_val
+
     # chance = min(confidence_values_lim)
-    # print(f'chance: {chance}')
-
-    # k1 = 10
-    # k2 = 20
-    # k3 = 25
-    # contrast_value_lim_all = np.sort(contrast_value_lim_all)
-    # contrast_values_lim_pos = (contrast_value_lim_all + 1.0) / 2.0
-    # estimated_confidence_values1 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k1
-    # estimated_confidence_values2 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k2
-    # estimated_confidence_values3 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k3
-    # estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
-    # estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
-    # estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
-    # # print(f'Estimated Confidence 1: {estimated_confidence_values1}')
-
-    # plt.plot(contrast_values_lim_pos, confidence_values_lim_all, marker='o', label=f'Actual', color='red')
-    # plt.plot(contrast_values_lim_pos, estimated_confidence_values1, marker='o', label=f'k={k1}', color='blue')
-    # plt.plot(contrast_values_lim_pos, estimated_confidence_values2, marker='o', label=f'k={k2}', color='green')
-    # plt.plot(contrast_values_lim_pos, estimated_confidence_values3, marker='o', label=f'k={k3}', color='black')
-    # plt.xlabel("Visibility")
+    # print(f"chance: {chance}")
+    # estimated_confidence_values = 1 - (1 - chance) * (rotation_values_lim) ** k
+    # estimated_confidence_values = np.clip(estimated_confidence_values, chance, 1.0)
+    # # estimated_confidence_values[0] = confidence_values_lim[0]
+    # plt.plot(rotation_values_lim, confidence_values_lim,
+    #          marker="o", label=f"Actual", color="red")
+    # plt.plot(rotation_values_lim, estimated_confidence_values,
+    #          marker='o', label=f'Fitted', color='blue')
+    # plt.xlabel("Normalized Rotation Angle")
     # plt.ylabel("Confidence")
     # plt.title(f"HVS for {augmentation_type}")
     # plt.legend()
     # plt.show()
+
+    """Contrast"""
+    augmentation_type = 'Contrast'
+    min_val, max_val = 0.0, 1.0
+    k = 20
+    num_bins = 31
+    contrast_values1 = [0.04, 0.06, 0.1, 1.0]
+    confidence_values1 = [0.0, 0.28, 0.96, 1.0]
+    confidence_values2 = [0.06, 0.3, 0.97, 1.0]
+    confidence_values3 = [0.2, 0.6, 0.94, 1.0]
+    confidence_values4 = [0.58, 0.9, 0.98, 1.0]
+    confidence_values5 = [0.76, 0.88, 0.98, 1.0]
+    confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
+
+    contrast_values_lim = np.linspace(min_val, max_val, num_bins)
+    confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
+    contrast_values_lim_neg = -1 * contrast_values_lim
+    contrast_value_lim_all = np.concatenate((contrast_values_lim_neg, contrast_values_lim))
+    print(confidence_values_lim)
+    confidence_values_lim_all = np.concatenate((confidence_values_lim, np.ones(num_bins, dtype=float)))
+    print(confidence_values_lim_all)
+    chance = min(confidence_values_lim)
+    print(f'chance: {chance}')
+
+    k1 = 7
+    k2 = 20
+    k3 = 25
+    contrast_value_lim_all = np.sort(contrast_value_lim_all)
+    contrast_values_lim_pos = (contrast_value_lim_all + 1.0) / 2.0
+    estimated_confidence_values1 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k1
+    estimated_confidence_values2 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k2
+    estimated_confidence_values3 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k3
+    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
+    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
+    estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
+    # print(f'Estimated Confidence 1: {estimated_confidence_values1}')
+
+    plt.plot(contrast_value_lim_all, confidence_values_lim_all, marker='o', label=f'Actual', color='red')
+    plt.plot(contrast_value_lim_all, estimated_confidence_values1, marker='o', label=f'k={k1}', color='blue')
+    plt.plot(contrast_value_lim_all, estimated_confidence_values2, marker='o', label=f'k={k2}', color='green')
+    plt.plot(contrast_value_lim_all, estimated_confidence_values3, marker='o', label=f'k={k3}', color='black')
+    plt.xlabel("Visibility")
+    plt.ylabel("Confidence")
+    plt.title(f"HVS for {augmentation_type}")
+    plt.legend()
+    plt.show()
 
     """Brightness"""
     """Color"""

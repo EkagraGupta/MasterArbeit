@@ -163,7 +163,7 @@ def create_transforms(
         augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
-        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=True))
+        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
@@ -293,12 +293,12 @@ if __name__ == "__main__":
     batch_size = 10
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=False,
-        custom=False,
-        # augmentation_name="Contrast",
-        # augmentation_severity=25,
-        # augmentation_sign=True,
+        random_cropping=False,
+        aggressive_augmentation=True,
+        custom=True,
+        augmentation_name="Contrast",
+        augmentation_severity=0,
+        augmentation_sign=False,
         dataset_name=DATASET_NAME,
     )
 
@@ -318,4 +318,4 @@ if __name__ == "__main__":
     display_image_grid(
         images, labels, confidences, batch_size=batch_size, classes=classes
     )
-    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")

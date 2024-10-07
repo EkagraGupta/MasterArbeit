@@ -278,8 +278,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=tx, ty=0
             )
-            # k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
+            k = 2
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "TranslateY":  # HVS Available
             dim1, dim2 = im.size[0], im.size[1]
@@ -287,8 +287,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=0, ty=ty
             )
-            # k = 2
-            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** self.k
+            k = 1.5
+            confidence_aa = 1 - (1 - self.chance) * (1 - visibility) ** k
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Brightness":
             # confidence_aa = comparison_metrics.sigmoid(
@@ -296,7 +296,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
-            k = 15
+            k = 7
             chance = 0.102  # 0.102, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
@@ -308,7 +308,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
-            k = 15
+            k = 7
             chance = 0.32   # 0.32, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
@@ -320,7 +320,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
-            k = 15
+            k = 7
             chance = 0.95  # 0.95, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
@@ -332,7 +332,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = (augmentation_magnitude + 1.0) / 2.0
-            k = 15
+            k = 7
             chance = 0.884  # 0.95, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
@@ -344,12 +344,10 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = float(augmentation_magnitude // 8.0)
+            
             k=2
             chance = 0.86
-            if augmentation_magnitude_normalized==0.0:
-                confidence_aa = chance
-            else:
-                confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
+            confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         elif augmentation_type == "Solarize":
             # confidence_aa = comparison_metrics.spatial_correlation_coefficient(
             #     im, augment_im
