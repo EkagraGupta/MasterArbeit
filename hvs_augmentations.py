@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     """Rotate"""
     augmentation_type = "Rotation"
-    k = 2.0
+    k = 3
     min_val, max_val = 0.0, 135.0
     num_bins = 31
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     rotation_values_lim = np.linspace(min_val, max_val, num_bins)
     confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
     confidence_values_lim[0] = 1.0
-    rotation_values_lim = rotation_values_lim * (1.0 / 135.0)
+    rotation_values_lim = rotation_values_lim / max_val
 
     chance = min(confidence_values_lim)
     print(f"chance: {chance}")
@@ -101,7 +101,7 @@ if __name__ == "__main__":
              marker="o", label=f"Actual", color="red")
     plt.plot(rotation_values_lim, estimated_confidence_values,
              marker='o', label=f'Fitted', color='blue')
-    plt.xlabel("Visibility")
+    plt.xlabel("Normalized Rotation Angle")
     plt.ylabel("Confidence")
     plt.title(f"HVS for {augmentation_type}")
     plt.legend()

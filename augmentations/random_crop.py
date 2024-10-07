@@ -138,5 +138,4 @@ class RandomCrop:
             # Parallel application of the RandomCrop
             if isinstance(confidence_rc, float):
                 confidence_rc = torch.tensor(confidence_rc)
-            # print(f'confidence_rc: {(confidence_rc)}')
             return cropped_image, confidence_rc

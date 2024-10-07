@@ -368,7 +368,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     d=4.16662431e-01,
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 2
+            k = 3  # 3, 4
             chance = 0.9315 # 0.9315, 0.1
             confidence_aa = get_data(abs(augmentation_magnitude) / 135.0, k=k, chance=chance)
         # elif augmentation_type == "Equalize":

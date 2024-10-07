@@ -163,7 +163,7 @@ def create_transforms(
         augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
-        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
+        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=True))
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
@@ -293,19 +293,21 @@ if __name__ == "__main__":
     batch_size = 10
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
-        custom=True,
+        random_cropping=True,
+        aggressive_augmentation=False,
+        custom=False,
         # augmentation_name="Contrast",
         # augmentation_severity=25,
         # augmentation_sign=True,
         dataset_name=DATASET_NAME,
     )
 
+    print(transforms_augmentation)
+
     trainset, testset = load_data(
         transforms_preprocess=transforms_preprocess,
         transforms_augmentation=transforms_augmentation,
-        dataset_name=DATASET_NAME,
+        dataset_name=DATASET_NAME
     )
 
     trainloader = torch.utils.data.DataLoader(
