@@ -57,14 +57,14 @@ if __name__ == "__main__":
 
     """Rotate"""
     # augmentation_type = "Rotation"
-    # k = 3
+    # k = 2
     # min_val, max_val = 0.0, 135.0
     # num_bins = 31
 
     # rotation_values1 = np.arange(0.0, 151.0, 30)
-    # confidence_values1 = [0.99, 0.99, 0.98, 0.97, 0.93, 0.96]
-    # confidence_values2 = [0.94, 0.96, 0.93, 0.91, 0.92, 0.86]
-    # confidence_values3 = [0.97, 0.98, 0.97, 0.96, 0.96, 0.92]
+    # confidence_values1 = [1.0, 0.99, 0.98, 0.97, 0.93, 0.96]
+    # confidence_values2 = [1.0, 0.96, 0.93, 0.91, 0.92, 0.86]
+    # confidence_values3 = [1.0, 0.98, 0.97, 0.96, 0.96, 0.92]
     # confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
     # confidence_values = np.mean(
     #     [
@@ -122,18 +122,17 @@ if __name__ == "__main__":
 
     contrast_values_lim = np.linspace(min_val, max_val, num_bins)
     confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
-    contrast_values_lim_neg = -1 * contrast_values_lim
+    contrast_values_lim_neg = -1 * contrast_values_lim[::-1]
     contrast_value_lim_all = np.concatenate((contrast_values_lim_neg, contrast_values_lim))
-    print(confidence_values_lim)
+    
     confidence_values_lim_all = np.concatenate((confidence_values_lim, np.ones(num_bins, dtype=float)))
-    print(confidence_values_lim_all)
+    # print(f'`contrast_value_lim_all`: {contrast_value_lim_all}\n`confidence_values_lim_all`: {confidence_values_lim_all}')
     chance = min(confidence_values_lim)
     print(f'chance: {chance}')
 
     k1 = 7
     k2 = 20
     k3 = 25
-    contrast_value_lim_all = np.sort(contrast_value_lim_all)
     contrast_values_lim_pos = (contrast_value_lim_all + 1.0) / 2.0
     estimated_confidence_values1 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k1
     estimated_confidence_values2 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k2

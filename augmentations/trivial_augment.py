@@ -366,9 +366,10 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             #     d=4.16662431e-01,
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
-            k = 3  # 3, 4
+            k = 2  # 2, 4
             chance = 0.9315 # 0.9315, 0.1
-            confidence_aa = get_data(abs(augmentation_magnitude) / 135.0, k=k, chance=chance)
+            augmentation_magnitude_normalized = abs(augmentation_magnitude) / 135.0 
+            confidence_aa = 1 - (1 - chance) * (augmentation_magnitude_normalized) ** k
         # elif augmentation_type == "Equalize":
         #     # confidence_aa = comparison_metrics.multiscale_structural_similarity(
         #     #     im, augment_im
@@ -419,7 +420,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         """K-model for All Augmentations"""
 
         confidence_aa = torch.from_numpy(
-            np.where(confidence_aa < 0.6, 0.6, confidence_aa)
+            np.where(confidence_aa < self.chance, self.chance, confidence_aa)
         )
         # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
