@@ -144,7 +144,7 @@ def compute_visibility(dim1: int, dim2: int, t: float) -> float:
 
 
 if __name__ == "__main__":
-    augmentation_type = "TranslateY"
+    augmentation_type = "Posterize"
     data = pd.read_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
@@ -156,98 +156,98 @@ if __name__ == "__main__":
     augmentation_std = data["Std"]
     model_accuracy = data["Accuracy"]
 
-    visibility = compute_visibility(
-        dim1=32.0, dim2=32.0, t=augmentation_magnitude
-    )
+    # visibility = compute_visibility(
+    #     dim1=32.0, dim2=32.0, t=augmentation_magnitude
+    # )
     # visibility = augmentation_magnitude / 255.0
     # visibility_abs = abs(augmentation_magnitude)
 
     """TEST Posterize and Solarize"""
-    # # augmentation_magnitudes = (augmentation_magnitude + 1.0) / 2.0
+    augmentation_magnitudes = augmentation_magnitude
     # augmentation_magnitudes = augmentation_magnitude
-    # # augmentation_magnitudes = augmentation_magnitude
-    # unique_augmentation_magnitudes, unique_indices = np.unique(augmentation_magnitudes, return_index=True)
-    # unique_model_accuracy = model_accuracy[unique_indices]
+    unique_augmentation_magnitudes, unique_indices = np.unique(augmentation_magnitudes, return_index=True)
+    unique_model_accuracy = model_accuracy[unique_indices]
 
-    # k1 = 1
-    # k2 = 2
-    # k3 = 3
-    # k4 = 4
-    # chance = min(model_accuracy)
-    # print(f"Minimum Chance: {chance}")
-    # print(unique_augmentation_magnitudes)
-    # confidence_scores1 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k1
-    # confidence_scores2 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k2
-    # confidence_scores3 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k3
-    # confidence_scores4 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k4
-    # # confidence_scores1[augmentation_magnitudes>0.0] = 1.0
-    # # confidence_scores2[augmentation_magnitudes>0.0] = 1.0
-    # # confidence_scores3[augmentation_magnitudes>0.0] = 1.0
-    # # confidence_scores4[augmentation_magnitudes>0.0] = 1.0
+    k1 = 1
+    k2 = 2
+    k3 = 3
+    k4 = 4
+    chance = min(model_accuracy)
+    print(f"Minimum Chance: {chance}")
+    confidence_scores1 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k1
+    confidence_scores2 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k2
+    confidence_scores3 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k3
+    confidence_scores4 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes) ** k4
     
-    # # # plot the curves
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(unique_augmentation_magnitudes, unique_model_accuracy, "--", label="Model Outputs", color="red")
-    # plt.plot(unique_augmentation_magnitudes, confidence_scores1, "-", label=f"k={k1}", color="blue")
+    # # plot the curves
+    plt.figure(figsize=(10, 6))
+    plt.plot(unique_augmentation_magnitudes, unique_model_accuracy, "--", label="Model Outputs", color="red")
+    plt.plot(unique_augmentation_magnitudes, confidence_scores1, "-", label=f"k={k1}", color="blue")
     # plt.plot(unique_augmentation_magnitudes, confidence_scores2, "-", label=f"k={k2}", color="green")
     # plt.plot(unique_augmentation_magnitudes, confidence_scores3, "-", label=f"k={k3}", color="purple")
     # plt.plot(unique_augmentation_magnitudes, confidence_scores4, "-", label=f"k={k4}", color="magenta")
-    # plt.legend()
-    # plt.show()
-    """TEST"""
-
-    chance = min(model_accuracy)
-    print(f"Minimum Chance: {chance}")
-    k1, k2, k3, k4 = 1.5, 2, 3, 4
-
-    augmentation_magnitude_pos = abs(augmentation_magnitude)
-
-    confidence_value1 = 1 - (1 - chance) * (1 - visibility) ** k1
-    confidence_value2 = 1 - (1 - chance) * (1 - visibility) ** k2
-    confidence_value3 = 1 - (1 - chance) * (1 - visibility) ** k3
-    confidence_value4 = 1 - (1 - chance) * (1 - visibility) ** k4
-    # confidence_rc_values1 = get_nl_curve(visibility, k=k1, chance=chance)
-    # confidence_rc_values2 = get_nl_curve(visibility_abs, k=k2, chance=chance)
-    # confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
-    # confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
-
-    # idx = 5
-    # print(
-    #     f"Augmentation Magnitude: {augmentation_magnitude[idx]}\tModel Accuracy: {model_accuracy[idx]}\tConfidence RC Values: {confidence_rc_values1[idx]}"
-    # )
-
-    # # plot the curves
-    plt.figure(figsize=(10, 6))
-    plt.plot(
-        augmentation_magnitude, model_accuracy, "--", label="Model Outputs", color="red"
-    )
-    plt.plot(
-        augmentation_magnitude,
-        confidence_value1,
-        "-",
-        label=f"k={k1}",
-        color="blue",
-    )
-    plt.plot(
-        augmentation_magnitude,
-        confidence_value2,
-        "-",
-        label=f"k={k2}",
-        color="green",
-    )
-    plt.plot(
-        augmentation_magnitude,
-        confidence_value3,
-        "-",
-        label=f"k={k3}",
-        color="purple",
-    )
-    plt.plot(
-        augmentation_magnitude,
-        confidence_value4,
-        "-",
-        label=f"k={k4}",
-        color="green",
-    )
     plt.legend()
     plt.show()
+    """TEST"""
+
+    # chance = min(model_accuracy)
+    # print(f"Minimum Chance: {chance}")
+    # k1, k2, k3, k4 = 2, 4, 6, 10
+
+    # augmentation_magnitude_pos = (augmentation_magnitude + 1.0) / 2.0
+
+    # confidence_value1 = 1 - (1 - chance) * (1 - augmentation_magnitude_pos) ** k1
+    # confidence_value2 = 1 - (1 - chance) * (1 - augmentation_magnitude_pos) ** k2
+    # confidence_value3 = 1 - (1 - chance) * (1 - augmentation_magnitude_pos) ** k3
+    # confidence_value4 = 1 - (1 - chance) * (1 - augmentation_magnitude_pos) ** k4
+    # # confidence_rc_values1 = get_nl_curve(visibility, k=k1, chance=chance)
+    # # confidence_rc_values2 = get_nl_curve(visibility_abs, k=k2, chance=chance)
+    # # confidence_rc_values1[augmentation_magnitude>0.0] = 1.0
+    # # confidence_rc_values2[augmentation_magnitude>0.0] = 1.0
+
+    # # idx = 5
+    # # print(
+    # #     f"Augmentation Magnitude: {augmentation_magnitude[idx]}\tModel Accuracy: {model_accuracy[idx]}\tConfidence RC Values: {confidence_rc_values1[idx]}"
+    # # )
+
+    # # # plot the curves
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(
+    #     augmentation_magnitude, model_accuracy, "--", label="Model Outputs", color="red"
+    # )
+    # plt.plot(
+    #     augmentation_magnitude, augmentation_mean, "--", label="Augmentation Mean", color="pink"
+    # )
+    # plt.plot(
+    #     augmentation_magnitude, augmentation_mean, "-", label="Augmentation mean", color="black"
+    # )
+    # plt.plot(
+    #     augmentation_magnitude,
+    #     confidence_value1,
+    #     "-",
+    #     label=f"k={k1}",
+    #     color="blue",
+    # )
+    # plt.plot(
+    #     augmentation_magnitude,
+    #     confidence_value2,
+    #     "-",
+    #     label=f"k={k2}",
+    #     color="green",
+    # )
+    # plt.plot(
+    #     augmentation_magnitude,
+    #     confidence_value3,
+    #     "-",
+    #     label=f"k={k3}",
+    #     color="purple",
+    # )
+    # plt.plot(
+    #     augmentation_magnitude,
+    #     confidence_value4,
+    #     "-",
+    #     label=f"k={k4}",
+    #     color="pink",
+    # )
+    # plt.legend()
+    # plt.show()
