@@ -120,55 +120,55 @@ if __name__ == "__main__":
     # plt.show()
     
     """Contrast"""
-    # augmentation_type = 'Contrast'
-    # min_val, max_val = 0.0, 1.0
-    # num_bins = 31
-    # contrast_values1 = [0.04, 0.06, 0.1, 1.0]
-    # confidence_values1 = [0.0, 0.28, 0.96, 1.0]
-    # confidence_values2 = [0.06, 0.3, 0.97, 1.0]
-    # confidence_values3 = [0.2, 0.6, 0.94, 1.0]
-    # confidence_values4 = [0.58, 0.9, 0.98, 1.0]
-    # confidence_values5 = [0.76, 0.88, 0.98, 1.0]
-    # confidence_values = np.mean([confidence_values1, confidence_values2,
-    #                             confidence_values3, confidence_values4, confidence_values5], axis=0)
-    # contrast_values_lim = np.linspace(min_val, max_val, num_bins)
-    # confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
-    # contrast_value_lim_all = 2 * contrast_values_lim - 1
+    augmentation_type = 'Contrast'
+    min_val, max_val = 0.0, 1.0
+    num_bins = 31
+    contrast_values1 = [0.044, 0.061, 0.098, 0.956]
+    confidence_values1 = [0.0, 0.28, 0.96, 1.0]
+    confidence_values2 = [0.06, 0.3, 0.97, 1.0]
+    confidence_values3 = [0.2, 0.6, 0.94, 1.0]
+    confidence_values4 = [0.58, 0.9, 0.98, 1.0]
+    confidence_values5 = [0.76, 0.88, 0.98, 1.0]
+    confidence_values = np.mean([confidence_values1, confidence_values2,
+                                confidence_values3, confidence_values4, confidence_values5], axis=0)
+    contrast_values_lim = np.linspace(min_val, max_val, num_bins)
+    confidence_values_lim = np.interp(contrast_values_lim, contrast_values1, confidence_values)
+    contrast_value_lim_all = 2 * contrast_values_lim - 1
 
-    # augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
+    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
 
-    # k1 = 2
-    # k2 = 10
-    # k3 = 30
-    # chance = min(confidence_values_lim)
-    # print(f'{augmentation_type} chance: {chance}')
+    k1 = 2
+    k2 = 10
+    k3 = 30
+    chance = min(confidence_values_lim)
+    print(f'{augmentation_type} chance: {chance}')
 
-    # contrast_values_lim_pos = (augmentation_magnitude + 1.0) / 2.0
-    # estimated_confidence_values1 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k1
-    # estimated_confidence_values2 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k2
-    # estimated_confidence_values3 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k3
-    # estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
-    # estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
-    # estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
+    contrast_values_lim_pos = (augmentation_magnitude + 1.0) / 2.0
+    estimated_confidence_values1 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k1
+    estimated_confidence_values2 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k2
+    estimated_confidence_values3 = 1 - (1 - chance) * (1 - contrast_values_lim_pos) ** k3
+    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
+    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
+    estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
 
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(contrast_value_lim_all, confidence_values_lim, '--', label=f'Contrast HVS', color='red')
-    # plt.plot(augmentation_magnitude, model_accuracy, "--", label="Model Confidence", color="black")
-    # plt.plot(augmentation_magnitude, estimated_confidence_values1, '-', label=f'k={k1}', color='blue')
-    # plt.plot(augmentation_magnitude, estimated_confidence_values2, '-', label=f'k={k2}', color='green')
-    # plt.plot(augmentation_magnitude, estimated_confidence_values3, '-', label=f'k={k3}', color='purple')
-    # plt.xlabel(f"Magnitude of {augmentation_type}")
-    # plt.ylabel("Confidence")
-    # plt.title(f"{augmentation_type} with chance: {chance}")
-    # plt.legend()
-    # plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
-    # plt.show()
+    plt.figure(figsize=(10, 6))
+    plt.plot(contrast_value_lim_all, confidence_values_lim, '--', label=f'Contrast HVS', color='red')
+    plt.plot(augmentation_magnitude, model_accuracy, "--", label="Model Confidence", color="black")
+    plt.plot(augmentation_magnitude, estimated_confidence_values1, '-', label=f'k={k1}', color='blue')
+    plt.plot(augmentation_magnitude, estimated_confidence_values2, '-', label=f'k={k2}', color='green')
+    plt.plot(augmentation_magnitude, estimated_confidence_values3, '-', label=f'k={k3}', color='purple')
+    plt.xlabel(f"Magnitude of {augmentation_type}")
+    plt.ylabel("Confidence")
+    plt.title(f"{augmentation_type} with chance: {chance}")
+    plt.legend()
+    plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
+    plt.show()
 
     """Brightness"""
     # augmentation_type = 'Brightness'
     # min_val, max_val = 0.0, 1.0
     # num_bins = 31
-    # contrast_values1 = [0.04, 0.06, 0.1, 1.0]
+    # contrast_values1 = [0.044, 0.061, 0.098, 0.956]
     # confidence_values1 = [0.0, 0.28, 0.96, 1.0]
     # confidence_values2 = [0.06, 0.3, 0.97, 1.0]
     # confidence_values3 = [0.2, 0.6, 0.94, 1.0]
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     # augmentation_type = 'Color'
     # min_val, max_val = 0.0, 1.0
     # num_bins = 31
-    # contrast_values1 = [0.04, 0.06, 0.1, 1.0]
+    # contrast_values1 = [0.044, 0.061, 0.098, 0.956]
     # confidence_values1 = [0.0, 0.28, 0.96, 1.0]
     # confidence_values2 = [0.06, 0.3, 0.97, 1.0]
     # confidence_values3 = [0.2, 0.6, 0.94, 1.0]
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     # augmentation_type = 'Sharpness'
     # min_val, max_val = 0.0, 1.0
     # num_bins = 31
-    # contrast_values1 = [0.04, 0.06, 0.1, 1.0]
+    # contrast_values1 = [0.044, 0.061, 0.098, 0.956]
     # confidence_values1 = [0.0, 0.28, 0.96, 1.0]
     # confidence_values2 = [0.06, 0.3, 0.97, 1.0]
     # confidence_values3 = [0.2, 0.6, 0.94, 1.0]
@@ -535,35 +535,35 @@ if __name__ == "__main__":
 
 
     """Solarize"""
-    augmentation_type = 'Solarize'
+    # augmentation_type = 'Solarize'
 
-    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
+    # augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
 
-    unique_augmentation_magnitudes, unique_indices = np.unique(augmentation_magnitude, return_index=True)
-    unique_model_accuracy = model_accuracy[unique_indices]
+    # unique_augmentation_magnitudes, unique_indices = np.unique(augmentation_magnitude, return_index=True)
+    # unique_model_accuracy = model_accuracy[unique_indices]
 
-    k1 = 1.5
-    k2 = 1
-    k3 = 2
-    k4 = 3
-    chance = min(model_accuracy)
-    print(f"Minimum Chance: {chance}")
+    # k1 = 1.5
+    # k2 = 1
+    # k3 = 2
+    # k4 = 3
+    # chance = min(model_accuracy)
+    # print(f"Minimum Chance: {chance}")
 
-    estimated_confidence_scores1 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k1
-    estimated_confidence_scores2 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k2
-    estimated_confidence_scores3 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k3
-    estimated_confidence_scores4 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k4
+    # estimated_confidence_scores1 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k1
+    # estimated_confidence_scores2 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k2
+    # estimated_confidence_scores3 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k3
+    # estimated_confidence_scores4 = 1 - (1 - chance) * (1 - unique_augmentation_magnitudes / 255.0) ** k4
     
-    # # plot the curves
-    plt.figure(figsize=(10, 6))
-    plt.plot(unique_augmentation_magnitudes, unique_model_accuracy, "--", label="Model Outputs", color="black")
-    plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores1, "-", label=f"k={k1}", color="blue")
-    plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores2, "-", label=f"k={k2}", color="green")
-    plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores3, "-", label=f"k={k3}", color="purple")
-    plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores4, "-", label=f"k={k4}", color="magenta")
-    plt.xlabel(f"Magnitude of {augmentation_type}")
-    plt.ylabel("Confidence")
-    plt.title(f"{augmentation_type} with chance: {chance}")
-    plt.legend()
-    plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
-    plt.show()
+    # # # plot the curves
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(unique_augmentation_magnitudes, unique_model_accuracy, "--", label="Model Outputs", color="black")
+    # plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores1, "-", label=f"k={k1}", color="blue")
+    # plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores2, "-", label=f"k={k2}", color="green")
+    # plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores3, "-", label=f"k={k3}", color="purple")
+    # plt.plot(unique_augmentation_magnitudes, estimated_confidence_scores4, "-", label=f"k={k4}", color="magenta")
+    # plt.xlabel(f"Magnitude of {augmentation_type}")
+    # plt.ylabel("Confidence")
+    # plt.title(f"{augmentation_type} with chance: {chance}")
+    # plt.legend()
+    # plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
+    # plt.show()
