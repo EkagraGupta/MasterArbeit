@@ -144,7 +144,7 @@ def compute_visibility(dim1: int, dim2: int, t: float) -> float:
 
 
 if __name__ == "__main__":
-    augmentation_type = "Posterize"
+    augmentation_type = "Solarize"
     data = pd.read_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/{augmentation_type}_MAPPING_results.csv"
     )
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     # visibility_abs = abs(augmentation_magnitude)
 
     """TEST Posterize and Solarize"""
-    augmentation_magnitudes = augmentation_magnitude
+    augmentation_magnitudes = augmentation_magnitude / 255.0
     # augmentation_magnitudes = augmentation_magnitude
     unique_augmentation_magnitudes, unique_indices = np.unique(augmentation_magnitudes, return_index=True)
     unique_model_accuracy = model_accuracy[unique_indices]
