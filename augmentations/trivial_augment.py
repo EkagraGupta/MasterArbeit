@@ -299,7 +299,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
             k = 10  # 7, 15
-            chance = 0.102  # 0.102, 0.1
+            chance = 0.32  # 0.102, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:
@@ -323,7 +323,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
             k = 10
-            chance = 0.95  # 0.95, 0.1
+            chance = 0.32  # 0.95, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:
@@ -335,7 +335,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
             k = 10
-            chance = 0.884  # 0.95, 0.1
+            chance = 0.32  # 0.95, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:

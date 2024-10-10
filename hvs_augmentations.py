@@ -61,63 +61,63 @@ if __name__ == "__main__":
     # plt.show()
 
     """Rotate"""
-    # augmentation_type = "Rotate"
-    # min_val, max_val = 0.0, 135.0
-    # num_bins = 31
+    augmentation_type = "Rotate"
+    min_val, max_val = 0.0, 135.0
+    num_bins = 31
 
-    # rotation_values1 = np.arange(0.0, 151.0, 30)
-    # confidence_values1 = [1.0, 0.99, 0.98, 0.97, 0.93, 0.96]
-    # confidence_values2 = [1.0, 0.96, 0.93, 0.91, 0.92, 0.86]
-    # confidence_values3 = [1.0, 0.98, 0.97, 0.96, 0.96, 0.92]
-    # confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
-    # confidence_values = np.mean([
-    #         confidence_values1,
-    #         confidence_values2,
-    #         confidence_values3,
-    #         confidence_values4,
-    #     ],
-    #     axis=0,
-    # )
-    # rotation_values_another = np.arange(0.0, 181.0, 45)
-    # confidence_values_another = [0.98, 0.99, 0.94, 0.94, 0.88]
-    # rotation_values = np.concatenate((rotation_values1, rotation_values_another))
-    # confidence_values = np.concatenate((confidence_values1, confidence_values_another))
-    # unique_rot_vals, unique_indices = np.unique(rotation_values1, return_index=True)
-    # rotation_values = unique_rot_vals.tolist()
-    # confidence_values = confidence_values[unique_indices].tolist()
+    rotation_values1 = np.arange(0.0, 151.0, 30)
+    confidence_values1 = [1.0, 0.99, 0.98, 0.97, 0.93, 0.96]
+    confidence_values2 = [1.0, 0.96, 0.93, 0.91, 0.92, 0.86]
+    confidence_values3 = [1.0, 0.98, 0.97, 0.96, 0.96, 0.92]
+    confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
+    confidence_values = np.mean([
+            confidence_values1,
+            confidence_values2,
+            confidence_values3,
+            confidence_values4,
+        ],
+        axis=0,
+    )
+    rotation_values_another = np.arange(0.0, 181.0, 45)
+    confidence_values_another = [0.98, 0.99, 0.94, 0.94, 0.88]
+    rotation_values = np.concatenate((rotation_values1, rotation_values_another))
+    confidence_values = np.concatenate((confidence_values1, confidence_values_another))
+    unique_rot_vals, unique_indices = np.unique(rotation_values1, return_index=True)
+    rotation_values = unique_rot_vals.tolist()
+    confidence_values = confidence_values[unique_indices].tolist()
 
-    # rotation_values_lim = np.linspace(min_val, max_val, num_bins)
-    # confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
-    # confidence_values_lim[0] = 1.0
+    rotation_values_lim = np.linspace(min_val, max_val, num_bins)
+    confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
+    confidence_values_lim[0] = 1.0
 
-    # augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
+    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
 
-    # k1 = 1.5
-    # k2 = 2
-    # k3 = 3
-    # chance = min(confidence_values_lim)
-    # print(f"chance: {chance}")
+    k1 = 1.5
+    k2 = 2
+    k3 = 3
+    chance = min(confidence_values_lim)
+    print(f"chance: {chance}")
 
-    # estimated_confidence_values1 = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k1
-    # estimated_confidence_values2 = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k2
-    # estimated_confidence_values3 = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k3
-    # estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
-    # estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
-    # estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
+    estimated_confidence_values1 = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k1
+    estimated_confidence_values2 = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k2
+    estimated_confidence_values3 = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k3
+    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
+    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
+    estimated_confidence_values3 = np.clip(estimated_confidence_values3, chance, 1.0)
 
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(rotation_values_lim, confidence_values_lim, "--", label=f"Rotation HVS", color="red")
-    # plt.plot(augmentation_magnitude, estimated_confidence_values1, '-', label=f'k={k1}', color='blue')
-    # plt.plot(augmentation_magnitude, estimated_confidence_values2, '-', label=f'k={k2}', color='green')
-    # plt.plot(augmentation_magnitude, estimated_confidence_values3, '-', label=f'k={k3}', color='purple')
-    # # plt.plot(augmentation_magnitude, model_accuracy, "--", label="Model Confidence", color="black")
-    # plt.xticks(rotation_values_lim[::10])
-    # plt.xlabel(f"Magnitude of {augmentation_type}")
-    # plt.ylabel("Confidence")
-    # plt.title(f"{augmentation_type} with chance: {chance}")
-    # plt.legend()
-    # plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
-    # plt.show()
+    plt.figure(figsize=(10, 6))
+    plt.plot(rotation_values_lim, confidence_values_lim, "--", label=f"Rotation HVS", color="red")
+    plt.plot(augmentation_magnitude, estimated_confidence_values1, '-', label=f'k={k1}', color='blue')
+    plt.plot(augmentation_magnitude, estimated_confidence_values2, '-', label=f'k={k2}', color='green')
+    plt.plot(augmentation_magnitude, estimated_confidence_values3, '-', label=f'k={k3}', color='purple')
+    # plt.plot(augmentation_magnitude, model_accuracy, "--", label="Model Confidence", color="black")
+    plt.xticks(rotation_values_lim[::10])
+    plt.xlabel(f"Magnitude of {augmentation_type}")
+    plt.ylabel("Confidence")
+    plt.title(f"{augmentation_type} with chance: {chance}")
+    plt.legend()
+    plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
+    plt.show()
     
     """Contrast"""
     augmentation_type = 'Contrast'
