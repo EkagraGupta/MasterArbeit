@@ -260,37 +260,55 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
+            # applying rotate to get nlmf
             k = 2  # 2, 4
-            chance = 0.9315  # 0.224, 0.1
+            chance = 0.224  # 0.224, 0.1
             confidence_aa = 1 - (1 - chance) * abs(augmentation_magnitude) ** k
+
+            # applying translateX to get nlmf
+            # dim1, dim2 = im.size[0], im.size[1]
+            # visibility = random_crop.compute_visibility(
+            #     dim1=dim1, dim2=dim2, tx=0., ty=augmentation_magnitude
+            # )
+            # k = 2
+            # chance = 0.224          # taken from model acc
+            # confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
         elif augmentation_type == "ShearY":
             # confidence_aa = comparison_metrics.gaussian(
             #     augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
+            # applying rotate to get nlmf
             k = 2  # 2, 4
-            chance = 0.9315  # 0.226, 0.1
+            chance = 0.226  # 0.226, 0.1
             confidence_aa = 1 - (1 - chance) * abs(augmentation_magnitude) ** k
+
+            # applying translateY to get nlmf
+            # dim1, dim2 = im.size[0], im.size[1]
+            # visibility = random_crop.compute_visibility(
+            #     dim1=dim1, dim2=dim2, tx=0., ty=augmentation_magnitude
+            # )
+            # k = 2
+            # chance = 0.224
+            # confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
         elif augmentation_type == "TranslateX":  # HVS Available
             dim1, dim2 = im.size[0], im.size[1]
-            tx = augment_info[augmentation_type]
             visibility = random_crop.compute_visibility(
-                dim1=dim1, dim2=dim2, tx=tx, ty=0
+                dim1=dim1, dim2=dim2, tx=augmentation_magnitude, ty=0
             )
-            k = 3
-            chance = 0.1
-            confidence_aa = 1 - (1 - chance) * (abs(augmentation_magnitude) / 32.0) ** k
+            k = 2
+            chance = 0.224
+            confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "TranslateY":  # HVS Available
             dim1, dim2 = im.size[0], im.size[1]
-            ty = augment_info[augmentation_type]
             visibility = random_crop.compute_visibility(
-                dim1=dim1, dim2=dim2, tx=0, ty=ty
+                dim1=dim1, dim2=dim2, tx=0, ty=augmentation_magnitude
             )
-            k = 3
+            k = 2
             chance = 0.1
-            confidence_aa = 1 - (1 - chance) * (abs(augmentation_magnitude) / 32.0) ** k
+            confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "Brightness":
             # confidence_aa = comparison_metrics.sigmoid(
@@ -298,8 +316,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
-            k = 30  # 7, 15
-            chance = 0.32  # 0.102, 0.1
+            k = 10  # 7, 15
+            chance = 0.102  # 0.102, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:
@@ -310,7 +328,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
-            k = 30
+            k = 10
             chance = 0.32   # 0.32, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
@@ -322,8 +340,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
-            k = 30
-            chance = 0.32  # 0.95, 0.1
+            k = 10
+            chance = 0.95  # 0.95, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:
@@ -334,8 +352,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_clipped = (augmentation_magnitude + 1.0) / 2.0
-            k = 30
-            chance = 0.32  # 0.95, 0.1
+            k = 10
+            chance = 0.884  # 0.884, 0.1
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:
@@ -347,7 +365,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = float(augmentation_magnitude // 8.0)
             
-            k=3
+            k=1.5
             chance = 0.86
             confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
             # confidence_aa = 1.0
@@ -357,7 +375,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # )
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             augmentation_magnitude_normalized = augmentation_magnitude / 255.0
-            k = 2
+            k = 1.5
             chance = 0.512  # 0.512, 0.1
             confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
         elif augmentation_type == "Rotate":  # HVS Available
