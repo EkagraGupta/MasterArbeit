@@ -290,7 +290,7 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
 
 if __name__ == "__main__":
 
-    batch_size = 10
+    batch_size = 100
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
