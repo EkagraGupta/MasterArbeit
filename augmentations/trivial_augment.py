@@ -298,7 +298,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 dim1=dim1, dim2=dim2, tx=augmentation_magnitude, ty=0
             )
             k = 2
-            chance = 0.224
+            chance = 0.1
             confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
         elif augmentation_type == "TranslateY":  # HVS Available
