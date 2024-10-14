@@ -290,15 +290,15 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
 
 if __name__ == "__main__":
 
-    batch_size = 100
+    batch_size = 1
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        augmentation_name="TranslateX",
+        augmentation_name="Contrast",
         augmentation_severity=0,
-        augmentation_sign=False,
+        augmentation_sign=True,
         dataset_name=DATASET_NAME,
     )
 
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(
-        images, labels, confidences, batch_size=batch_size, classes=classes
-    )
+    # display_image_grid(
+    #     images, labels, confidences, batch_size=batch_size, classes=classes
+    # )
     # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")

@@ -17,7 +17,7 @@ def model_accuracy_mapping(
     for i in range(len(augmentation_magnitude_list)):
         mag = augmentation_magnitude_list[i]
         if round(mag, 5) == round(augmentation_magnitude, 5):
-            return model_accuracy_list[i]
+            return model_accuracy_list[i], i
 
 
 if __name__ == "__main__":
