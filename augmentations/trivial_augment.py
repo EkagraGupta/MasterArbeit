@@ -261,16 +261,20 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         """Performance data obtained from available HVS"""
 
         dat = self._augmentation_space(self.num_magnitude_bins)
-        augmentation_type = next(iter(dat.keys()))
-        mags = dat[augmentation_type]
-        for i in range(len(mags[0])):
-            # print(f'mag: {round(mags[0][i].item(), 5)}')
-            # print(f'aug mag: {round(augmentation_magnitude, 5)}')
-            if round(abs(augmentation_magnitude), 5) == round(mags[0][i].item(), 5):
-                augmentation_idx = i
-                break
-        # print(mags)
+        # print(f'dat: {dat}\n')
+        # augmentation_type = next(iter(dat.keys()))
 
+        if augmentation_type in ['Identity', 'AutoContrast', 'Equalize', 'Invert']:
+            augmentation_idx = 0
+        else:
+            mags = dat[augmentation_type]
+            for i in range(len(mags[0])):
+                if round(abs(augmentation_magnitude), 5) == round(mags[0][i].item(), 5):
+                    augmentation_idx = i
+                    break
+        
+        # print(f'augmentation_type: {augmentation_type}\taugmentation_idx: {augmentation_idx}\n')
+            
         if augmentation_type == "ShearX":
             """Custom Gaussian Function"""
             # confidence_aa = comparison_metrics.gaussian(
@@ -323,7 +327,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             """Exact Rotation HVS"""
             confidence_aa = rotation_hvs[augmentation_idx]
 
-        elif augmentation_type == "TranslateX":  # HVS Available
+        if augmentation_type == "TranslateX":  # HVS Available
             """Exact Model Accuracy"""
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
