@@ -11,6 +11,7 @@ from augmentations.random_crop import RandomCrop
 from augmentations.random_choice import RandomChoiceTransforms
 from compute_loss import soft_loss
 
+import random
 
 class AugmentedDataset(torch.utils.data.Dataset):
     """Dataset wrapper to perform augmentations and allow robust loss functions.
@@ -287,10 +288,15 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
         ax.axis("off")
     plt.show()
 
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+
 
 if __name__ == "__main__":
 
-    batch_size = 1
+    batch_size = 10
     DATASET_NAME = "CIFAR10"
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -310,12 +316,15 @@ if __name__ == "__main__":
         dataset_name=DATASET_NAME
     )
 
+    g = torch.Generator()
+    g.manual_seed(0)
+
     trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=batch_size, shuffle=True
+        trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(
-    #     images, labels, confidences, batch_size=batch_size, classes=classes
-    # )
-    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    display_image_grid(
+        images, labels, confidences, batch_size=batch_size, classes=classes
+    )
+    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")

@@ -369,18 +369,19 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Contrast HVS"""
-            # k = 10      # 10, 30  
-            # chance = 0.32  # 0.102, 0.1
+            k_neg, k_pos = 2, 5      # 10, 30  
+            chance_pos = 0.32   # 0.102, 0.1
+            chance_neg = 0.86   # model_acc[-1]
+            if augmentation_magnitude>0.0:
+                confidence_aa = 1 - (1 - chance_pos) * (augmentation_magnitude) ** k_pos
+            else:
+                confidence_aa = 1 - (1 - chance_neg) * (augmentation_magnitude) ** k_neg
+
+            """Exact Contrast HVS"""
             # if augmentation_magnitude>0.0:
             #     confidence_aa = 1.0
             # else:
-            #     confidence_aa = 1 - (1 - chance) * (abs(augmentation_magnitude)) ** k
-
-            """Exact Contrast HVS"""
-            if augmentation_magnitude>0.0:
-                confidence_aa = 1.0
-            else:
-                confidence_aa = contrast_hvs[::-1][augmentation_idx]
+            #     confidence_aa = contrast_hvs[::-1][augmentation_idx]
 
         elif augmentation_type == "Contrast":  # HVS Available
             """Custom Sigmoid Function"""
@@ -392,12 +393,13 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Contrast HVS"""
-            # k = 10      # 10, 30    
-            # chance = 0.32   # 0.102, 0.1
-            # if augmentation_magnitude>0.0:
-            #     confidence_aa = 1.0
-            # else:
-            #     confidence_aa = 1 - (1 - chance) * (abs(augmentation_magnitude)) ** k
+            k_neg, k_pos = 2, 5      # 10, 30  
+            chance_pos = 0.32   # 0.102, 0.1
+            chance_neg = 0.86   # model_acc[-1]
+            if augmentation_magnitude>0.0:
+                confidence_aa = 1 - (1 - chance_pos) * (augmentation_magnitude) ** k_pos
+            else:
+                confidence_aa = 1 - (1 - chance_neg) * (augmentation_magnitude) ** k_neg
 
             """Exact Contrast HVS"""
             if augmentation_magnitude>0.0:
