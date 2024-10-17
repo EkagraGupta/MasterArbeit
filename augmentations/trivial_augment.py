@@ -332,32 +332,32 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Translation HVS"""
-            # dim1, dim2 = im.size[0], im.size[1]
-            # visibility = random_crop.compute_visibility(
-            #     dim1=dim1, dim2=dim2, tx=augmentation_magnitude, ty=0
-            # )
-            # k = 2
-            # chance = 0.1
-            # confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
+            dim1, dim2 = im.size[0], im.size[1]
+            visibility = random_crop.compute_visibility(
+                dim1=dim1, dim2=dim2, tx=augmentation_magnitude, ty=0
+            )
+            k = 2
+            chance = 0.1
+            confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
 
             """Exact Occlusion HVS"""
-            confidence_aa = occlusion_hvs[::-1][augmentation_idx]
+            # confidence_aa = occlusion_hvs[::-1][augmentation_idx]
 
         elif augmentation_type == "TranslateY":  # HVS Available
             """Exact Model Accuracy"""
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
             
             """Mapping function from Translation HVS"""
-            # dim1, dim2 = im.size[0], im.size[1]
-            # visibility = random_crop.compute_visibility(
-            #     dim1=dim1, dim2=dim2, tx=0, ty=augmentation_magnitude
-            # )
-            # k = 2
-            # chance = 0.1
-            # confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
+            dim1, dim2 = im.size[0], im.size[1]
+            visibility = random_crop.compute_visibility(
+                dim1=dim1, dim2=dim2, tx=0, ty=augmentation_magnitude
+            )
+            k = 2
+            chance = 0.1
+            confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
 
             """Exact Occlusion HVS"""
-            confidence_aa = occlusion_hvs[::-1][augmentation_idx]
+            # confidence_aa = occlusion_hvs[::-1][augmentation_idx]
 
         elif augmentation_type == "Brightness":
             """Custom Sigmoid Function"""
@@ -369,7 +369,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Contrast HVS"""
-            k_neg, k_pos = 2, 5      # 10, 30  
+            k_neg, k_pos = 2, 3      # 10, 30  
             chance_pos = 0.32   # 0.102, 0.1
             chance_neg = 0.86   # model_acc[-1]
             if augmentation_magnitude>0.0:
@@ -393,7 +393,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Contrast HVS"""
-            k_neg, k_pos = 2, 5      # 10, 30  
+            k_neg, k_pos = 2, 3      # 10, 30  
             chance_pos = 0.32   # 0.102, 0.1
             chance_neg = 0.86   # model_acc[-1]
             if augmentation_magnitude>0.0:
@@ -402,10 +402,10 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 confidence_aa = 1 - (1 - chance_neg) * (augmentation_magnitude) ** k_neg
 
             """Exact Contrast HVS"""
-            if augmentation_magnitude>0.0:
-                confidence_aa = 1.0
-            else:
-                confidence_aa = contrast_hvs[::-1][augmentation_idx]
+            # if augmentation_magnitude>0.0:
+            #     confidence_aa = 1.0
+            # else:
+            #     confidence_aa = contrast_hvs[::-1][augmentation_idx]
 
         # elif augmentation_type == "Color":
         #     """Custom Sigmoid Function"""
@@ -497,12 +497,12 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Rotation HVS"""
-            # k = 2  # 2, 3
-            # chance = 0.9315 # 0.9315, 0.1
-            # confidence_aa = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k
+            k = 1.5  # 2, 3
+            chance = 0.9315 # 0.9315, 0.1
+            confidence_aa = 1 - (1 - chance) * (abs(augmentation_magnitude) / 135.0) ** k
 
             """Exact Rotation HVS"""
-            confidence_aa = rotation_hvs[augmentation_idx]
+            # confidence_aa = rotation_hvs[augmentation_idx]
 
         # elif augmentation_type == "Equalize":
         #     # confidence_aa = comparison_metrics.multiscale_structural_similarity(
