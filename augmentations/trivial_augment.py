@@ -556,7 +556,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         confidence_aa = torch.from_numpy(
             np.where(confidence_aa < self.chance, self.chance, confidence_aa)
         )
-        print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
+        # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
