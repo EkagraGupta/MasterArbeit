@@ -24,6 +24,7 @@ class RandomCrop:
         sigma_crop: float = 10,
         dataset_name: str = "CIFAR10",
         custom: bool = False,
+        seed: Optional[int] = None
     ):
         if dataset_name == "CIFAR10":
             self.n_class = 10
@@ -36,12 +37,13 @@ class RandomCrop:
         self.sigma_crop = sigma_crop
         self.bg_crop = bg_crop
         self.custom = custom
+        self.seed = seed
 
     def draw_offset(
         self,
         sigma: Optional[float] = 0.3,
         limit: Optional[int] = 24,
-        n: Optional[int] = 100,
+        n: Optional[int] = 100
     ) -> int:
         """Draws a random offset within a specified limit using a normal distribution.
 
@@ -53,6 +55,9 @@ class RandomCrop:
         Returns:
             int: The drawn offset within the limit
         """
+        if self.seed is not None:
+            torch.seed(self.seed)
+
         for _ in range(n):
             x = torch.randn((1)) * sigma
             if abs(x) <= limit:
@@ -96,6 +101,10 @@ class RandomCrop:
         to_tensor = transforms.ToTensor()
         image = to_tensor(image)
         dim1, dim2 = image.size(1), image.size(2)
+
+        # setting manual seed for consistent results
+        if self.seed is not None:
+            torch.seed(self.seed)
 
         # Create background
         bg = (

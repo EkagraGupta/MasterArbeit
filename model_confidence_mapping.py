@@ -8,6 +8,9 @@ def model_accuracy_mapping(
     augmentation_type: Optional[str],
     root_path: Optional[str] = "/kaggle/working/MasterArbeit",
 ) -> Optional[float]:
+    
+    root_path = '/home/ekagra/Documents/GitHub/MasterArbeit'
+    
     filename = os.path.join(root_path, f"{augmentation_type}_MAPPING_results.csv")
     data = pd.read_csv(filename)
     augmentation_magnitude_list = data["Severity"]

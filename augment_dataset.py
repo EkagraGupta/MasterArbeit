@@ -116,6 +116,7 @@ def create_transforms(
     augmentation_severity: int = 0,
     augmentation_sign: bool = False,
     dataset_name: str = "CIFAR10",
+    seed: Optional[int] = None
 ) -> Optional[tuple]:
     """Creates preprocessing and augmentation transformations.
 
@@ -140,7 +141,7 @@ def create_transforms(
                 augmentation_name=augmentation_name,
                 severity=augmentation_severity,
                 get_signed=augmentation_sign,
-                dataset_name=dataset_name,
+                dataset_name=dataset_name
             )
         )
 
@@ -164,7 +165,7 @@ def create_transforms(
         augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
-        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
+        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom, seed=seed))
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
@@ -292,12 +293,17 @@ def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
+    torch.seed(worker_seed)
 
 
 if __name__ == "__main__":
 
     batch_size = 10
     DATASET_NAME = "CIFAR10"
+
+    g = torch.Generator()
+    g.manual_seed(0)
+
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
         aggressive_augmentation=True,
@@ -305,7 +311,7 @@ if __name__ == "__main__":
         augmentation_name="Contrast",
         augmentation_severity=0,
         augmentation_sign=True,
-        dataset_name=DATASET_NAME,
+        dataset_name=DATASET_NAME
     )
 
     print(transforms_augmentation)
@@ -316,8 +322,7 @@ if __name__ == "__main__":
         dataset_name=DATASET_NAME
     )
 
-    g = torch.Generator()
-    g.manual_seed(0)
+    print(f'seed_worker: {seed_worker}\ngenerator: {g}\nmanual_seed: {g.manual_seed(0)}')
 
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
