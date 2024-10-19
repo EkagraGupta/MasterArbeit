@@ -223,7 +223,7 @@ def sigmoid(x, a, b, c):
 
 
 def custom_poly_common(severity, max_severity=30):
-    return 1.0 - (0.9 / max_severity) * severity
+    return 1.0 - (severity / max_severity)
 
 
 if __name__ == "__main__":

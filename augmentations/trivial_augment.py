@@ -545,9 +545,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             severity=augmentation_severity, max_severity=self.num_magnitude_bins
         )
 
-        # Update self.chance
-        self.chance = 0.5
-
         confidence_aa = (
             1 - (1 - self.chance) * (1 - visibility) ** self.k
         )  # The non-linear function
@@ -560,9 +557,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     confidence_aa = 
         """TBD: if hvs is not available, apply Aggressive RC"""
         
-        # confidence_aa = torch.from_numpy(
-        #     np.where(confidence_aa < self.chance, self.chance, confidence_aa)
-        # )
+        confidence_aa = torch.from_numpy(
+            np.where(confidence_aa < self.chance, self.chance, confidence_aa)
+        )
         # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
