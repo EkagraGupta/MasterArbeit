@@ -165,7 +165,7 @@ def create_transforms(
         augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
-        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom, seed=seed))
+        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
