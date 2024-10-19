@@ -308,7 +308,7 @@ if __name__ == "__main__":
         random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        augmentation_name="Contrast",
+        augmentation_name="Brightness",
         augmentation_severity=0,
         augmentation_sign=True,
         dataset_name=DATASET_NAME

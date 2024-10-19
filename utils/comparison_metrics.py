@@ -223,7 +223,7 @@ def sigmoid(x, a, b, c):
 
 
 def custom_poly_common(severity, max_severity=30):
-    return 1.0 - (0.5 / max_severity) * severity
+    return 1.0 - (0.9 / max_severity) * severity
 
 
 if __name__ == "__main__":
@@ -231,3 +231,8 @@ if __name__ == "__main__":
     im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image.png"
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
+
+
+    severity = 30
+    max_severity = 30
+    print(custom_poly_common(severity, max_severity))

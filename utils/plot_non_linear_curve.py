@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = "HVS"
+COMPARISON_METRIC = "k2_model"
 
 
 def get_mean_std(confidences_tensor):
