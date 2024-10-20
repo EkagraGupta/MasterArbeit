@@ -309,7 +309,7 @@ if __name__ == "__main__":
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
-        augmentation_severity=0,
+        augmentation_severity=20,
         augmentation_sign=True,
         dataset_name=DATASET_NAME
     )

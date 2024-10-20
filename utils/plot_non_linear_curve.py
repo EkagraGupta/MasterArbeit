@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = "k2_model"
+COMPARISON_METRIC = "comparison_all"
 
 
 def get_mean_std(confidences_tensor):
@@ -20,6 +20,7 @@ def save_to_csv(
     augmentation_type,
     augmentation_magnitudes_list,
     time_list,
+    iq_metric
 ):
     folder_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}"
     if not os.path.exists(folder_name):
@@ -29,25 +30,32 @@ def save_to_csv(
         folder_name, f"{augmentation_type}_{COMPARISON_METRIC}_results.csv"
     )
 
-    # print(f'Augmentation Magnitudes: {augmentation_magnitudes}')
+    print(f'mean: {mean_list}\nstd: {std_list}\naccuracy: {accuracy_list}\naugmentation_magnitudes: {augmentation_magnitudes_list}\ntime: {time_list}\n')
 
-    with open(filename, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Severity", "Mean", "Std", "Accuracy", "Time Taken"])
-        for i, (mean, std, accuracy, augmentation_magnitude, time_taken) in enumerate(
-            zip(
+    if not os.path.exists(filename):
+        with open(filename, mode="w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["severity", "accuracy", f"mean_{iq_metric}", f"std_{iq_metric}", f"elapsed_time_{iq_metric}"])
+            for mean, std, accuracy, augmentation_magnitude, time_taken in zip(
                 mean_list,
                 std_list,
                 accuracy_list,
                 augmentation_magnitudes_list,
                 time_list,
-            ),
-            1,
-        ):
-            writer.writerow(
-                [augmentation_magnitude.item(), mean, std, accuracy, time_taken]
-            )
-    print(f"Results saved to {filename}")
+            ):
+                writer.writerow(
+                    [augmentation_magnitude.item(), accuracy, mean, std, time_taken]
+                )
+        print(f"Results saved to {filename}\n")
+    else:
+        df = pd.read_csv(filename)
+        df[f'mean_{iq_metric}'] = mean_list
+        df[f'std_{iq_metric}'] = std_list
+        df[f'elapsed_time_{iq_metric}'] = time_list
+        
+        df.to_csv(filename, index=False)
+        print(f'Results for Image Quality metric {iq_metric} appended to {filename}\n')
+
     return filename
 
 
@@ -89,16 +97,16 @@ def plot_mean_std(
     # plt.show()
 
 
-def plot_mean_std_from_csv(csv_file, augmentation_type=None):
+def plot_mean_std_from_csv(csv_file, augmentation_type=None, iq_metric='ssim'):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(csv_file)
-    df = df.sort_values(by="Severity")
+    df = df.sort_values(by="severity")
 
     # Extract the relevant columns
-    mean = df["Mean"].tolist()
-    std = df["Std"].tolist()
-    model_confidences = df["Accuracy"].tolist()
-    augmentation_magnitudes = df["Severity"].tolist()
+    mean = df[f"mean_{iq_metric}"].tolist()
+    std = df[f"std_{iq_metric}"].tolist()
+    model_confidences = df["accuracy"].tolist()
+    augmentation_magnitudes = df["severity"].tolist()
 
     if augmentation_type == "Solarize":
         augmentation_magnitudes.reverse()
@@ -113,19 +121,17 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
 
     # Plot Mean and Std against Augmentation Magnitudes
     augmentation_magnitudes.sort()
-    print(augmentation_magnitudes)
-    # print(augmentation_magnitudes)
     plt.figure(figsize=(8, 6))
     plt.plot(
         augmentation_magnitudes, mean, "-", color="red", label="Comparison Confidence"
     )
-    plt.fill_between(
-        augmentation_magnitudes,
-        [m - s for m, s in zip(mean, std)],
-        [m + s for m, s in zip(mean, std)],
-        color="red",
-        alpha=0.2,
-    )
+    # plt.fill_between(
+    #     augmentation_magnitudes,
+    #     [m - s for m, s in zip(mean, std)],
+    #     [m + s for m, s in zip(mean, std)],
+    #     color="red",
+    #     alpha=0.2,
+    # )
     plt.plot(
         augmentation_magnitudes,
         model_confidences,
@@ -136,8 +142,8 @@ def plot_mean_std_from_csv(csv_file, augmentation_type=None):
     plt.ylabel("Confidence")
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
     plt.legend()
-    plt.savefig(filename)
-    # plt.show()
+    # plt.savefig(filename)
+    plt.show()
 
 
 # Example usage:
@@ -148,9 +154,9 @@ if __name__ == "__main__":
     # augmentation_magnitudes = [1, 2, 3, 4, 5]
     # plot_mean_std(mean, std, model_confidences, "Brightness", augmentation_magnitudes)
 
-    augmentation_type = "Brightness"
+    augmentation_type = "Rotate"
 
     plot_mean_std_from_csv(
-        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_MAPPING_results.csv",
+        f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_{COMPARISON_METRIC}_results.csv",
         f"{augmentation_type}",
     )
