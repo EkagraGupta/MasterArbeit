@@ -97,7 +97,7 @@ def plot_mean_std(
     # plt.show()
 
 
-def plot_mean_std_from_csv(csv_file, augmentation_type=None, iq_metric='ssim'):
+def plot_mean_std_from_csv(csv_file, augmentation_type=None, iq_metric='scc'):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(csv_file)
     df = df.sort_values(by="severity")
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     # augmentation_magnitudes = [1, 2, 3, 4, 5]
     # plot_mean_std(mean, std, model_confidences, "Brightness", augmentation_magnitudes)
 
-    augmentation_type = "Rotate"
+    augmentation_type = "Brightness"
 
     plot_mean_std_from_csv(
         f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_{COMPARISON_METRIC}_results.csv",
