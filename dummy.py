@@ -1,54 +1,84 @@
-from augment_dataset import create_transforms, load_data
+from torchvision.datasets import ImageFolder
+from torchvision import transforms
 import torch
-from utils.measure_dataloader import measure_dataloader_time
-from torchvision import transforms, datasets
-from torchvision.transforms import functional as F
+import os
+from PIL import Image
+import matplotlib.pyplot as plt
 
-preprocess, augmentation = create_transforms(
-    random_cropping=False,
-    aggressive_augmentation=True,
-    custom=True,
-    augmentation_name="Sharpness",
-    augmentation_severity=30,
-    augmentation_sign=True,
-)
+class TinyImageNetDataset(torch.utils.data.Dataset):
+    def __init__(self, root, transform=None, train=True):
+        self.train = train
+        if train:
+            self.root_dir = os.path.join(root, 'train')
+        else:
+            self.root_dir = os.path.join(root, 'val')
+        self.transform = transform
+        self.data = []
+        self.labels = []
+        self.wnids = self.load_wnids(os.path.join(root, 'wnids.txt'))
+        self.class_names = self.load_class_names(os.path.join(root, 'words.txt'))
 
-trainset, _ = load_data(
-    transforms_preprocess=preprocess,
-    transforms_augmentation=augmentation,
-    dataset_split=10,
-)
-# magnitude = 0.99
-# sharpness_factor = 1.0 + magnitude
-# adjust_sharpness = transforms.Lambda(lambda x: F.adjust_sharpness(x, sharpness_factor))
+        self.class_to_idx = {wnid: idx for idx, wnid in enumerate(self.wnids)}
 
-# transform_train = transforms.Compose(
-#     [   
-#         transforms.GaussianBlur(kernel_size=5, sigma=1.0),
-#         transforms.ToTensor(),
-#     ]
-# )
+        for class_name, idx in self.class_to_idx.items():
+            if train:
+                class_dir = os.path.join(self.root_dir, class_name)
+            else:
+                class_dir = self.root_dir
+            class_dir = os.path.join(class_dir, 'images')
+            for image_name in os.listdir(class_dir):
+                im_path = os.path.join(class_dir, image_name)
+                if image_name.endswith('.JPEG'):
+                    self.data.append(im_path)
+                    self.labels.append(idx)
 
-# trainset = datasets.CIFAR10(
-#     root="./data", train=True, download=True, transform=transform_train
-# )
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        image_path = self.data[idx]
+        image = Image.open(image_path).convert('RGB')
+        label = self.labels[idx]
 
-trainloader = torch.utils.data.DataLoader(trainset, shuffle=False, batch_size=1)
+        if self.transform:
+            image = self.transform(image)
+        
+        return image, label
+    
+    def load_wnids(self, wnids_path):
+        with open(wnids_path, 'r') as f:
+            wnids = [line.strip() for line in f.readlines()]
+        return wnids
 
-# time_taken = measure_dataloader_time(trainloader)
-# print(f"\nTime taken: {time_taken:.3f} seconds.\n")
+    def load_class_names(self, words_path):
+        class_names = {}
+        with open(words_path, 'r') as f:
+            for line in f:
+                parts = line.split('\t')
+                wnid = parts[0]
+                name = ' '.join(parts[1:])
+                class_names[wnid] = name
+        return class_names
+    
+    def get_class_name(self, label):
+        wnid = self.wnids[label]
+        return self.class_names.get(wnid, 'Unknown')
+    
 
-images, labels, conf = next(
-    iter(trainloader)
-)  # confidences[0]: augmentation_magnitude, confidences[1]: confidence_score
-to_pil = transforms.ToPILImage()
-resize = transforms.Resize((256, 256))
-im_pil = resize(to_pil(images[0]))
-im_pil.show()
+if __name__ == '__main__':
 
-# Gaussian blur image
-# from PIL import Image, ImageFilter
-# im = Image.open('example/original_image.png')
-# im = im.filter(ImageFilter.GaussianBlur(radius=1.0))
-# im = im.resize((256, 256))
-# im.show()
+    transform = transforms.Compose([
+        transforms.Resize((64, 64)),
+        transforms.ToTensor()
+    ])
+
+    dataset = TinyImageNetDataset('/home/ekagra/Documents/GitHub/MasterArbeit/data/tiny_imnet/tiny-imagenet-200', transform=transform, train=True)
+    
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
+
+    image, label = next(iter(dataloader))
+    plt.imshow(image[0].permute(1, 2, 0))
+    plt.title(dataset.get_class_name(label[0].item()))
+    plt.show()
+    

@@ -132,6 +132,7 @@ def create_transforms(
     augmentations = [
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),
+        transforms.TrivialAugmentWide()
     ]
 
     if aggressive_augmentation:
@@ -305,8 +306,8 @@ if __name__ == "__main__":
     g.manual_seed(0)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
+        random_cropping=True,
+        aggressive_augmentation=False,
         custom=True,
         augmentation_name="Brightness",
         augmentation_severity=20,
@@ -322,7 +323,7 @@ if __name__ == "__main__":
         dataset_name=DATASET_NAME
     )
 
-    print(f'seed_worker: {seed_worker}\ngenerator: {g}\nmanual_seed: {g.manual_seed(0)}')
+    # print(f'seed_worker: {seed_worker}\ngenerator: {g}\nmanual_seed: {g.manual_seed(0)}')
 
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
@@ -332,4 +333,6 @@ if __name__ == "__main__":
     display_image_grid(
         images, labels, confidences, batch_size=batch_size, classes=classes
     )
+    print(confidences)
     print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+
