@@ -132,35 +132,35 @@ def create_transforms(
     augmentations = [
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),
-        transforms.TrivialAugmentWide()
+        # transforms.TrivialAugmentWide()
     ]
-
-    if aggressive_augmentation:
-        augmentations.append(
-            CustomTrivialAugmentWide(
-                custom=custom,
-                augmentation_name=augmentation_name,
-                severity=augmentation_severity,
-                get_signed=augmentation_sign,
-                dataset_name=dataset_name
-            )
-        )
-
-    # custom_trivial_augment = CustomTrivialAugmentWide(
-    #     custom=custom,
-    #     augmentation_name=augmentation_name,
-    #     severity=augmentation_severity,
-    #     get_signed=augmentation_sign,
-    #     dataset_name=dataset_name,
-    # )
-    # random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
 
     # if aggressive_augmentation:
     #     augmentations.append(
-    #         RandomChoiceTransforms(
-    #             [custom_trivial_augment, random_crop_augment], [0.8, 0.2]
+    #         CustomTrivialAugmentWide(
+    #             custom=custom,
+    #             augmentation_name=augmentation_name,
+    #             severity=augmentation_severity,
+    #             get_signed=augmentation_sign,
+    #             dataset_name=dataset_name
     #         )
     #     )
+
+    custom_trivial_augment = CustomTrivialAugmentWide(
+        custom=custom,
+        augmentation_name=augmentation_name,
+        severity=augmentation_severity,
+        get_signed=augmentation_sign,
+        dataset_name=dataset_name,
+    )
+    random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
+
+    if aggressive_augmentation:
+        augmentations.append(
+            RandomChoiceTransforms(
+                [transforms.TrivialAugmentWide(), random_crop_augment], [0.85, 0.15]
+            )
+        )
 
     if random_cropping:
         augmentations.pop(-2)  # -1, -2(if sequential)
@@ -190,6 +190,9 @@ def load_data(
     Returns:
         Optional[tuple]: The training and testing datasets.
     """
+
+    print(f'Transforms Augmentation: {transforms_augmentation}')
+
     if dataset_name == "CIFAR10":
         # CIFAR-10
         base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
@@ -253,6 +256,8 @@ def load_data(
             download=True,
         )
 
+    print(trainset)
+
     return trainset, testset
 
 
@@ -306,8 +311,8 @@ if __name__ == "__main__":
     g.manual_seed(0)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=False,
+        random_cropping=False,
+        aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
         augmentation_severity=20,

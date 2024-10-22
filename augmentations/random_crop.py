@@ -148,3 +148,4 @@ class RandomCrop:
             if isinstance(confidence_rc, float):
                 confidence_rc = torch.tensor(confidence_rc)
             return cropped_image, confidence_rc
+        
