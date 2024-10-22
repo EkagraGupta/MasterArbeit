@@ -106,8 +106,16 @@ if __name__ == '__main__':
         transforms.ToTensor()
     ])
 
-    dataset = TinyImageNetDataset('/home/ekagra/Documents/GitHub/MasterArbeit/data/tiny_imnet/tiny-imagenet-200', transform=transform, train=False)
+    dataset = TinyImageNetDataset('/home/ekagra/Documents/GitHub/MasterArbeit/data/tiny_imnet/tiny-imagenet-200', transform=transform, train=True)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
     image, label = next(iter(dataloader))
     display_image_grid(image, label, 10)
-    
+
+
+    from wideresnet import WideResNet_28_4, WideBasic
+
+    net = WideResNet_28_4(num_classes=10)
+    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth"
+    net = torch.nn.DataParallel(net)
+    state_dict = torch.load(PATH, map_location=torch.device("cpu"))
+    net.load_state_dict(state_dict["model_state_dict"], strict=False)

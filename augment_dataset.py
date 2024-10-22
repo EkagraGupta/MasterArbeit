@@ -135,32 +135,32 @@ def create_transforms(
         # transforms.TrivialAugmentWide()
     ]
 
-    # if aggressive_augmentation:
-    #     augmentations.append(
-    #         CustomTrivialAugmentWide(
-    #             custom=custom,
-    #             augmentation_name=augmentation_name,
-    #             severity=augmentation_severity,
-    #             get_signed=augmentation_sign,
-    #             dataset_name=dataset_name
-    #         )
-    #     )
-
-    custom_trivial_augment = CustomTrivialAugmentWide(
-        custom=custom,
-        augmentation_name=augmentation_name,
-        severity=augmentation_severity,
-        get_signed=augmentation_sign,
-        dataset_name=dataset_name,
-    )
-    random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
-
     if aggressive_augmentation:
         augmentations.append(
-            RandomChoiceTransforms(
-                [transforms.TrivialAugmentWide(), random_crop_augment], [0.85, 0.15]
+            CustomTrivialAugmentWide(
+                custom=custom,
+                augmentation_name=augmentation_name,
+                severity=augmentation_severity,
+                get_signed=augmentation_sign,
+                dataset_name=dataset_name
             )
         )
+
+    # custom_trivial_augment = CustomTrivialAugmentWide(
+    #     custom=custom,
+    #     augmentation_name=augmentation_name,
+    #     severity=augmentation_severity,
+    #     get_signed=augmentation_sign,
+    #     dataset_name=dataset_name,
+    # )
+    # random_crop_augment = RandomCrop(dataset_name=dataset_name, custom=custom)
+
+    # if aggressive_augmentation:
+    #     augmentations.append(
+    #         RandomChoiceTransforms(
+    #             [transforms.TrivialAugmentWide(), random_crop_augment], [0.85, 0.15]
+    #         )
+    #     )
 
     if random_cropping:
         augmentations.pop(-2)  # -1, -2(if sequential)
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     g.manual_seed(0)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
+        random_cropping=True,
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
@@ -339,5 +339,5 @@ if __name__ == "__main__":
         images, labels, confidences, batch_size=batch_size, classes=classes
     )
     print(confidences)
-    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
