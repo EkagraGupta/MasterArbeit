@@ -1,121 +1,127 @@
-from torchvision.datasets import ImageFolder
-from torchvision import transforms
-import torchvision
-import torch
-import os
-from PIL import Image
-import matplotlib.pyplot as plt
-import numpy as np
+import random
+import shutil
+from hashlib import md5
+from pathlib import Path
+from urllib.request import urlretrieve
+from zipfile import ZipFile
+import cv2
 
-class TinyImageNetDataset(torch.utils.data.Dataset):
-    def __init__(self, root, transform=None, train=True):
-        self.train = train
+from tqdm import tqdm
 
-        self.data = []
-        self.labels = []
-        if train:
-            self.root_dir = os.path.join(root, 'train')
-            self.wnids = self.load_wnids(os.path.join(root, 'wnids.txt'))
-            self.class_names = self.load_class_names(os.path.join(root, 'words.txt'))
-            self.class_to_idx = {wnid: idx for idx, wnid in enumerate(self.wnids)}
-            
-            for class_name, idx in self.class_to_idx.items():
-                class_dir = os.path.join(self.root_dir, class_name)
-                class_dir = os.path.join(class_dir, 'images')
-                for image_name in os.listdir(class_dir):
-                    im_path = os.path.join(class_dir, image_name)
-                    if image_name.endswith('.JPEG'):
-                        self.data.append(im_path)
-                        self.labels.append(idx)
+random.seed(42)
+
+# DATASET_URL = "http://cs231n.stanford.edu/tiny-imagenet-200.zip"
+DATASET_URL = (
+    "https://github.com/tjmoon0104/pytorch-tiny-imagenet/releases/download/tiny-imagenet-dataset/tiny-imagenet-200.zip"
+)
+DATASET_ZIP = Path("./tiny-imagenet-200.zip")
+DATASET_MD5_HASH = "90528d7ca1a48142e341f4ef8d21d0de"
+
+# Download Dataset if needed
+if not DATASET_ZIP.exists():
+    print("Downloading the dataset, this may take a while...")
+
+    with tqdm(unit="B", unit_scale=True, unit_divisor=1024, miniters=1, desc=DATASET_URL.split("/")[-1]) as t:
+
+        def show_progress(block_num, block_size, total_size):
+            t.total = total_size
+            t.update(block_num * block_size - t.n)
+
+        urlretrieve(url=DATASET_URL, filename=DATASET_ZIP, reporthook=show_progress)
+
+# Check MD5 Hash
+with DATASET_ZIP.open("rb") as f:
+    assert (
+        md5(f.read()).hexdigest() == DATASET_MD5_HASH
+    ), "The dataset zip file seems corrupted. Try to download it again."
+
+
+# Remove existing data set
+ORIGINAL_DATASET_DIR = Path("./original")
+if ORIGINAL_DATASET_DIR.exists():
+    shutil.rmtree(ORIGINAL_DATASET_DIR)
+
+if not ORIGINAL_DATASET_DIR.exists():
+    print("Extracting the dataset, this may take a while...")
+
+    # Unzip the dataset
+    with ZipFile(DATASET_ZIP, "r") as zip_ref:
+        for member in tqdm(zip_ref.infolist(), desc="Extracting"):
+            zip_ref.extract(member, ORIGINAL_DATASET_DIR)
+
+# Remove existing data set
+DATASET_DIR = Path("./tiny-imagenet-200")
+if DATASET_DIR.exists():
+    shutil.rmtree(DATASET_DIR)
+
+# Create the dataset directory
+if not DATASET_DIR.exists():
+    print("Creating the dataset directory...")
+    DATASET_DIR.mkdir()
+
+# Move train images to dataset directory
+ORIGINAL_TRAIN_DIR = ORIGINAL_DATASET_DIR / "tiny-imagenet-200" / "train"
+if ORIGINAL_TRAIN_DIR.exists():
+    print("Moving train images...")
+    ORIGINAL_TRAIN_DIR.replace(DATASET_DIR / "train")
+
+# Get validation images and annotations
+val_dict = {}
+ORIGINAL_VAL_DIR = ORIGINAL_DATASET_DIR / "tiny-imagenet-200" / "val"
+with (ORIGINAL_VAL_DIR / "val_annotations.txt").open("r") as f:
+    for line in f.readlines():
+        split_line = line.split("\t")
+        if split_line[1] not in val_dict.keys():
+            val_dict[split_line[1]] = [split_line[0]]
         else:
-            self.root_dir = os.path.join(root, 'val')
-            self.wnids = self.load_class_names(os.path.join(self.root_dir, 'val_annotations.txt'))
-            self.class_names = self.load_class_names(os.path.join(root, 'words.txt'))
-            self.wnids_data = {}
-
-            for im_name, wnid_data in self.wnids.items():
-                wnid = wnid_data.split(' ')[0]
-                self.wnids_data[im_name] = wnid
-            
-            self.idx_to_wnids = {idx: wnid for idx, wnid in enumerate(self.wnids_data.values())}
-
-            for idx, (im_name, wnid) in enumerate(self.wnids_data.items()):
-                im_path = os.path.join(self.root_dir, 'images', im_name)
-                self.data.append(im_path)
-                self.labels.append(idx)
-        self.transform = transform
+            val_dict[split_line[1]].append(split_line[0])
 
 
-    
-    def __len__(self):
-        return len(self.data)
-    
-    def __getitem__(self, idx):
-        image_path = self.data[idx]
-        image = Image.open(image_path).convert('RGB')
-        label = self.labels[idx]
+def split_list_randomly(input_list: list[str], split_ratio=0.5) -> dict[str, list[str]]:
+    # Shuffle the input list in-place
+    random.shuffle(input_list)
 
-        if self.transform:
-            image = self.transform(image)
-        
-        return image, label
-    
-    def load_wnids(self, wnids_path):
-        with open(wnids_path, 'r') as f:
-            wnids = [line.strip() for line in f.readlines()]
-        return wnids
+    # Calculate the index to split the list
+    split_index = int(len(input_list) * split_ratio)
 
-    def load_class_names(self, words_path):
-        class_names = {}
-        with open(words_path, 'r') as f:
-            for line in f:
-                parts = line.split('\t')
-                wnid = parts[0]
-                name = ' '.join(parts[1:])
-                class_names[wnid] = name
-        return class_names
-    
-    def get_class_name(self, label):
-        if self.train:
-            wnid = self.wnids[label]
-            return self.class_names.get(wnid, 'Unknown')
-        else:
-            wnid = self.idx_to_wnids[label]
-            return self.class_names.get(wnid, 'Unknown')
-    
-def display_image_grid(images, labels, batch_size):
-    grid_im = torchvision.utils.make_grid(images, nrow=batch_size//10)
-    np_im = grid_im.numpy()
-
-    plt.figure(figsize=(batch_size * 2, 2))
-    plt.imshow(np.transpose(np_im, (1, 2, 0)))
-    plt.axis('off')
-
-    for i in range(batch_size):
-        ax = plt.subplot(1, batch_size, i + 1)
-        ax.imshow(np.transpose(images[i].numpy(), (1, 2, 0)))
-        ax.set_title(f"{labels[i].item()}: {dataset.get_class_name(label[i].item())}")
-        ax.axis('off')
-    plt.subplots_adjust(wspace=1, hspace=0.5)
-    plt.show()
-
-if __name__ == '__main__':
-
-    transform = transforms.Compose([
-        transforms.Resize((64, 64)),
-        transforms.ToTensor()
-    ])
-
-    dataset = TinyImageNetDataset('/home/ekagra/Documents/GitHub/MasterArbeit/data/tiny_imnet/tiny-imagenet-200', transform=transform, train=True)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
-    image, label = next(iter(dataloader))
-    display_image_grid(image, label, 10)
+    # Split the list into two parts
+    return {"val": input_list[:split_index], "test": input_list[split_index:]}
 
 
-    from wideresnet import WideResNet_28_4, WideBasic
+# Sample from validation images randomly into validation and test sets (50/50)
+print("Splitting original dataset images...")
+with tqdm(val_dict.items(), desc="Splitting images", unit="class") as t:
+    for image_label, images in t:
+        for split_type, split_images in split_list_randomly(images, split_ratio=0.5).items():
+            for image in split_images:
+                src = ORIGINAL_VAL_DIR / "images" / image
+                dest_folder = DATASET_DIR / split_type / image_label / "images"
+                dest_folder.mkdir(parents=True, exist_ok=True)
+                src.replace(dest_folder / image)
+        t.update()
 
-    net = WideResNet_28_4(num_classes=10)
-    PATH = "/home/ekagra/Documents/GitHub/MasterArbeit/models/robust_no_TA_augments.pth"
-    net = torch.nn.DataParallel(net)
-    state_dict = torch.load(PATH, map_location=torch.device("cpu"))
-    net.load_state_dict(state_dict["model_state_dict"], strict=False)
+# Remove original directory
+shutil.rmtree(ORIGINAL_DATASET_DIR)
+
+# Remove resized data set directory
+RESIZED_DIR = Path("./tiny-224")
+if RESIZED_DIR.exists():
+    shutil.rmtree(RESIZED_DIR)
+
+# Copy processed dataset to tiny-224
+print("Copying processed dataset to tiny-224...")
+shutil.copytree(DATASET_DIR, RESIZED_DIR)
+
+
+# Resize images to 224x224
+def resize_img(image_path: Path, size: int = 224) -> None:
+    img = cv2.imread(image_path.as_posix())
+    img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
+    cv2.imwrite(image_path.as_posix(), img)
+
+
+all_images = [*Path("tiny-224").glob("**/*.JPEG")]
+print("Resizing images...")
+with tqdm(all_images, desc="Resizing images", unit="file") as t:
+    for image in t:
+        resize_img(image, 224)

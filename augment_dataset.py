@@ -54,7 +54,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
             Optional[float]: The combined confidence value.
         """
         combined_confidence = reduce(lambda x, y: x * y, confidences)
-        print(f"Confidences: {confidences}\tCombined Confidence: {combined_confidence}")
+        # print(f"Confidences: {confidences}\tCombined Confidence: {combined_confidence}")
         return combined_confidence
 
     def __getitem__(self, i: Optional[int]) -> Optional[tuple]:
