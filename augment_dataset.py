@@ -310,37 +310,47 @@ if __name__ == "__main__":
     batch_size = 25
     DATASET_NAME = "Tiny-ImageNet"
 
-    g = torch.Generator()
-    g.manual_seed(0)
+    # g = torch.Generator()
+    # g.manual_seed(0)
 
-    transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=True,
-        custom=True,
-        augmentation_name="Brightness",
-        augmentation_severity=20,
-        augmentation_sign=True,
-        dataset_name=DATASET_NAME
-    )
+    # transforms_preprocess, transforms_augmentation = create_transforms(
+    #     random_cropping=False,
+    #     aggressive_augmentation=True,
+    #     custom=True,
+    #     augmentation_name="Brightness",
+    #     augmentation_severity=20,
+    #     augmentation_sign=True,
+    #     dataset_name=DATASET_NAME
+    # )
+    
+    # print(transforms_augmentation)
 
-    print(transforms_augmentation)
+    # trainset, testset = load_data(
+    #     transforms_preprocess=transforms_preprocess,
+    #     transforms_augmentation=transforms_augmentation,
+    #     dataset_name=DATASET_NAME
+    # )
 
-    trainset, testset = load_data(
-        transforms_preprocess=transforms_preprocess,
-        transforms_augmentation=transforms_augmentation,
-        dataset_name=DATASET_NAME
-    )
+    # trainloader = torch.utils.data.DataLoader(
+    #     trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
+    # )
+    # classes = trainset.dataset.classes
+    # images, labels, confidences = next(iter(trainloader))
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
-    # print(f'seed_worker: {seed_worker}\ngenerator: {g}\nmanual_seed: {g.manual_seed(0)}')
 
-    trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
-    )
-    classes = trainset.dataset.classes
-    images, labels, confidences = next(iter(trainloader))
-    display_image_grid(
-        images, labels, confidences, batch_size=batch_size, classes=classes
-    )
-    print(confidences)
+    transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
+    train_path = "./data/tiny-imagenet-200/new_train"
+    custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_augmentation)
+    # custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_preprocess)
+    classes = custom_trainset.classes
+    custom_trainloader = torch.utils.data.DataLoader(custom_trainset, batch_size=128, shuffle=True, num_workers=2, pin_memory=True)
+    # test_path = "/kaggle/input/tiny-imagenet/tiny-imagenet-200/new_test"
+    # custom_testset = datasets.ImageFolder(root=test_path, transform=transform_test)
+    # custom_testloader = torch.utils.data.DataLoader(custom_testset, batch_size=128, shuffle=False, num_workers=2, pin_memory=True)
+    images, labels = next(iter(custom_trainloader))
+    confidences = images[1][1]
+    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 

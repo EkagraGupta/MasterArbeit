@@ -16,6 +16,8 @@ from torchvision.transforms import functional as F, InterpolationMode
 from model_confidence_mapping import model_accuracy_mapping
 from hvs_augmentations import get_data
 
+from torchvision import transforms
+
 
 def _apply_op(
     im: Tensor,
@@ -118,6 +120,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         self.num_magnitude_bins = num_magnitude_bins
         self.interpolation = interpolation
         self.fill = fill
+        self.dataset_name = dataset_name
 
         """MODIFICATION: Add severity"""
         # self.severity = severity
@@ -569,6 +572,11 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         confidence_aa = torch.from_numpy(
             np.where(confidence_aa < self.chance, self.chance, confidence_aa)
         )
+
+        if self.dataset_name=="Tiny-ImageNet":
+            to_tensor = transforms.Compose([transforms.ToTensor()])
+            augment_im = to_tensor(augment_im)
+
         # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
