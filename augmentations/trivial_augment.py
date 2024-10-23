@@ -130,6 +130,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             self.chance = 1 / 10
         elif dataset_name == "CIFAR100":
             self.chance = 1 / 100
+        elif dataset_name == "Tiny-ImageNet":
+            self.chance = 1 / 200
         else:
             raise ValueError(f"Dataset name {dataset_name} not supported")
 
