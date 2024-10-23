@@ -351,6 +351,7 @@ if __name__ == "__main__":
     # custom_testloader = torch.utils.data.DataLoader(custom_testset, batch_size=128, shuffle=False, num_workers=2, pin_memory=True)
     images, labels = next(iter(custom_trainloader))
     confidences = images[1][1]
+    print(f'Confidence: {confidences}')
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
