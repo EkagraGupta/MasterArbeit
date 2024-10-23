@@ -132,7 +132,7 @@ def create_transforms(
     augmentations = [
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),
-        # transforms.TrivialAugmentWide()
+        # transforms.TrivialAugmentWide(),
     ]
 
     if aggressive_augmentation:
@@ -191,8 +191,6 @@ def load_data(
         Optional[tuple]: The training and testing datasets.
     """
 
-    print(f'Transforms Augmentation: {transforms_augmentation}')
-
     if dataset_name == "CIFAR10":
         # CIFAR-10
         base_trainset = datasets.CIFAR10(root="./data/train", train=True, download=True)
@@ -203,6 +201,9 @@ def load_data(
             root="./data/train", train=True, download=True
         )
         base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
+    elif dataset_name == "Tiny-ImageNet":
+        base_trainset = datasets.ImageFolder(root="./data/tiny-imagenet-200/new_train")
+        base_testset = datasets.ImageFolder(root="./data/tiny-imagenet-200/new_test")
     else:
         raise ValueError(f"Dataset {dataset_name} not supported")
 
@@ -256,43 +257,47 @@ def load_data(
             download=True,
         )
 
-    print(trainset)
-
     return trainset, testset
 
 
 def display_image_grid(images, labels, confidences, batch_size, classes):
     """
-    Displays a grid of images with labels and confidence scores.
+    Displays a 5x5 grid of images with labels and confidence scores.
 
     Args:
         images (torch.Tensor): Batch of images.
         labels (torch.Tensor): Corresponding labels for the images.
         confidences (torch.Tensor): Corresponding confidence scores for the images.
-        batch_size (int): Number of images to display in the grid.
+        batch_size (int): Number of images to display in the grid (should be 25 for a 5x5 grid).
+        classes (list): List of class names for labeling.
     """
+    # Limit batch_size to 25 for a 5x5 grid
+    batch_size = min(batch_size, 25)
+    
     if isinstance(confidences, list):
         confidences = confidences[1]
 
-    # Convert images to a grid
-    grid_img = torchvision.utils.make_grid(images, nrow=batch_size // 10)
+    # Convert images to a grid, with 5 images per row
+    grid_img = torchvision.utils.make_grid(images[:batch_size], nrow=5)
 
     # Convert from tensor to numpy for display
     npimg = grid_img.numpy()
 
-    # Plot the grid
-    plt.figure(figsize=(batch_size * 2, 2))
+    # Plot the grid with appropriate figure size (for 5x5 grid)
+    plt.figure(figsize=(10, 10))
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.axis("off")
 
-    # Add titles
+    # Add titles for each image (labels and confidence scores)
     for i in range(batch_size):
-        ax = plt.subplot(1, batch_size, i + 1)
+        ax = plt.subplot(5, 5, i + 1)  # Adjust to a 5x5 grid
         ax.imshow(np.transpose(images[i].numpy(), (1, 2, 0)))
         ax.set_title(
-            f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}"
+            f"{labels[i].item()} ({classes[labels[i].item()]})\nConf: {confidences[i]:.2f}",
+            fontsize=8
         )
         ax.axis("off")
+
     plt.show()
 
 def seed_worker(worker_id):
@@ -304,8 +309,8 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
 
-    batch_size = 10
-    DATASET_NAME = "CIFAR10"
+    batch_size = 25
+    DATASET_NAME = "Tiny-ImageNet"
 
     g = torch.Generator()
     g.manual_seed(0)

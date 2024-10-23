@@ -30,6 +30,8 @@ class RandomCrop:
             self.n_class = 10
         elif dataset_name == "CIFAR100":
             self.n_class = 100
+        elif dataset_name == "Tiny-ImageNet":
+            self.n_class = 200
         else:
             raise ValueError(f"Dataset name {dataset_name} not supported")
         self.chance = 1 / self.n_class
