@@ -140,7 +140,6 @@ class RandomCrop:
             confidence_rc = torch.tensor(1.0)
         if confidence_aa is not None:
             # Sequential application of the RandomCrop
-            # REPAIR NEED TO BE DONE
             confidences = (confidence_aa, confidence_rc)
             return cropped_image, confidences
         else:

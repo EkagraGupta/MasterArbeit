@@ -9,7 +9,8 @@ def model_accuracy_mapping(
     root_path: Optional[str] = "/kaggle/working/MasterArbeit",
 ) -> Optional[float]:
     
-    root_path = '/home/ekagra/Documents/GitHub/MasterArbeit'
+    # For local testing
+    # root_path = '/home/ekagra/Documents/GitHub/MasterArbeit'
     
     filename = os.path.join(root_path, f"{augmentation_type}_MAPPING_results.csv")
     data = pd.read_csv(filename)
