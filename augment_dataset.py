@@ -197,13 +197,11 @@ def load_data(
         base_testset = datasets.CIFAR10(root="./data/test", train=False, download=True)
     elif dataset_name == "CIFAR100":
         # CIFAR-100
-        base_trainset = datasets.CIFAR100(
-            root="./data/train", train=True, download=True
-        )
+        base_trainset = datasets.CIFAR100(root="./data/train", train=True, download=True)
         base_testset = datasets.CIFAR100(root="./data/test", train=False, download=True)
     elif dataset_name == "Tiny-ImageNet":
-        base_trainset = datasets.ImageFolder(root="./data/tiny-imagenet-200/new_train")
-        base_testset = datasets.ImageFolder(root="./data/tiny-imagenet-200/new_test")
+        base_trainset = datasets.ImageFolder(root="/kaggle/working/MasterArbeit/data/tiny-imagenet-200/new_train")
+        base_testset = datasets.ImageFolder(root="/kaggle/working/MasterArbeit/data/tiny-imagenet-200/new_test")
     else:
         raise ValueError(f"Dataset {dataset_name} not supported")
 
