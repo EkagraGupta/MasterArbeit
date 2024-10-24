@@ -131,7 +131,7 @@ def create_transforms(
     t = [transforms.ToTensor()]
     augmentations = [
         transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),
+        transforms.RandomCrop(64, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
     ]
 
@@ -349,9 +349,10 @@ if __name__ == "__main__":
     # test_path = "/kaggle/input/tiny-imagenet/tiny-imagenet-200/new_test"
     # custom_testset = datasets.ImageFolder(root=test_path, transform=transform_test)
     # custom_testloader = torch.utils.data.DataLoader(custom_testset, batch_size=128, shuffle=False, num_workers=2, pin_memory=True)
-    images, labels = next(iter(custom_trainloader))
-    confidences = images[1][1]
-    print(f'Confidence: {confidences}')
+    images_data, labels = next(iter(custom_trainloader))
+    images = images_data[0]
+    confidences = images_data[1][1]
+    print(f'Image shape: {images.shape}')
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 

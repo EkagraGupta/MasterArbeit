@@ -10,7 +10,7 @@ def model_accuracy_mapping(
 ) -> Optional[float]:
     
     # For local testing
-    # root_path = '/home/ekagra/Documents/GitHub/MasterArbeit'
+    root_path = '/home/ekagra/Documents/GitHub/MasterArbeit'
     
     filename = os.path.join(root_path, f"{augmentation_type}_MAPPING_results.csv")
     data = pd.read_csv(filename)
