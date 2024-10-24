@@ -136,15 +136,18 @@ def create_transforms(
     ]
 
     if aggressive_augmentation:
-        augmentations.append(
-            CustomTrivialAugmentWide(
-                custom=custom,
-                augmentation_name=augmentation_name,
-                severity=augmentation_severity,
-                get_signed=augmentation_sign,
-                dataset_name=dataset_name
-            )
-        )
+        if custom:
+            augmentations.append(
+                CustomTrivialAugmentWide(
+                    custom=custom,
+                    augmentation_name=augmentation_name,
+                    severity=augmentation_severity,
+                    get_signed=augmentation_sign,
+                    dataset_name=dataset_name
+                ))
+        else:
+            augmentations.extend([transforms.TrivialAugmentWide(), transforms.ToTensor()])
+        
 
     # custom_trivial_augment = CustomTrivialAugmentWide(
     #     custom=custom,
@@ -343,16 +346,13 @@ if __name__ == "__main__":
     transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
     train_path = "./data/tiny-imagenet-200/new_train"
     custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_augmentation)
-    # custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_preprocess)
     classes = custom_trainset.classes
     custom_trainloader = torch.utils.data.DataLoader(custom_trainset, batch_size=128, shuffle=True, num_workers=2, pin_memory=True)
-    # test_path = "/kaggle/input/tiny-imagenet/tiny-imagenet-200/new_test"
-    # custom_testset = datasets.ImageFolder(root=test_path, transform=transform_test)
-    # custom_testloader = torch.utils.data.DataLoader(custom_testset, batch_size=128, shuffle=False, num_workers=2, pin_memory=True)
-    images_data, labels = next(iter(custom_trainloader))
-    images = images_data[0]
-    confidences = images_data[1][1]
-    print(f'Image shape: {images.shape}')
+    images, labels = next(iter(custom_trainloader))
+    confidences = np.ones((128,))
+    # images = images_data[0]
+    # confidences = images_data[1][1]
+    # print(f'Image shape: {images.shape}')
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
