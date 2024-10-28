@@ -131,7 +131,7 @@ def create_transforms(
     t = [transforms.ToTensor()]
     augmentations = [
         transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(64, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
+        transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
     ]
 
@@ -311,48 +311,48 @@ def seed_worker(worker_id):
 if __name__ == "__main__":
 
     batch_size = 25
-    DATASET_NAME = "Tiny-ImageNet"
+    DATASET_NAME = "CIFAR10"
 
-    # g = torch.Generator()
-    # g.manual_seed(0)
+    g = torch.Generator()
+    g.manual_seed(0)
 
-    # transforms_preprocess, transforms_augmentation = create_transforms(
-    #     random_cropping=False,
-    #     aggressive_augmentation=True,
-    #     custom=True,
-    #     augmentation_name="Brightness",
-    #     augmentation_severity=20,
-    #     augmentation_sign=True,
-    #     dataset_name=DATASET_NAME
-    # )
+    transforms_preprocess, transforms_augmentation = create_transforms(
+        random_cropping=False,
+        aggressive_augmentation=True,
+        custom=True,
+        augmentation_name="Brightness",
+        augmentation_severity=20,
+        augmentation_sign=True,
+        dataset_name=DATASET_NAME
+    )
     
-    # print(transforms_augmentation)
+    print(transforms_augmentation)
 
-    # trainset, testset = load_data(
-    #     transforms_preprocess=transforms_preprocess,
-    #     transforms_augmentation=transforms_augmentation,
-    #     dataset_name=DATASET_NAME
-    # )
+    trainset, testset = load_data(
+        transforms_preprocess=transforms_preprocess,
+        transforms_augmentation=transforms_augmentation,
+        dataset_name=DATASET_NAME
+    )
 
-    # trainloader = torch.utils.data.DataLoader(
-    #     trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
-    # )
-    # classes = trainset.dataset.classes
-    # images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
-
-
-    transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
-    train_path = "./data/tiny-imagenet-200/new_train"
-    custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_augmentation)
-    classes = custom_trainset.classes
-    custom_trainloader = torch.utils.data.DataLoader(custom_trainset, batch_size=128, shuffle=True, num_workers=2, pin_memory=True)
-    images, labels = next(iter(custom_trainloader))
-    confidences = np.ones((128,))
-    # images = images_data[0]
-    # confidences = images_data[1][1]
-    # print(f'Image shape: {images.shape}')
+    trainloader = torch.utils.data.DataLoader(
+        trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
+    )
+    classes = trainset.dataset.classes
+    images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+
+
+    # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
+    # train_path = "./data/tiny-imagenet-200/new_train"
+    # custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_augmentation)
+    # classes = custom_trainset.classes
+    # custom_trainloader = torch.utils.data.DataLoader(custom_trainset, batch_size=128, shuffle=True, num_workers=2, pin_memory=True)
+    # images, labels = next(iter(custom_trainloader))
+    # confidences = np.ones((128,))
+    # # images = images_data[0]
+    # # confidences = images_data[1][1]
+    # # print(f'Image shape: {images.shape}')
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
