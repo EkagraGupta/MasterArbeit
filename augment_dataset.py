@@ -133,6 +133,7 @@ def create_transforms(
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
+        # transforms.Resize(256),
     ]
 
     if aggressive_augmentation:
@@ -314,7 +315,7 @@ if __name__ == "__main__":
     DATASET_NAME = "CIFAR10"
 
     g = torch.Generator()
-    g.manual_seed(0)
+    g.manual_seed(1)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
