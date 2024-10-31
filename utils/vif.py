@@ -1,4 +1,4 @@
-import piq
+# import piq
 import numpy as np
 from torchvision import transforms
 from PIL import Image
