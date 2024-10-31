@@ -468,53 +468,53 @@ if __name__ == "__main__":
     # plt.show()
 
     """TranslateX"""
-    augmentation_type = "TranslateX"
-    min_val, max_val = 0.0, 1.0
-    num_bins = 31
+    # augmentation_type = "TranslateX"
+    # min_val, max_val = 0.0, 1.0
+    # num_bins = 31
 
-    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
+    # augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
 
-    visibility_values1 = [0.0, .05, .10, .15, .20, .25, .30, .35, 1.0]
-    confidence_values1 = [0.22, 0.42, 0.44, 0.6, 0.56, 0.64, 0.62, 0.72, 1.0]
-    confidence_values2 = [0.18, 0.42, 0.62, 0.64, 0.62, 0.73, 0.8, 0.72, 1.0]
-    confidence_values3 = [0.22, 0.48, 0.62, 0.74, 0.72, 0.76, 0.78, 0.83, 1.0]
-    confidence_values4 = [0.24, 0.47, 0.6, 0.74, 0.72, 0.8, 0.86, 0.87, 1.0]
-    confidence_values5 = [0.22, 0.58, 0.64, 0.72, 0.78, 0.82, 0.76, 0.77, 1.0]
-    confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
+    # visibility_values1 = [0.0, .05, .10, .15, .20, .25, .30, .35, 1.0]
+    # confidence_values1 = [0.22, 0.42, 0.44, 0.6, 0.56, 0.64, 0.62, 0.72, 1.0]
+    # confidence_values2 = [0.18, 0.42, 0.62, 0.64, 0.62, 0.73, 0.8, 0.72, 1.0]
+    # confidence_values3 = [0.22, 0.48, 0.62, 0.74, 0.72, 0.76, 0.78, 0.83, 1.0]
+    # confidence_values4 = [0.24, 0.47, 0.6, 0.74, 0.72, 0.8, 0.86, 0.87, 1.0]
+    # confidence_values5 = [0.22, 0.58, 0.64, 0.72, 0.78, 0.82, 0.76, 0.77, 1.0]
+    # confidence_values = np.mean([confidence_values1, confidence_values2, confidence_values3, confidence_values4, confidence_values5], axis=0)
 
-    # translate_values_lim = np.linspace(min_val, max_val, num_bins)[::-1]
-    translate_values_lim = augmentation_magnitude[31:] / 32.
-    confidence_values_lim = np.interp(translate_values_lim, visibility_values1, confidence_values)[::-1]
+    # # translate_values_lim = np.linspace(min_val, max_val, num_bins)[::-1]
+    # translate_values_lim = augmentation_magnitude[31:] / 32.
+    # confidence_values_lim = np.interp(translate_values_lim, visibility_values1, confidence_values)[::-1]
 
-    random_crop = RandomCrop(n_class=10)
-    visibility = random_crop.compute_visibility(dim1=32, dim2=32, tx=0., ty=augmentation_magnitude)
+    # random_crop = RandomCrop(n_class=10)
+    # visibility = random_crop.compute_visibility(dim1=32, dim2=32, tx=0., ty=augmentation_magnitude)
 
-    k1 = 2
-    k2 = 4
+    # k1 = 2
+    # k2 = 4
 
-    chance_underestimate = min(model_accuracy)
-    chance_overestimate = min(confidence_values_lim)
+    # chance_underestimate = min(model_accuracy)
+    # chance_overestimate = min(confidence_values_lim)
 
-    print(f'{augmentation_type}: Underestimate -> k1=({k1}), Chance: {chance_underestimate}; Overestimate -> k2=({k2}), Chance: {chance_overestimate}\n')
+    # print(f'{augmentation_type}: Underestimate -> k1=({k1}), Chance: {chance_underestimate}; Overestimate -> k2=({k2}), Chance: {chance_overestimate}\n')
     
     
-    estimated_confidence_values1 = 1 - (1 - chance_underestimate) * (1 - visibility) ** k1
-    estimated_confidence_values2 = 1 - (1 - chance_overestimate) * (1 - visibility) ** k2
+    # estimated_confidence_values1 = 1 - (1 - chance_underestimate) * (1 - visibility) ** k1
+    # estimated_confidence_values2 = 1 - (1 - chance_overestimate) * (1 - visibility) ** k2
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(translate_values_lim, confidence_values_lim, '--', label=f'Occlussion HVS', color='red')
-    plt.plot(augmentation_magnitude / 32.0, model_accuracy, '--', label=f'Model Accuracy', color='black')
-    plt.plot(augmentation_magnitude / 32.0, estimated_confidence_values1, '-', label=f'k={k1}', color='blue')
-    plt.plot(augmentation_magnitude / 32.0, estimated_confidence_values2, '-', label=f'k={k2}', color='green')
-    plt.axhline(y=chance_overestimate, color='magenta', linestyle=':', label=f'HVS lower bound / Chance={chance_overestimate:.3f}')
-    plt.axhline(y=chance_underestimate, color='black', linestyle=':', label=f'Model lower bound={chance_underestimate}')
-    plt.xlabel(f"Magnitude of {augmentation_type}")
-    plt.ylabel("Confidence")
-    plt.yticks(np.arange(0.1, 1.1, 0.1))
-    plt.title(f"{augmentation_type}")
-    plt.legend()
-    plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
-    plt.show()
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(translate_values_lim, confidence_values_lim, '--', label=f'Occlussion HVS', color='red')
+    # plt.plot(augmentation_magnitude / 32.0, model_accuracy, '--', label=f'Model Accuracy', color='black')
+    # plt.plot(augmentation_magnitude / 32.0, estimated_confidence_values1, '-', label=f'k={k1}', color='blue')
+    # plt.plot(augmentation_magnitude / 32.0, estimated_confidence_values2, '-', label=f'k={k2}', color='green')
+    # plt.axhline(y=chance_overestimate, color='magenta', linestyle=':', label=f'HVS lower bound / Chance={chance_overestimate:.3f}')
+    # plt.axhline(y=chance_underestimate, color='black', linestyle=':', label=f'Model lower bound={chance_underestimate}')
+    # plt.xlabel(f"Magnitude of {augmentation_type}")
+    # plt.ylabel("Confidence")
+    # plt.yticks(np.arange(0.1, 1.1, 0.1))
+    # plt.title(f"{augmentation_type}")
+    # plt.legend()
+    # plt.savefig(f"/home/ekagra/Documents/GitHub/MasterArbeit/non_linear_mapping_data/{augmentation_type}/{augmentation_type}_plot.png")
+    # plt.show()
 
     """TranslateY"""
     # augmentation_type = "TranslateY"

@@ -12,7 +12,8 @@ def plot_severity_vs_confidence(augmentation_type: str):
     ncc_values = df["mean_ncc"]
     uiq_values = df["mean_uiq"]
     scc_values = df["mean_scc"]
-    return ssim_values, ncc_values, uiq_values, scc_values
+    sift_values = df["mean_sift"]
+    return ssim_values, ncc_values, uiq_values, scc_values, sift_values
     
 
 

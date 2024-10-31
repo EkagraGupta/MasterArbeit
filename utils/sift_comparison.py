@@ -51,9 +51,7 @@ def sift_operation(im1, im2, display_matches: bool = False):
     return len(matches)
 
 
-def sift_correction_factor(
-    original_image, augmented_image, display_matches: bool = False
-):
+def sift_correction_factor(original_image, augmented_image, display_matches: bool = False):
     matches_reference = sift_operation(original_image, original_image)
     matches_12 = sift_operation(original_image, augmented_image, display_matches)
     correction_factor = matches_12 / matches_reference

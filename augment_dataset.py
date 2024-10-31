@@ -322,7 +322,7 @@ if __name__ == "__main__":
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
-        augmentation_severity=20,
+        augmentation_severity=15,
         augmentation_sign=True,
         dataset_name=DATASET_NAME
     )
@@ -336,12 +336,16 @@ if __name__ == "__main__":
     )
 
     trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=batch_size, shuffle=True, worker_init_fn=seed_worker, generator=g
+        trainset, batch_size=batch_size, shuffle=False, worker_init_fn=seed_worker, generator=g
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+
+    pil = transforms.ToPILImage()
+    im = pil(images[0])
+    im.save("./example/augmented_image_less_dark.png")
 
 
     # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)

@@ -99,7 +99,7 @@ def get_plot(augmentation_type, model, dataset_split=100, worker_init_fn=None, g
         augmentation_type,
         augmentation_magnitudes_list,
         time_list,
-        iq_metric='scc'
+        iq_metric='sift'
     )
     print(f'CSV Filename: {csv_filename}')
     # plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
@@ -117,12 +117,12 @@ if __name__ == "__main__":
         "TranslateX",
         "TranslateY",
         "Rotate",
-        "Brightness",
-        "Color",
-        "Contrast",
-        "Sharpness",
-        "Posterize",
-        "Solarize",
+        # "Brightness",
+        # "Color",
+        # "Contrast",
+        # "Sharpness",
+        # "Posterize",
+        # "Solarize",
         # "AutoContrast",
         # "Equalize",
     ]

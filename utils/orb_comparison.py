@@ -57,7 +57,7 @@ if __name__ == "__main__":
     im1 = Image.open(im1_path)
     im2 = Image.open(im2_path)
 
-    resize = transforms.Resize(512)
+    resize = transforms.Resize(256)
     im1 = resize(im1)
     im2 = resize(im2)
 
