@@ -340,12 +340,12 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
-    pil = transforms.ToPILImage()
-    im = pil(images[0])
-    im.save("./example/augmented_image_less_dark.png")
+    # pil = transforms.ToPILImage()
+    # im = pil(images[0])
+    # im.save("./example/augmented_image_less_dark.png")
 
 
     # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
