@@ -131,7 +131,7 @@ def create_transforms(
     t = [transforms.ToTensor()]
     augmentations = [
         transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
+        transforms.RandomCrop(64, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
@@ -318,7 +318,7 @@ if __name__ == "__main__":
     g.manual_seed(1)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
+        random_cropping=True,
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
