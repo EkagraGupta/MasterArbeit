@@ -306,7 +306,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Rotation HVS"""
-            k = 2  # 2, 4
+            k = 3  # 1.5, 3
             chance = 0.224  # 0.224, 0.1
             confidence_aa = 1 - (1 - chance) * abs(augmentation_magnitude) ** k
 
@@ -332,7 +332,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Rotation HVS"""
-            k = 2  # 2, 4
+            k = 3  # 1.5, 3
             chance = 0.226  # 0.226, 0.1
             confidence_aa = 1 - (1 - chance) * abs(augmentation_magnitude) ** k
 
@@ -357,7 +357,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=augmentation_magnitude, ty=0
             )
-            k = 3               # 2, 4
+            k = 4               # 2, 4
             chance = 0.216        # 0.216, 0.1
             confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
 
@@ -373,7 +373,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             visibility = random_crop.compute_visibility(
                 dim1=dim1, dim2=dim2, tx=0, ty=augmentation_magnitude
             )
-            k = 3               # 2, 4
+            k = 4               # 2, 4
             chance = 0.216        # 0.216, 0.1
             confidence_aa = 1 - (1 - chance) * (1 - visibility) ** k
 
@@ -390,7 +390,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Contrast HVS"""
-            k_neg, k_pos = 20, 4             # 10, 20  
+            k_neg, k_pos = 20, 2             # 10, 20  
             chance_pos = 0.86              # 0.102, 0.32
             chance_neg = 0.32               # model_acc[-1]
             if augmentation_magnitude>0.0:
@@ -462,7 +462,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
 
             """Mapping function from Model Accuracy"""
             k = 7                       # 2, 7   
-            chance = 0.884               # 0.95, 0.1   
+            chance = 0.884               # 0.884, 0.1   
             if augmentation_magnitude>0.0:
                 confidence_aa = 1.0
             else:
