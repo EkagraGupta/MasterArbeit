@@ -390,7 +390,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
             """Mapping function from Contrast HVS"""
-            k_neg, k_pos = 20, 2             # 10, 20  
+            k_neg, k_pos = 20, 3             # 10, 20  
             chance_pos = 0.86              # 0.102, 0.32
             chance_neg = 0.32               # model_acc[-1]
             if augmentation_magnitude>0.0:
