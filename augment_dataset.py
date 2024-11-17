@@ -318,7 +318,7 @@ if __name__ == "__main__":
     g.manual_seed(1)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
+        random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
         augmentation_name="Brightness",
