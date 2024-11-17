@@ -311,7 +311,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
 
-    batch_size = 25
+    batch_size = 5
     DATASET_NAME = "CIFAR10"
 
     g = torch.Generator()
@@ -321,7 +321,7 @@ if __name__ == "__main__":
         random_cropping=False,
         aggressive_augmentation=True,
         custom=True,
-        augmentation_name="Brightness",
+        augmentation_name="Rotate",
         augmentation_severity=15,
         augmentation_sign=True,
         dataset_name=DATASET_NAME

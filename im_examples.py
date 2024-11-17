@@ -13,7 +13,7 @@ batch_size = 1
 DATASET_NAME = "CIFAR10"
 augmentation_type = "TranslateX"
 severity = 30
-augment_sign = True
+augment_sign = False
 
 g = torch.Generator()
 g.manual_seed(1)
@@ -42,9 +42,11 @@ classes = trainset.dataset.classes
 images, labels, confidences = next(iter(trainloader))
 
 to_pil = transforms.ToPILImage()
+resize = transforms.Resize(256)
 im = to_pil(images[0])
-# im.show()
+im = resize(im)
+im.show()
 if augment_sign:
-    im.save(f"final_plots/augmented_{augmentation_type}_min_{severity}.png")
+    im.save(f"final_plots/image_examples/augmented_{augmentation_type}_min_{severity}.png")
 else:
-    im.save(f"final_plots/augmented_{augmentation_type}_plus_{severity}.png")
+    im.save(f"final_plots/image_examples/augmented_{augmentation_type}_plus_{severity}.png")

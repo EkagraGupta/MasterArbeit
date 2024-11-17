@@ -27,16 +27,16 @@ def orb_operation(im1, im2):
     )
 
     # Display the best matching points
-    plt.rcParams["figure.figsize"] = [14.0, 7.0]
-    plt.title("Number of Matching Keypoints: " + str(len(matches)))
-    plt.imshow(result)
-    plt.show()
+    # plt.rcParams["figure.figsize"] = [14.0, 7.0]
+    # plt.title("Number of Matching Keypoints: " + str(len(matches)))
+    # plt.imshow(result)
+    # plt.show()
 
     # Print total number of matching points between the training and query images
-    print(
-        "\nNumber of Matching Keypoints Between The Training and Query Images: ",
-        len(matches),
-    )
+    # print(
+    #     "\nNumber of Matching Keypoints Between The Training and Query Images: ",
+    #     len(matches),
+    # )
     return len(matches)
 
 
@@ -50,7 +50,7 @@ def orb_correction_factor(
 
 
 if __name__ == "__main__":
-
+    import time
     im1_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png"
     im2_path = "/home/ekagra/Documents/GitHub/MasterArbeit/example/augmented_image_geometric.png"
     # im2_path = '/home/ekagra/Documents/GitHub/MasterArbeit/example/original_image.png'
@@ -61,5 +61,8 @@ if __name__ == "__main__":
     im1 = resize(im1)
     im2 = resize(im2)
 
+    start = time.time()
     corr_fac = orb_correction_factor(original_image=im1, augmented_image=im2)
+    end = time.time()
+    print(f"Time taken: {end - start:.3f} seconds")
     print(f"Correction factor: {corr_fac:.3f}")

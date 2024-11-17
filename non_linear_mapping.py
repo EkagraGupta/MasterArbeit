@@ -116,7 +116,7 @@ if __name__ == "__main__":
         "ShearY",
         "TranslateX",
         "TranslateY",
-        "Rotate",
+        # "Rotate",
         # "Brightness",
         # "Color",
         # "Contrast",

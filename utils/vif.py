@@ -45,7 +45,7 @@ if __name__ == "__main__":
     im2 = Image.open(im2_path)
 
     print(type(im1))
-
+    
     vif_val = compute_vif(im1, im2)
     print(vif_val)
 
