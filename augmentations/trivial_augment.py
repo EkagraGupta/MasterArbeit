@@ -279,29 +279,8 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                 if round(abs(augmentation_magnitude), 5) == round(mags[0][i].item(), 5):
                     augmentation_idx = i
                     break
-        # print(f'augmentation_type: {augmentation_type}\taugmentation_idx: {augmentation_idx}\n')
-
-        # # SSIM Calculation
-        # confidence_aa = comparison_metrics.multiscale_structural_similarity(im1=im, im2=augment_im)
-        # # Normalized Cross Correlation calculation
-        # confidence_aa = comparison_metrics.normalized_cross_correlation(im, augment_im)
-        # # Universal Image Quality Index calculation
-        # confidence_aa = comparison_metrics.universal_image_quality_index(im, augment_im)
-        # Spatial Correlation Coefficient calculation
-        # confidence_aa = comparison_metrics.spatial_correlation_coefficient(im, augment_im)
-        # SIFT calculation
-        if augmentation_type in ["ShearX", "ShearY", "TranslateX", "TranslateY", "Rotate"]:
-            confidence_aa = sift_correction_factor(im, augment_im)
-        # ORB calculation
-        # if augmentation_type in ["ShearX", "ShearY", "TranslateX", "TranslateY", "Rotate"]:
-        #     confidence_aa = orb_correction_factor(im, augment_im)
             
         # if augmentation_type == "ShearX":
-        #     """Custom Gaussian Function"""
-        #     # confidence_aa = comparison_metrics.gaussian(
-        #     #     augmentation_magnitude, a=1.0, b=0.0, c=0.56, d=0.0
-        #     # )
-
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
@@ -323,11 +302,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     # confidence_aa = rotation_hvs[augmentation_idx]
 
         # elif augmentation_type == "ShearY":
-        #     """Custom Gaussian Function"""
-        #     # confidence_aa = comparison_metrics.gaussian(
-        #     #     augmentation_magnitude, a=1.0, b=0.02, c=0.56, d=0.0
-        #     # )
-            
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
 
@@ -381,10 +355,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     confidence_aa = occlusion_hvs[::-1][augmentation_idx]
 
         # elif augmentation_type == "Brightness":
-        #     """Custom Sigmoid Function"""
-        #     # confidence_aa = comparison_metrics.sigmoid(
-        #     #     augmentation_magnitude, 0.9753, 17.0263, -0.8297
-        #     # )
 
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
@@ -405,10 +375,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #         confidence_aa = contrast_hvs[::-1][augmentation_idx]
 
         # elif augmentation_type == "Contrast":  # HVS Available
-        #     """Custom Sigmoid Function"""
-        #     # confidence_aa = comparison_metrics.sigmoid(
-        #     #     augmentation_magnitude, 0.9914758, 13.89562814, -0.82550186
-        #     # )
 
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
@@ -429,10 +395,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #         confidence_aa = contrast_hvs[::-1][augmentation_idx]
 
         # elif augmentation_type == "Color":
-        #     """Custom Sigmoid Function"""
-        #     # confidence_aa = comparison_metrics.sigmoid(
-        #     #     augmentation_magnitude, 1.0, 4.93537641, -1.5837580
-        #     # )
 
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
@@ -452,10 +414,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     #     confidence_aa = contrast_hvs[::-1][augmentation_idx]
 
         # elif augmentation_type == "Sharpness":
-        #     """Custom Sigmoid Function"""
-        #     # confidence_aa = comparison_metrics.sigmoid(
-        #     #     augmentation_magnitude, 0.9995181, 7.07685057, -1.24349678
-        #     # )
 
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
@@ -505,14 +463,6 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     confidence_aa = 1 - (1 - chance) * (1 - augmentation_magnitude_normalized) ** k
 
         # elif augmentation_type == "Rotate":  # HVS Available
-        #     """Custom Gaussian Function"""
-        #     # confidence_aa = comparison_metrics.gaussian(
-        #     #     augmentation_magnitude,
-        #     #     a=5.83337531e-01,
-        #     #     b=-5.36740882e-03,
-        #     #     c=2.16250254e01,
-        #     #     d=4.16662431e-01,
-        #     # )
 
         #     """Exact Model Accuracy"""
         #     # confidence_aa, _ = model_accuracy_mapping(augmentation_magnitude, augmentation_type)
@@ -536,43 +486,41 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     )
 
         """K-model for All Augmentations"""
-        # self.chance = 0.5
+        self.chance = 0.5
 
-        # if augmentation_type in [
-        #     "ShearX",
-        #     "ShearY",
-        #     "Brightness",
-        #     "Color",
-        #     "Contrast",
-        #     "Sharpness",
-        # ]:
-        #     max_magnitude = 0.99
-        # elif augmentation_type in ["TranslateX", "TranslateY"]:
-        #     max_magnitude = 32.0
-        # elif augmentation_type == "Rotate":
-        #     max_magnitude = 135.0
-        # elif augmentation_type == "Posterize":
-        #     max_magnitude = 8
-        # elif augmentation_type == "Solarize":
-        #     max_magnitude = 255.0
-        # else:
-        #     max_magnitude = 1.0
+        if augmentation_type in [
+            "ShearX",
+            "ShearY",
+            "Brightness",
+            "Color",
+            "Contrast",
+            "Sharpness",
+        ]:
+            max_magnitude = 0.99
+        elif augmentation_type in ["TranslateX", "TranslateY"]:
+            max_magnitude = 32.0
+        elif augmentation_type == "Rotate":
+            max_magnitude = 135.0
+        elif augmentation_type == "Posterize":
+            max_magnitude = 8
+        elif augmentation_type == "Solarize":
+            max_magnitude = 255.0
+        else:
+            max_magnitude = 1.0
 
-        # augmentation_severity = abs(
-        #     int(augmentation_magnitude / max_magnitude * self.num_magnitude_bins)
-        # )
-        # if augmentation_type == "Solarize":
-        #     augmentation_severity = self.num_magnitude_bins - augmentation_severity
+        augmentation_severity = abs(
+            int(augmentation_magnitude / max_magnitude * self.num_magnitude_bins)
+        )
+        if augmentation_type == "Solarize":
+            augmentation_severity = self.num_magnitude_bins - augmentation_severity
 
-        # visibility = comparison_metrics.custom_poly_common(
-        #     severity=augmentation_severity, max_severity=self.num_magnitude_bins
-        # )
+        visibility = comparison_metrics.custom_poly_common(
+            severity=augmentation_severity, max_severity=self.num_magnitude_bins
+        )
 
-        # confidence_aa = (
-        #     1 - (1 - self.chance) * (1 - visibility) ** self.k
-        # )  # The non-linear function
-
-        # # print(f'\nNum bins: {self.num_magnitude_bins}\tAugmentation info: {augment_info}\tvisibility: {visibility}\tconfidence_aa: {confidence_aa}\n')
+        confidence_aa = (
+            1 - (1 - self.chance) * (1 - visibility) ** self.k
+        )  # The non-linear function
         """K-model for All Augmentations"""
         
         confidence_aa = torch.from_numpy(
