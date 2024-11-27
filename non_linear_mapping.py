@@ -92,16 +92,16 @@ def get_plot(augmentation_type, model, dataset_split=100, worker_init_fn=None, g
     #               augmentation_type, augmentation_magnitudes_list)
     if len(accuracy_list) == 0:
         accuracy_list = [0] * len(mean_list)
-    csv_filename = save_to_csv(
-        mean_list,
-        std_list,
-        accuracy_list,
-        augmentation_type,
-        augmentation_magnitudes_list,
-        time_list,
-        iq_metric='sift'
-    )
-    print(f'CSV Filename: {csv_filename}')
+    # csv_filename = save_to_csv(
+    #     mean_list,
+    #     std_list,
+    #     accuracy_list,
+    #     augmentation_type,
+    #     augmentation_magnitudes_list,
+    #     time_list,
+    #     iq_metric='sift'
+    # )
+    # print(f'CSV Filename: {csv_filename}')
     # plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
 
     print(
@@ -112,12 +112,12 @@ def get_plot(augmentation_type, model, dataset_split=100, worker_init_fn=None, g
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        "ShearX",
-        "ShearY",
-        "TranslateX",
-        "TranslateY",
+        # "ShearX",
+        # "ShearY",
+        # "TranslateX",
+        # "TranslateY",
         # "Rotate",
-        # "Brightness",
+        "Brightness",
         # "Color",
         # "Contrast",
         # "Sharpness",
