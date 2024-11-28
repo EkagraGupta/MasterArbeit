@@ -486,7 +486,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     )
 
         """K-model for All Augmentations"""
-        self.chance = 0.5
+        # self.chance = 0.5
 
         if augmentation_type in [
             "ShearX",
