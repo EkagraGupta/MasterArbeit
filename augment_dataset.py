@@ -160,7 +160,7 @@ def create_transforms(
     #         augmentations.extend([transforms.TrivialAugmentWide(), transforms.ToTensor()])
         
 
-    augmentations.append(RandomErasing(p=0.3, scale=(0.02, 0.33), ratio=(0.3, 3.3), value='random', custom=custom))
+    augmentations.append(RandomErasing(p=0.3, scale=(0.02, 0.33), ratio=(0.3, 3.3), value='random', custom=custom, dataset_name=dataset_name))
     # custom_trivial_augment = CustomTrivialAugmentWide(
     #     custom=custom,
     #     augmentation_name=augmentation_name,
@@ -323,7 +323,7 @@ def seed_worker(worker_id):
 if __name__ == "__main__":
 
     batch_size = 25
-    DATASET_NAME = "CIFAR10"
+    DATASET_NAME = "CIFAR100"
 
     g = torch.Generator()
     g.manual_seed(0)
