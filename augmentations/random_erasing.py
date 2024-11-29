@@ -127,7 +127,7 @@ class RandomErasing(torch.nn.Module):
         Returns:
             float: Visibility ratio of the cropped image.
         """
-        return (dim1 - h) * (dim2 - w) / (dim1 * dim2)
+        return 1 - (h * w) / (dim1 * dim2)
 
     def forward(self, img):
         """
@@ -169,7 +169,7 @@ class RandomErasing(torch.nn.Module):
             
             if self.custom:
                 visibility = self.compute_visibility(img.shape[-2], img.shape[-1], h, w)
-                self.chance = 0.5
+                # self.chance = 0.5
                 confidence_re = (
                     1 - (1 - self.chance) * (1 - visibility) ** self.k
                 )  # The non-linear function
