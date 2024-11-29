@@ -146,21 +146,21 @@ def create_transforms(
         # transforms.Resize(256),
     ]
 
-    if aggressive_augmentation:
-        if custom:
-            # augmentations.append(
-            #     CustomTrivialAugmentWide(
-            #         custom=custom,
-            #         augmentation_name=augmentation_name,
-            #         severity=augmentation_severity,
-            #         get_signed=augmentation_sign,
-            #         dataset_name=dataset_name
-            #     ))
-            augmentations.append(RandomErasing(p=0.3, scale=(0.02, 0.33), ratio=(0.3, 3.3), value='random', custom=custom))
-        else:
-            augmentations.extend([transforms.TrivialAugmentWide(), transforms.ToTensor()])
+    # if aggressive_augmentation:
+    #     if custom:
+    #         # augmentations.append(
+    #         #     CustomTrivialAugmentWide(
+    #         #         custom=custom,
+    #         #         augmentation_name=augmentation_name,
+    #         #         severity=augmentation_severity,
+    #         #         get_signed=augmentation_sign,
+    #         #         dataset_name=dataset_name
+    #         #     ))
+    #     else:
+    #         augmentations.extend([transforms.TrivialAugmentWide(), transforms.ToTensor()])
         
 
+    augmentations.append(RandomErasing(p=0.3, scale=(0.02, 0.33), ratio=(0.3, 3.3), value='random', custom=custom))
     # custom_trivial_augment = CustomTrivialAugmentWide(
     #     custom=custom,
     #     augmentation_name=augmentation_name,
@@ -331,7 +331,7 @@ if __name__ == "__main__":
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
         aggressive_augmentation=True,
-        custom=True,
+        custom=False,
         augmentation_name="Rotate",
         augmentation_severity=15,
         augmentation_sign=True,
