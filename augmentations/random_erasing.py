@@ -58,6 +58,10 @@ class RandomErasing(torch.nn.Module):
         self.ratio = ratio
         self.value = value
         self.inplace = inplace
+        """MODIFICATION"""
+        self.chance = 0.1
+        self.k = 2
+        """MODIFICATION"""
 
     @staticmethod
     def get_params(
@@ -104,6 +108,19 @@ class RandomErasing(torch.nn.Module):
         # Return original image
         return 0, 0, img_h, img_w, img
 
+    def compute_visibility(self, dim1: int, dim2: int, h: float, w: float) -> float:
+        """Computes the visibility of the cropped uimage within the background.
+
+        Args:
+            dim1 (int): Height of the image.
+            dim2 (int): Width of the image.
+            tx (int): Horizontal offset.
+            ty (int): Vertical offset.
+
+        Returns:
+            float: Visibility ratio of the cropped image.
+        """
+        return (dim1 - h) * (dim2 - w) / (dim1 * dim2)
 
     def forward(self, img):
         """
@@ -113,6 +130,14 @@ class RandomErasing(torch.nn.Module):
         Returns:
             img (Tensor): Erased Tensor image.
         """
+
+        """MODIFICATION"""
+        h, w = 0, 0
+
+        to_tensor = F.to_tensor
+        img = to_tensor(img)
+        """MODIFICATION"""
+
         if torch.rand(1) < self.p:
 
             # cast self.value to script acceptable type
@@ -131,12 +156,15 @@ class RandomErasing(torch.nn.Module):
                     f"{img.shape[-3]} (number of input channels)"
                 )
 
-            to_tensor = F.to_tensor
-            img = to_tensor(img)
 
             x, y, h, w, v = self.get_params(img, scale=self.scale, ratio=self.ratio, value=value)
-            return F.erase(img, x, y, h, w, v, self.inplace)
-        return img, (h, w)
+
+            visibility = self.compute_visibility(img.shape[-2], img.shape[-1], h, w)
+            confidence_re = (
+                1 - (1 - self.chance) * (1 - visibility) ** self.k
+            )  # The non-linear function
+            return F.erase(img, x, y, h, w, v, self.inplace), confidence_re
+        return img, 1.0
 
 
     def __repr__(self) -> str:

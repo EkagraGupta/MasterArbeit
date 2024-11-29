@@ -82,24 +82,25 @@ class AugmentedDataset(torch.utils.data.Dataset):
 
         augment_x = augment(x)
 
-
-
         # if isinstance(augment_x, tuple):
         #     confidences = augment_x[1]
         #     augment_x = augment_x[0]
-        #     if isinstance(confidences, tuple):
-        #         combined_confidence = self.get_confidence(confidences)
-        #     elif isinstance(confidences, list):
-        #         combined_confidence = confidences[1]
-        #         augmentation_magnitude = confidences[0]
-        #     else:
-        #         combined_confidence = confidences
+        # print(confidences)
+
+        if isinstance(augment_x, tuple):
+            confidences = augment_x[1]
+            augment_x = augment_x[0]
+            if isinstance(confidences, tuple):
+                combined_confidence = self.get_confidence(confidences)
+            elif isinstance(confidences, list):
+                combined_confidence = confidences[1]
+                augmentation_magnitude = confidences[0]
+            else:
+                combined_confidence = confidences
 
         to_tensor = transforms.ToTensor()
         if isinstance(augment_x, Image.Image):
             augment_x = to_tensor(augment_x)
-        
-        print(type(x), type(augment_x))
         # augment_x = self.preprocess(augment_x)
 
         if self.robust_samples == 0:
@@ -321,7 +322,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
 
-    batch_size = 16
+    batch_size = 25
     DATASET_NAME = "CIFAR10"
 
     g = torch.Generator()
@@ -350,7 +351,7 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
     pil = transforms.ToPILImage()
