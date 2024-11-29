@@ -10,7 +10,9 @@ from augmentations.trivial_augment import CustomTrivialAugmentWide
 from augmentations.random_crop import RandomCrop
 from augmentations.random_choice import RandomChoiceTransforms
 from compute_loss import soft_loss
+from PIL import Image
 
+from augmentations.random_erasing import RandomErasing
 import random
 
 class AugmentedDataset(torch.utils.data.Dataset):
@@ -80,18 +82,25 @@ class AugmentedDataset(torch.utils.data.Dataset):
 
         augment_x = augment(x)
 
-        if isinstance(augment_x, tuple):
-            confidences = augment_x[1]
-            augment_x = augment_x[0]
-            if isinstance(confidences, tuple):
-                combined_confidence = self.get_confidence(confidences)
-            elif isinstance(confidences, list):
-                combined_confidence = confidences[1]
-                augmentation_magnitude = confidences[0]
-            else:
-                combined_confidence = confidences
 
-        augment_x = self.preprocess(augment_x)
+
+        # if isinstance(augment_x, tuple):
+        #     confidences = augment_x[1]
+        #     augment_x = augment_x[0]
+        #     if isinstance(confidences, tuple):
+        #         combined_confidence = self.get_confidence(confidences)
+        #     elif isinstance(confidences, list):
+        #         combined_confidence = confidences[1]
+        #         augmentation_magnitude = confidences[0]
+        #     else:
+        #         combined_confidence = confidences
+
+        to_tensor = transforms.ToTensor()
+        if isinstance(augment_x, Image.Image):
+            augment_x = to_tensor(augment_x)
+        
+        print(type(x), type(augment_x))
+        # augment_x = self.preprocess(augment_x)
 
         if self.robust_samples == 0:
             if augmentation_magnitude is not None:
@@ -132,7 +141,7 @@ def create_transforms(
     augmentations = [
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
-        # transforms.TrivialAugmentWide(),
+        transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
 
@@ -149,6 +158,7 @@ def create_transforms(
         else:
             augmentations.extend([transforms.TrivialAugmentWide(), transforms.ToTensor()])
         
+    augmentations.append(RandomErasing(p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value='random'))
 
     # custom_trivial_augment = CustomTrivialAugmentWide(
     #     custom=custom,
@@ -311,7 +321,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
 
-    batch_size = 5
+    batch_size = 16
     DATASET_NAME = "CIFAR10"
 
     g = torch.Generator()
@@ -319,9 +329,9 @@ if __name__ == "__main__":
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
-        aggressive_augmentation=True,
-        custom=True,
-        augmentation_name="Brightness",
+        aggressive_augmentation=False,
+        custom=False,
+        augmentation_name="Rotate",
         augmentation_severity=15,
         augmentation_sign=True,
         dataset_name=DATASET_NAME
@@ -340,12 +350,12 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
-    # pil = transforms.ToPILImage()
-    # im = pil(images[0])
-    # im.save("./example/augmented_image_less_dark.png")
+    pil = transforms.ToPILImage()
+    im = pil(images[0])
+    # im.save("./example/augmented_rotated_sev15.png")
 
 
     # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)

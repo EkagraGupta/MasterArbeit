@@ -486,7 +486,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     )
 
         """K-model for All Augmentations"""
-        # self.chance = 0.5
+        self.chance = 0.5
 
         if augmentation_type in [
             "ShearX",
@@ -531,7 +531,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
             to_tensor = transforms.Compose([transforms.ToTensor()])
             augment_im = to_tensor(augment_im)
 
-        # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
+        print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
