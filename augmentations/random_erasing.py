@@ -35,7 +35,7 @@ class RandomErasing(torch.nn.Module):
         >>> ])
     """
 
-    def __init__(self, p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False):
+    def __init__(self, p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False, custom=False):
         super().__init__()
         # _log_api_usage_once(self)
         if not isinstance(value, (numbers.Number, str, tuple, list)):
@@ -61,6 +61,7 @@ class RandomErasing(torch.nn.Module):
         """MODIFICATION"""
         self.chance = 0.1
         self.k = 2
+        self.custom = custom
         """MODIFICATION"""
 
     @staticmethod
@@ -136,6 +137,7 @@ class RandomErasing(torch.nn.Module):
 
         to_tensor = F.to_tensor
         img = to_tensor(img)
+        confidence_re = 1.0
         """MODIFICATION"""
 
         if torch.rand(1) < self.p:
@@ -158,13 +160,14 @@ class RandomErasing(torch.nn.Module):
 
 
             x, y, h, w, v = self.get_params(img, scale=self.scale, ratio=self.ratio, value=value)
-
-            visibility = self.compute_visibility(img.shape[-2], img.shape[-1], h, w)
-            confidence_re = (
-                1 - (1 - self.chance) * (1 - visibility) ** self.k
-            )  # The non-linear function
+            
+            if self.custom:
+                visibility = self.compute_visibility(img.shape[-2], img.shape[-1], h, w)
+                confidence_re = (
+                    1 - (1 - self.chance) * (1 - visibility) ** self.k
+                )  # The non-linear function
             return F.erase(img, x, y, h, w, v, self.inplace), confidence_re
-        return img, 1.0
+        return img, confidence_re
 
 
     def __repr__(self) -> str:
