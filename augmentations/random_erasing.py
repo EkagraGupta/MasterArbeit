@@ -60,14 +60,14 @@ class RandomErasing(torch.nn.Module):
         self.inplace = inplace
         """MODIFICATION"""
         self.dataset_name = dataset_name
+        self.k = 1
+        self.custom = custom
         if self.dataset_name == 'CIFAR10':
             self.chance = 0.1
         elif self.dataset_name == 'CIFAR100':
             self.chance = 0.01
         else: 
             raise ValueError("Dataset name should be either CIFAR10 or CIFAR100")
-        self.k = 2
-        self.custom = custom
         """MODIFICATION"""
 
     @staticmethod
