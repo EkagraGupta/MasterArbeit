@@ -89,89 +89,89 @@ if __name__ == "__main__":
 
     
     """Rotate"""
-    augmentation_type = "Rotate"
-    min_val, max_val = 0.0, 135.0
-    num_bins = 31
+    # augmentation_type = "Rotate"
+    # min_val, max_val = 0.0, 135.0
+    # num_bins = 31
 
-    # rotation_values1 = np.arange(0.0, 151.0, 30)
-    # confidence_values1 = [1.0, 0.99, 0.98, 0.97, 0.93, 0.96]
-    # confidence_values2 = [1.0, 0.96, 0.93, 0.91, 0.92, 0.86]
-    # confidence_values3 = [1.0, 0.98, 0.97, 0.96, 0.96, 0.92]
-    # confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
-    # confidence_values = np.mean([
-    #         confidence_values1,
-    #         confidence_values2,
-    #         confidence_values3,
-    #         confidence_values4,
-    #     ],
-    #     axis=0,
-    # )
-    # rotation_values_another = np.arange(0.0, 181.0, 45)
-    # confidence_values_another = [0.98, 0.99, 0.94, 0.94, 0.88]
-    # rotation_values = np.concatenate((rotation_values1, rotation_values_another))
-    # confidence_values = np.concatenate((confidence_values1, confidence_values_another))
-    # unique_rot_vals, unique_indices = np.unique(rotation_values1, return_index=True)
-    # rotation_values = unique_rot_vals.tolist()
-    # confidence_values = confidence_values[unique_indices].tolist()
+    # # rotation_values1 = np.arange(0.0, 151.0, 30)
+    # # confidence_values1 = [1.0, 0.99, 0.98, 0.97, 0.93, 0.96]
+    # # confidence_values2 = [1.0, 0.96, 0.93, 0.91, 0.92, 0.86]
+    # # confidence_values3 = [1.0, 0.98, 0.97, 0.96, 0.96, 0.92]
+    # # confidence_values4 = [1.0, 1.0, 1.0, 0.98, 0.99, 0.98]
+    # # confidence_values = np.mean([
+    # #         confidence_values1,
+    # #         confidence_values2,
+    # #         confidence_values3,
+    # #         confidence_values4,
+    # #     ],
+    # #     axis=0,
+    # # )
+    # # rotation_values_another = np.arange(0.0, 181.0, 45)
+    # # confidence_values_another = [0.98, 0.99, 0.94, 0.94, 0.88]
+    # # rotation_values = np.concatenate((rotation_values1, rotation_values_another))
+    # # confidence_values = np.concatenate((confidence_values1, confidence_values_another))
+    # # unique_rot_vals, unique_indices = np.unique(rotation_values1, return_index=True)
+    # # rotation_values = unique_rot_vals.tolist()
+    # # confidence_values = confidence_values[unique_indices].tolist()
 
-    # rotation_values_lim = np.linspace(min_val, max_val, num_bins)
-    # confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
-    # confidence_values_lim[0] = 1.0
+    # # rotation_values_lim = np.linspace(min_val, max_val, num_bins)
+    # # confidence_values_lim = np.interp(rotation_values_lim, rotation_values, confidence_values)
+    # # confidence_values_lim[0] = 1.0
 
-    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
-    print(np.array(augmentation_magnitude))
-    k1 = 2
-    k2 = 3
+    # augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
+    # print(np.array(augmentation_magnitude))
+    # k1 = 2
+    # k2 = 3
 
-    chance_overestimate = min(rotation_hvs)
-    chance_underestimate = min(model_accuracy)
-    print(f'Augmentation: {augmentation_type}, chance underestimate: {chance_underestimate}, chance overestimate: {chance_overestimate}\n')
+    # chance_overestimate = min(rotation_hvs)
+    # chance_underestimate = min(model_accuracy)
+    # print(f'Augmentation: {augmentation_type}, chance underestimate: {chance_underestimate}, chance overestimate: {chance_overestimate}\n')
 
-    estimated_confidence_values1 = 1 - (1 - chance_overestimate) * (abs(augmentation_magnitude) / 135.0) ** k1
-    estimated_confidence_values2 = 1 - (1 - chance_overestimate) * (abs(augmentation_magnitude) / 135.0) ** k2
-    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance_overestimate, 1.0)
-    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance_overestimate, 1.0)
-    estimated_confidence_values1_m = 1 - (1 - chance_underestimate) * (abs(augmentation_magnitude) / 135.0) ** k1
-    estimated_confidence_values2_m = 1 - (1 - chance_underestimate) * (abs(augmentation_magnitude) / 135.0) ** k2
-    estimated_confidence_values1_m = np.clip(estimated_confidence_values1_m, chance_underestimate, 1.0)
-    estimated_confidence_values2_m = np.clip(estimated_confidence_values2_m, chance_underestimate, 1.0)
+    # estimated_confidence_values1 = 1 - (1 - chance_overestimate) * (abs(augmentation_magnitude) / 135.0) ** k1
+    # estimated_confidence_values2 = 1 - (1 - chance_overestimate) * (abs(augmentation_magnitude) / 135.0) ** k2
+    # estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance_overestimate, 1.0)
+    # estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance_overestimate, 1.0)
+    # estimated_confidence_values1_m = 1 - (1 - chance_underestimate) * (abs(augmentation_magnitude) / 135.0) ** k1
+    # estimated_confidence_values2_m = 1 - (1 - chance_underestimate) * (abs(augmentation_magnitude) / 135.0) ** k2
+    # estimated_confidence_values1_m = np.clip(estimated_confidence_values1_m, chance_underestimate, 1.0)
+    # estimated_confidence_values2_m = np.clip(estimated_confidence_values2_m, chance_underestimate, 1.0)
 
-    ssim, ncc, uiq, scc, sift = plot_severity_vs_confidence(augmentation_type)
-    augmentation_magnitude_single = augmentation_magnitude[31:]
-    model_accuracy_single = model_accuracy[31:]
-    estimated_confidence_values1_single = estimated_confidence_values1[31:]
-    estimated_confidence_values2_single = estimated_confidence_values2_m[31:]
-    ssim_single = ssim[31:]
-    ncc_single = ncc[31:]
-    uiq_single = uiq[31:]
-    scc_single = scc[31:]
-    sift_single = sift[31:]
+    # ssim, ncc, uiq, scc, sift = plot_severity_vs_confidence(augmentation_type)
+    # augmentation_magnitude_single = augmentation_magnitude[31:]
+    # model_accuracy_single = model_accuracy[31:]
+    # estimated_confidence_values1_single = estimated_confidence_values1[31:]
+    # estimated_confidence_values2_single = estimated_confidence_values2_m[31:]
+    # ssim_single = ssim[31:]
+    # ncc_single = ncc[31:]
+    # uiq_single = uiq[31:]
+    # scc_single = scc[31:]
+    # sift_single = sift[31:]
 
-    sns.set_palette("colorblind")
-    plt.figure(figsize=(12, 8))
-    plt.plot(augmentation_magnitude_single, rotation_hvs, '-', label='Rotation HVS', color=main_data_color, linewidth=2)
-    plt.plot(augmentation_magnitude_single, model_accuracy_single, "-", label="Model Confidence", color=secondary_data_color, linewidth=2)
-    plt.plot(augmentation_magnitude_single, estimated_confidence_values1_single, '-.', label=f'k={k1}', color=est_conf_color, linewidth=2)
-    plt.plot(augmentation_magnitude_single, estimated_confidence_values2_single, '--', label=f'k={k2}', color=est_conf_color, linewidth=2)
-    plt.plot(augmentation_magnitude_single, ssim_single, '-', label='SSIM', color=metrics_color, linewidth=1, alpha=0.8)
-    plt.plot(augmentation_magnitude_single, ncc_single, '--', label='NCC', color=metrics_color, linewidth=1, alpha=0.8)
-    plt.plot(augmentation_magnitude_single, uiq_single, '.-', label='UIQ', color=metrics_color, linewidth=1, alpha=0.8)
-    plt.plot(augmentation_magnitude_single, scc_single, ':', label='SCC', color=metrics_color, linewidth=1, alpha=0.8)
-    plt.plot(augmentation_magnitude_single, sift_single, '-.', label='SIFT', color=metrics_color, linewidth=1, alpha=0.8)
-    plt.axhline(y=chance_overestimate, color=main_data_color, linestyle=':', label=f'HVS lower bound', linewidth=2, alpha=0.6)
-    plt.axhline(y=chance_underestimate, color=secondary_data_color, linestyle=':', label=f'Model lower bound', linewidth=2, alpha=0.6)
-    plt.yticks(list(plt.yticks()[0]) + [chance_overestimate, chance_underestimate])
-    plt.gca().get_yticklabels()[-2].set_color(main_data_color)
-    plt.gca().get_yticklabels()[-1].set_color(secondary_data_color)
-    plt.xlabel(f"Magnitude of {augmentation_type}", fontsize=14)
-    plt.ylabel("Confidence", fontsize=14)
-    plt.title(f"{augmentation_type}", fontsize=16)
-    plt.legend(fontsize=10, frameon=False)
-    plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.5)
-    plt.tight_layout()
-    # file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/{augmentation_type}_plot.png"
-    # plt.savefig(file_name)
-    # plt.show()
+    # sns.set_palette("colorblind")
+    # plt.figure(figsize=(12, 8))
+    # plt.plot(augmentation_magnitude_single, rotation_hvs, '-', label='Rotation HVS', color=main_data_color, linewidth=2)
+    # plt.plot(augmentation_magnitude_single, model_accuracy_single, "-", label="Model Confidence", color=secondary_data_color, linewidth=2)
+    # plt.plot(augmentation_magnitude_single, estimated_confidence_values1_single, '-.', label=f'k={k1}', color=est_conf_color, linewidth=2)
+    # plt.plot(augmentation_magnitude_single, estimated_confidence_values2_single, '--', label=f'k={k2}', color=est_conf_color, linewidth=2)
+    # plt.plot(augmentation_magnitude_single, ssim_single, '-', label='SSIM', color=metrics_color, linewidth=1, alpha=0.8)
+    # plt.plot(augmentation_magnitude_single, ncc_single, '--', label='NCC', color=metrics_color, linewidth=1, alpha=0.8)
+    # plt.plot(augmentation_magnitude_single, uiq_single, '.-', label='UIQ', color=metrics_color, linewidth=1, alpha=0.8)
+    # plt.plot(augmentation_magnitude_single, scc_single, ':', label='SCC', color=metrics_color, linewidth=1, alpha=0.8)
+    # plt.plot(augmentation_magnitude_single, sift_single, '-.', label='SIFT', color=metrics_color, linewidth=1, alpha=0.8)
+    # plt.axhline(y=chance_overestimate, color=main_data_color, linestyle=':', label=f'HVS lower bound', linewidth=2, alpha=0.6)
+    # plt.axhline(y=chance_underestimate, color=secondary_data_color, linestyle=':', label=f'Model lower bound', linewidth=2, alpha=0.6)
+    # plt.yticks(list(plt.yticks()[0]) + [chance_overestimate, chance_underestimate])
+    # plt.gca().get_yticklabels()[-2].set_color(main_data_color)
+    # plt.gca().get_yticklabels()[-1].set_color(secondary_data_color)
+    # plt.xlabel(f"Magnitude of {augmentation_type}", fontsize=14)
+    # plt.ylabel("Confidence", fontsize=14)
+    # plt.title(f"{augmentation_type}", fontsize=16)
+    # plt.legend(fontsize=10, frameon=False)
+    # plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.5)
+    # plt.tight_layout()
+    # # file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/{augmentation_type}_plot.png"
+    # # plt.savefig(file_name)
+    # # plt.show()
     
     """Contrast"""
     # augmentation_type = 'Contrast'
