@@ -169,7 +169,7 @@ class RandomErasing(torch.nn.Module):
             
             if self.custom:
                 visibility = self.compute_visibility(img.shape[-2], img.shape[-1], h, w)
-                self.chance = 0.5
+                # self.chance = 0.5
                 confidence_re = (
                     1 - (1 - self.chance) * (1 - visibility) ** self.k
                 )  # The non-linear function
