@@ -142,7 +142,7 @@ def create_transforms(
     augmentations = [
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
-        # transforms.TrivialAugmentWide(),
+        transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
 
