@@ -3,7 +3,7 @@ import os
 import csv
 import pandas as pd
 
-COMPARISON_METRIC = "comparison_all"
+COMPARISON_METRIC = "poly_k"
 
 
 def get_mean_std(confidences_tensor):
@@ -89,12 +89,12 @@ def plot_mean_std(
         color="blue",
         label="Model Confidence",
     )
-    # plt.xticks(augmentation_magnitudes)
+    plt.xticks(augmentation_magnitudes)
     plt.ylabel("Confidence")
     plt.title(f"Mean and standard deviation curve for {augmentation_type}")
     plt.legend()
-    plt.savefig(filename)
-    # plt.show()
+    # plt.savefig(filename)
+    plt.show()
 
 
 def plot_mean_std_from_csv(csv_file, augmentation_type=None, iq_metric='scc'):

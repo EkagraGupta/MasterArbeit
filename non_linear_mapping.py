@@ -19,7 +19,12 @@ def get_plot(augmentation_type, model, dataset_split=100, worker_init_fn=None, g
     mean_list, std_list, time_list, augmentation_magnitudes_list = [], [], [], []
     accuracy_list = []
 
-    for enable_sign in range(0, 2):
+    if augmentation_type in ['Posterize', 'Solarize']:
+        sign = 1
+    else:
+        sign = 2
+
+    for enable_sign in range(0, sign):
         if enable_sign == 1:
             enable_sign = False
         else:
@@ -91,17 +96,18 @@ def get_plot(augmentation_type, model, dataset_split=100, worker_init_fn=None, g
     # plot_mean_std(mean_list, std_list, accuracy_list,
     #               augmentation_type, augmentation_magnitudes_list)
     if len(accuracy_list) == 0:
+        print('its going here')
         accuracy_list = [0] * len(mean_list)
-    # csv_filename = save_to_csv(
-    #     mean_list,
-    #     std_list,
-    #     accuracy_list,
-    #     augmentation_type,
-    #     augmentation_magnitudes_list,
-    #     time_list,
-    #     iq_metric='sift'
-    # )
-    # print(f'CSV Filename: {csv_filename}')
+    csv_filename = save_to_csv(
+        mean_list,
+        std_list,
+        accuracy_list,
+        augmentation_type,
+        augmentation_magnitudes_list,
+        time_list,
+        iq_metric='poly_k'
+    )
+    print(f'CSV Filename: {csv_filename}')
     # plot_mean_std_from_csv(csv_file=csv_filename, augmentation_type=augmentation_type)
 
     print(
@@ -116,8 +122,8 @@ if __name__ == "__main__":
         # "ShearY",
         # "TranslateX",
         # "TranslateY",
-        # "Rotate",
-        "Brightness",
+        "Rotate",
+        # "Brightness",
         # "Color",
         # "Contrast",
         # "Sharpness",
