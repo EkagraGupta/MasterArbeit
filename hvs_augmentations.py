@@ -338,66 +338,7 @@ if __name__ == "__main__":
     # plt.show()
 
     """Color"""
-    augmentation_type = 'Color'
-    num_bins = 31
-    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
-
-    df_aug = pd.read_csv(f'non_linear_mapping_data/{augmentation_type}/{augmentation_type}_poly_k_results.csv')
-    df_aug = df_aug.sort_values(by='severity')
-    const_k = np.array(df_aug['mean_poly_k'])
-    chance_constant_k = 0.5
-
-    k1 = 2
-    k2 = 5
-
-    chance = min(model_accuracy)
-    print(f'Augmentation: {augmentation_type}, Chance: {chance}')
-
-    estimated_confidence_values1 = 1 - (1 - chance) * (abs(augmentation_magnitude)) ** k1
-    estimated_confidence_values2 = 1 - (1 - chance) * (abs(augmentation_magnitude)) ** k2
-    estimated_confidence_values1[augmentation_magnitude > 0] = 1.0
-    estimated_confidence_values2[augmentation_magnitude > 0] = 1.0
-    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
-    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
-    
-    ssim, ncc, uiq, scc = plot_severity_vs_confidence(augmentation_type)
-    ssim = np.array(ssim)
-    ncc = np.array(ncc)
-    uiq = np.array(uiq)
-    scc = np.array(scc)
-    augmentation_magnitude = np.array(augmentation_magnitude)
-    model_accuracy = np.array(model_accuracy)
-    estimated_confidence_values1 = np.array(estimated_confidence_values1)
-    estimated_confidence_values2 = np.array(estimated_confidence_values2)
-    
-    sns.set_palette("colorblind")
-    plt.figure(figsize=(12, 8))
-    plt.plot(augmentation_magnitude, model_accuracy, "-", label="Model Confidence", color=secondary_data_color, linewidth=2)
-    plt.plot(augmentation_magnitude, estimated_confidence_values1, '-.', label=f'k={k1}', color=est_conf_color, linewidth=2)
-    plt.plot(augmentation_magnitude, estimated_confidence_values2, '--', label=f'k={k2}', color=est_conf_color, linewidth=2)
-    # plt.plot(augmentation_magnitude, ssim, '-', label='SSIM', color=metrics_color, linewidth=1, alpha=0.8)
-    # plt.plot(augmentation_magnitude, ncc, '--', label='NCC', color=metrics_color, linewidth=1, alpha=0.8)
-    # plt.plot(augmentation_magnitude, uiq, '.-', label='UIQ', color=metrics_color, linewidth=1, alpha=0.8)
-    # plt.plot(augmentation_magnitude, scc, ':', label='SCC', color=metrics_color, linewidth=1, alpha=0.8)
-    plt.axhline(y=chance, color=secondary_data_color, linestyle=':', label=f'Model lower bound', linewidth=2, alpha=0.6)
-    # plt.plot(augmentation_magnitude, const_k, '-', label=f'k={2}, Confidence>={chance_constant_k}', color=constk_color, linewidth=2)
-    plt.yticks(np.arange(0.90, 1.01, 0.01))
-    plt.yticks(list(plt.yticks()[0]) + [chance])
-    plt.gca().get_yticklabels()[-1].set_color(secondary_data_color)
-    plt.xlabel(f"Magnitude of {augmentation_type}", fontsize=16)
-    plt.ylabel("Confidence", fontsize=16)
-    plt.ylim(0.93, 1.01)
-    plt.title(f"{augmentation_type}", fontsize=16, fontweight='bold')
-    plt.legend(fontsize=10, frameon=False)
-    plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.5)
-    plt.tight_layout()
-    # file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/{augmentation_type}_plot.svg"
-    file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/color_model_under_over_plot.svg"
-    plt.savefig(file_name, format='svg')
-    plt.show()
-
-    """Sharpness"""
-    # augmentation_type = 'Sharpness'
+    # augmentation_type = 'Color'
     # num_bins = 31
     # augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
 
@@ -407,7 +348,7 @@ if __name__ == "__main__":
     # chance_constant_k = 0.5
 
     # k1 = 2
-    # k2 = 7
+    # k2 = 5
 
     # chance = min(model_accuracy)
     # print(f'Augmentation: {augmentation_type}, Chance: {chance}')
@@ -418,9 +359,8 @@ if __name__ == "__main__":
     # estimated_confidence_values2[augmentation_magnitude > 0] = 1.0
     # estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
     # estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
-
-    # ssim, ncc, uiq, scc = plot_severity_vs_confidence(augmentation_type)
     
+    # ssim, ncc, uiq, scc = plot_severity_vs_confidence(augmentation_type)
     # ssim = np.array(ssim)
     # ncc = np.array(ncc)
     # uiq = np.array(uiq)
@@ -435,6 +375,70 @@ if __name__ == "__main__":
     # plt.plot(augmentation_magnitude, model_accuracy, "-", label="Model Confidence", color=secondary_data_color, linewidth=2)
     # plt.plot(augmentation_magnitude, estimated_confidence_values1, '-.', label=f'k={k1}', color=est_conf_color, linewidth=2)
     # plt.plot(augmentation_magnitude, estimated_confidence_values2, '--', label=f'k={k2}', color=est_conf_color, linewidth=2)
+    # # plt.plot(augmentation_magnitude, ssim, '-', label='SSIM', color=metrics_color, linewidth=1, alpha=0.8)
+    # # plt.plot(augmentation_magnitude, ncc, '--', label='NCC', color=metrics_color, linewidth=1, alpha=0.8)
+    # # plt.plot(augmentation_magnitude, uiq, '.-', label='UIQ', color=metrics_color, linewidth=1, alpha=0.8)
+    # # plt.plot(augmentation_magnitude, scc, ':', label='SCC', color=metrics_color, linewidth=1, alpha=0.8)
+    # plt.axhline(y=chance, color=secondary_data_color, linestyle=':', label=f'Model lower bound', linewidth=2, alpha=0.6)
+    # # plt.plot(augmentation_magnitude, const_k, '-', label=f'k={2}, Confidence>={chance_constant_k}', color=constk_color, linewidth=2)
+    # plt.yticks(np.arange(0.90, 1.01, 0.01))
+    # plt.yticks(list(plt.yticks()[0]) + [chance])
+    # plt.gca().get_yticklabels()[-1].set_color(secondary_data_color)
+    # plt.xlabel(f"Magnitude of {augmentation_type}", fontsize=16)
+    # plt.ylabel("Confidence", fontsize=16)
+    # plt.ylim(0.93, 1.01)
+    # plt.title(f"{augmentation_type}", fontsize=16, fontweight='bold')
+    # plt.legend(fontsize=10, frameon=False)
+    # plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.5)
+    # plt.tight_layout()
+    # # file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/{augmentation_type}_plot.svg"
+    # file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/color_model_under_over_plot.svg"
+    # plt.savefig(file_name, format='svg')
+    # plt.show()
+
+    """Sharpness"""
+    augmentation_type = 'Sharpness'
+    num_bins = 31
+    augmentation_magnitude, augmentation_mean, model_accuracy = model_confidence(augmentation_type=augmentation_type)
+
+    df_aug = pd.read_csv(f'non_linear_mapping_data/{augmentation_type}/{augmentation_type}_poly_k_results.csv')
+    df_aug = df_aug.sort_values(by='severity')
+    const_k = np.array(df_aug['mean_poly_k'])
+    chance_constant_k = 0.5
+
+    k1 = 2
+    k2 = 7
+
+    chance = min(model_accuracy)
+    print(f'Augmentation: {augmentation_type}, Chance: {chance}')
+
+    estimated_confidence_values1 = 1 - (1 - chance) * (abs(augmentation_magnitude)) ** k1
+    estimated_confidence_values2 = 1 - (1 - chance) * (abs(augmentation_magnitude)) ** k2
+    estimated_confidence_values1[augmentation_magnitude > 0] = 1.0
+    estimated_confidence_values2[augmentation_magnitude > 0] = 1.0
+    estimated_confidence_values1 = np.clip(estimated_confidence_values1, chance, 1.0)
+    estimated_confidence_values2 = np.clip(estimated_confidence_values2, chance, 1.0)
+
+    ssim, ncc, uiq, scc = plot_severity_vs_confidence(augmentation_type)
+    
+    ssim = np.array(ssim)
+    ncc = np.array(ncc)
+    uiq = np.array(uiq)
+    scc = np.array(scc)
+    augmentation_magnitude = np.array(augmentation_magnitude)
+    model_accuracy = np.array(model_accuracy)
+    estimated_confidence_values1 = np.array(estimated_confidence_values1)
+    estimated_confidence_values2 = np.array(estimated_confidence_values2)
+    
+    x = augmentation_magnitude[5]
+    y = model_accuracy[5]
+    print(x, y)
+
+    sns.set_palette("colorblind")
+    plt.figure(figsize=(12, 8))
+    plt.plot(augmentation_magnitude, model_accuracy, "-", label="Model Confidence", color=secondary_data_color, linewidth=2)
+    # plt.plot(augmentation_magnitude, estimated_confidence_values1, '-.', label=f'k={k1}', color=est_conf_color, linewidth=2)
+    # plt.plot(augmentation_magnitude, estimated_confidence_values2, '--', label=f'k={k2}', color=est_conf_color, linewidth=2)
     # plt.plot(augmentation_magnitude, ssim, '-', label='SSIM', color=metrics_color, linewidth=1, alpha=0.8)
     # plt.plot(augmentation_magnitude, ncc, '--', label='NCC', color=metrics_color, linewidth=1, alpha=0.8)
     # plt.plot(augmentation_magnitude, uiq, '.-', label='UIQ', color=metrics_color, linewidth=1, alpha=0.8)
@@ -443,17 +447,29 @@ if __name__ == "__main__":
     # plt.axhline(y=chance, color=secondary_data_color, linestyle=':', label=f'Model lower bound', linewidth=2, alpha=0.6)
     # plt.yticks(np.arange(0.880, 1.01, 0.01))
     # plt.ylim(0.880, 1.01)
+
+
+    plt.axvline(x=x, color="red", linestyle="--", linewidth=2, label="Random Augmentation")
+    plt.axhline(y=y, color="red", linestyle="--", linewidth=2)
+
+    plt.annotate(f"({x:.2f}, {y:.2f})", 
+                xy=(x, y), 
+                xytext=(x + 0.02, y + 0.002),
+                fontsize=14)
+
+
     # plt.yticks(list(plt.yticks()[0]) + [chance])
     # plt.gca().get_yticklabels()[-1].set_color(secondary_data_color)
-    # plt.xlabel(f"Magnitude of {augmentation_type}", fontsize=16)
-    # plt.ylabel("Confidence", fontsize=16)
+    plt.xlabel(f"Magnitude of {augmentation_type}", fontsize=16)
+    plt.ylabel("Confidence", fontsize=16)
     # plt.title(f"{augmentation_type}", fontsize=16, fontweight='bold')
-    # plt.legend(fontsize=10, frameon=False)
-    # plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.5)
-    # plt.tight_layout()
+    plt.legend(fontsize=10, frameon=False)
+    plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.5)
+    plt.tight_layout()
     # file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/{augmentation_type}_plot.svg"
-    # plt.savefig(file_name, format='svg')
-    # plt.show()
+    file_name = f"/home/ekagra/Documents/GitHub/MasterArbeit/final_plots/model_acc_mapping_plot.jpeg"
+    plt.savefig(file_name, format='jpeg')
+    plt.show()
 
     """ShearX"""
     # augmentation_type = "ShearX"

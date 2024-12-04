@@ -11,9 +11,9 @@ transform = transforms.Compose([
 
 batch_size = 1
 DATASET_NAME = "CIFAR10"
-augmentation_type = "TranslateX"
-severity = 30
-augment_sign = False
+augmentation_type = "Sharpness"
+severity = 25
+augment_sign = True
 
 g = torch.Generator()
 g.manual_seed(1)
