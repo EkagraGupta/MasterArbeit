@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 # Load data from CSV file
-augmentation_type = 'Rotate'
+augmentation_type = 'Solarize'
 df_model = pd.read_csv(f'non_linear_mapping_data/{augmentation_type}/{augmentation_type}_poly_k_results.csv')
 df_aug = pd.read_csv(f'non_linear_mapping_data/{augmentation_type}/{augmentation_type}_poly_k_results.csv')
 

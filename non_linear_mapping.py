@@ -118,19 +118,19 @@ def get_plot(augmentation_type, model, dataset_split=100, worker_init_fn=None, g
 if __name__ == "__main__":
     augmentation_types = [
         # "Identity",
-        # "ShearX",
-        # "ShearY",
-        # "TranslateX",
-        # "TranslateY",
+        "ShearX",
+        "ShearY",
+        "TranslateX",
+        "TranslateY",
         "Rotate",
-        # "Brightness",
-        # "Color",
-        # "Contrast",
-        # "Sharpness",
-        # "Posterize",
-        # "Solarize",
-        # "AutoContrast",
-        # "Equalize",
+        "Brightness",
+        "Color",
+        "Contrast",
+        "Sharpness",
+        "Posterize",
+        "Solarize",
+        "AutoContrast",
+        "Equalize",
     ]
 
     g = torch.Generator()

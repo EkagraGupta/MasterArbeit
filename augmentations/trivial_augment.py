@@ -281,7 +281,7 @@ class CustomTrivialAugmentWide(torch.nn.Module):
                     break
 
         self.k = 2
-        self.chance = 0.5
+        self.chance = 0.1
             
         if augmentation_type == "ShearX":
             """Exact Model Accuracy"""
@@ -495,14 +495,14 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #     )
 
         confidence_aa = torch.from_numpy(
-            np.where(confidence_aa < self.chance, self.chance, confidence_aa)
+            np.where(confidence_aa < 0.5, 0.5, confidence_aa)
         )
 
         if self.dataset_name=="Tiny-ImageNet":
             to_tensor = transforms.Compose([transforms.ToTensor()])
             augment_im = to_tensor(augment_im)
 
-        print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
+        # print(f'\nAugmentation info: {augment_info}\tconf: {confidence_aa}\n')
         return augment_im, [augmentation_magnitude, confidence_aa]
 
     def __call__(
