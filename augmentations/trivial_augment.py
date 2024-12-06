@@ -494,9 +494,9 @@ class CustomTrivialAugmentWide(torch.nn.Module):
         #         im, augment_im
         #     )
 
-        confidence_aa = torch.from_numpy(
-            np.where(confidence_aa < 0.5, 0.5, confidence_aa)
-        )
+        # confidence_aa = torch.from_numpy(
+        #     np.where(confidence_aa < 0.5, 0.5, confidence_aa)
+        # )
 
         if self.dataset_name=="Tiny-ImageNet":
             to_tensor = transforms.Compose([transforms.ToTensor()])

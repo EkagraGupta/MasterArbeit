@@ -130,8 +130,8 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        # transforms.RandomHorizontalFlip(),
-        # transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
@@ -318,9 +318,9 @@ if __name__ == "__main__":
     g.manual_seed(1)
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
-        custom=True,
+        random_cropping=True,
+        aggressive_augmentation=False,
+        custom=False,
         augmentation_name="Brightness",
         augmentation_severity=15,
         augmentation_sign=True,
@@ -343,9 +343,9 @@ if __name__ == "__main__":
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
-    # pil = transforms.ToPILImage()
-    # im = pil(images[0])
-    # im.save("./example/augmented_image_less_dark.png")
+    pil = transforms.ToPILImage()
+    im = pil(images[0])
+    im.save("./example/rc_image.png")
 
 
     # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
