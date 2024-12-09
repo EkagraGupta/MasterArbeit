@@ -144,6 +144,7 @@ class RandomErasing(torch.nn.Module):
         to_tensor = F.to_tensor
         img = to_tensor(img)
         confidence_re = 1.0
+        occlusion_hvs = [0.216, 0.388, 0.51066667, 0.584, 0.65333333, 0.68533333, 0.68, 0.72666667, 0.75466667, 0.764, 0.776, 0.78758974, 0.79876923, 0.80994872, 0.82112821, 0.83230769, 0.84348718, 0.85466667, 0.86584615, 0.87702564, 0.88820513, 0.89938462, 0.9105641, 0.92174359, 0.93292308, 0.94410256, 0.95528205, 0.96646154, 0.97764103, 0.98882051, 1.]
         """MODIFICATION"""
 
         if torch.rand(1) < self.p:
@@ -169,7 +170,6 @@ class RandomErasing(torch.nn.Module):
             
             if self.custom:
                 visibility = self.compute_visibility(img.shape[-2], img.shape[-1], h, w)
-                # self.chance = 0.5
                 confidence_re = (
                     1 - (1 - self.chance) * (1 - visibility) ** self.k
                 )  # The non-linear function
