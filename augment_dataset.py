@@ -167,7 +167,7 @@ def create_transforms(
     #     )
 
     if random_cropping:
-        augmentations.pop(-2)  # -1, -2(if sequential)
+        # augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
@@ -312,7 +312,7 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
 
-    batch_size = 5
+    batch_size = 1
     DATASET_NAME = "CIFAR10"
 
     g = torch.Generator()
@@ -323,8 +323,8 @@ if __name__ == "__main__":
     augmentation_sign = False
 
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
+        random_cropping=True,
+        aggressive_augmentation=False,
         custom=True,
         augmentation_name=augmentation_type,
         augmentation_severity=augmentation_severity,
@@ -346,16 +346,18 @@ if __name__ == "__main__":
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
     # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
     pil = transforms.ToPILImage()
     resize = transforms.Resize(256)
     im = resize(pil(images[0]))
-    if augmentation_sign:
-        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
-    else:
-        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
+    # if augmentation_sign:
+    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
+    # else:
+    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
+    filename = f"./final_plots/image_examples/rc_example.png"
     im.save(filename)
+    im.show()
 
     # fig, ax = plt.subplots()
     # ax.imshow(images[0].permute(1, 2, 0).numpy())
