@@ -130,8 +130,8 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
+        # transforms.RandomHorizontalFlip(),
+        # transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
@@ -171,6 +171,7 @@ def create_transforms(
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
+
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
@@ -317,13 +318,17 @@ if __name__ == "__main__":
     g = torch.Generator()
     g.manual_seed(1)
 
+    augmentation_type = "TranslateY"
+    augmentation_severity = 15
+    augmentation_sign = False
+
     transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=True,
-        aggressive_augmentation=False,
-        custom=False,
-        augmentation_name="Brightness",
-        augmentation_severity=15,
-        augmentation_sign=True,
+        random_cropping=False,
+        aggressive_augmentation=True,
+        custom=True,
+        augmentation_name=augmentation_type,
+        augmentation_severity=augmentation_severity,
+        augmentation_sign=augmentation_sign,
         dataset_name=DATASET_NAME
     )
     
@@ -340,12 +345,29 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
     print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
     pil = transforms.ToPILImage()
-    im = pil(images[0])
-    im.save("./example/rc_image.png")
+    resize = transforms.Resize(256)
+    im = resize(pil(images[0]))
+    if augmentation_sign:
+        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
+    else:
+        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
+    im.save(filename)
+
+    # fig, ax = plt.subplots()
+    # ax.imshow(images[0].permute(1, 2, 0).numpy())
+    # ax.axis('off')
+
+    # if augmentation_sign:
+    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.svg"
+    # else:
+    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.svg"
+
+    # fig.savefig(filename, format='svg', bbox_inches='tight')
+    # plt.close(fig)
 
 
     # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
