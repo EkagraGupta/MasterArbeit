@@ -135,7 +135,6 @@ class RandomCrop:
         if self.custom:
             # compute visibility and confidence score
             visibility = self.compute_visibility(dim1, dim2, tx, ty)
-            print(f'tx: {tx}, ty: {ty}, visibility: {visibility}')
             confidence_rc = (
                 1 - (1 - self.chance) * (1 - visibility) ** self.k
             )  # The non-linear function
