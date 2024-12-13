@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from augmentations.random_crop import RandomCrop
 from curve_plotting import plot_severity_vs_confidence
-import scienceplots
+# import scienceplots
 import seaborn as sns
 import os
 
