@@ -130,8 +130,8 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
+        # transforms.RandomHorizontalFlip(),
+        # transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
@@ -318,9 +318,9 @@ if __name__ == "__main__":
     g = torch.Generator()
     g.manual_seed(1)
 
-    augmentation_type = "TranslateY"
+    augmentation_type = "Sharpness"
     augmentation_severity = 15
-    augmentation_sign = False
+    augmentation_sign = True
 
     transforms_preprocess, transforms_augmentation = create_transforms(
         random_cropping=False,
@@ -345,19 +345,19 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
-    # pil = transforms.ToPILImage()
-    # resize = transforms.Resize(256)
-    # im = resize(pil(images[0]))
-    # # if augmentation_sign:
-    # #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
-    # # else:
-    # #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
+    pil = transforms.ToPILImage()
+    resize = transforms.Resize(256)
+    im = resize(pil(images[0]))
+    if augmentation_sign:
+        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
+    else:
+        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
     # filename = f"./final_plots/image_examples/rc_example.png"
-    # im.save(filename)
-    # im.show()
+    im.save(filename)
+    im.show()
 
     # fig, ax = plt.subplots()
     # ax.imshow(images[0].permute(1, 2, 0).numpy())
@@ -369,7 +369,7 @@ if __name__ == "__main__":
     #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.svg"
 
     # fig.savefig(filename, format='svg', bbox_inches='tight')
-    # plt.close(fig)
+    # plt.show()
 
 
     # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
