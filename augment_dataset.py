@@ -345,19 +345,19 @@ if __name__ == "__main__":
     )
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
-    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
+    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
 
-    pil = transforms.ToPILImage()
-    resize = transforms.Resize(256)
-    im = resize(pil(images[0]))
-    if augmentation_sign:
-        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
-    else:
-        filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
-    # filename = f"./final_plots/image_examples/rc_example.png"
-    im.save(filename)
-    im.show()
+    # pil = transforms.ToPILImage()
+    # resize = transforms.Resize(256)
+    # im = resize(pil(images[0]))
+    # if augmentation_sign:
+    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
+    # else:
+    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
+    # # filename = f"./final_plots/image_examples/rc_example.png"
+    # im.save(filename)
+    # im.show()
 
     # fig, ax = plt.subplots()
     # ax.imshow(images[0].permute(1, 2, 0).numpy())
