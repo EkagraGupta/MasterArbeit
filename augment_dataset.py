@@ -130,8 +130,8 @@ def create_transforms(
     """
     t = [transforms.ToTensor()]
     augmentations = [
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
+        # transforms.RandomHorizontalFlip(),
+        # transforms.RandomCrop(32, padding=4),       # For Tiny-ImageNet: 64 x 64; For CIFAR: 32 x 32
         # transforms.TrivialAugmentWide(),
         # transforms.Resize(256),
     ]
@@ -167,7 +167,7 @@ def create_transforms(
     #     )
 
     if random_cropping:
-        augmentations.pop(-2)  # -1, -2(if sequential)
+        # augmentations.pop(-2)  # -1, -2(if sequential)
         # for testing
         # augmentations.append(transforms.TrivialAugmentWide())
         augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
@@ -318,7 +318,7 @@ if __name__ == "__main__":
     g = torch.Generator()
     g.manual_seed(1)
 
-    augmentation_type = "Sharpness"
+    augmentation_type = "Brightness"
     augmentation_severity = 15
     augmentation_sign = True
 

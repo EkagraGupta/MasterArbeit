@@ -115,7 +115,7 @@ class RandomCrop:
         bg[:, dim1 : dim1 * 2, dim2 : dim2 * 2] = image  # Put image at the center
 
         # calculate random offsets.
-        tx, ty = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(
+        ty, tx = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(
             self.sigma_crop, dim2
         )
 
@@ -124,7 +124,7 @@ class RandomCrop:
         top, bottom = ty + dim2, ty + dim2 * 2
 
         # crop the image
-        cropped_image = bg[:, left:right, top:bottom]
+        cropped_image = bg[:, top:bottom, left:right]
 
         to_pil = transforms.ToPILImage()
         cropped_image = to_pil(cropped_image)
