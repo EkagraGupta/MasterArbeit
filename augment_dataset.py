@@ -54,7 +54,7 @@ class AugmentedDataset(torch.utils.data.Dataset):
             Optional[float]: The combined confidence value.
         """
         combined_confidence = reduce(lambda x, y: x * y, confidences)
-        # print(f"Confidences: {confidences}\tCombined Confidence: {combined_confidence}")
+        print(f"Confidences: {confidences}\tCombined Confidence: {combined_confidence}\n")
         return combined_confidence
 
     def __getitem__(self, i: Optional[int]) -> Optional[tuple]:
@@ -78,6 +78,9 @@ class AugmentedDataset(torch.utils.data.Dataset):
             else self.transforms_generated
         )
 
+        if isinstance(x, tuple):
+            print(x)
+            raise ValueError("Tuple not supported")
         augment_x = augment(x)
 
         if isinstance(augment_x, tuple):
@@ -135,6 +138,7 @@ def create_transforms(
         # transforms.TrivialAugmentWide(),
     ]
 
+    """Sequential Augmentations"""
     if aggressive_augmentation:
         if custom:
             augmentations.append(
@@ -146,9 +150,14 @@ def create_transforms(
                     dataset_name=dataset_name
                 ))
         else:
-            augmentations.extend([transforms.TrivialAugmentWide(), transforms.ToTensor()])
+            augmentations.extend([transforms.TrivialAugmentWide()])
+    if random_cropping:
+        augmentations.pop(-2)       # -1, -2(if sequential)
+        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom, seed=seed))
+    """Sequential Augmentations"""
         
 
+    """Parallel Augmentations"""
     # custom_trivial_augment = CustomTrivialAugmentWide(
     #     custom=custom,
     #     augmentation_name=augmentation_name,
@@ -164,13 +173,9 @@ def create_transforms(
     #             [transforms.TrivialAugmentWide(), random_crop_augment], [0.85, 0.15]
     #         )
     #     )
-
-    if random_cropping:
-        # augmentations.pop(-2)  # -1, -2(if sequential)
-        # for testing
-        # augmentations.append(transforms.TrivialAugmentWide())
-        augmentations.append(RandomCrop(dataset_name=dataset_name, custom=custom))
-
+    # if random_cropping:
+    #     augmentations.pop(-2)        # -1, -2(if sequential)
+    """Parallel Augmentations"""
 
     transforms_preprocess = transforms.Compose(t)
     transforms_augmentation = transforms.Compose(augmentations)
@@ -302,7 +307,7 @@ def display_image_grid(images, labels, confidences, batch_size, classes):
 
     plt.show()
 
-def seed_worker(worker_id):
+def seed_worker():
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
@@ -311,76 +316,45 @@ def seed_worker(worker_id):
 
 if __name__ == "__main__":
 
-    batch_size = 25
+    # Set the batch size for the data loader
+    batch_size = 5
     DATASET_NAME = "CIFAR10"
 
+    # Set the random seed for reproducibility
     g = torch.Generator()
     g.manual_seed(1)
 
+    # For individual augmentation analysis
     augmentation_type = "Brightness"
     augmentation_severity = 15
     augmentation_sign = True
 
-    transforms_preprocess, transforms_augmentation = create_transforms(
-        random_cropping=False,
-        aggressive_augmentation=True,
-        custom=True,
-        augmentation_name=augmentation_type,
-        augmentation_severity=augmentation_severity,
-        augmentation_sign=augmentation_sign,
-        dataset_name=DATASET_NAME
-    )
+    # Create the transformations for preprocessing and augmentation
+    transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=True, 
+                                                                       aggressive_augmentation=True, 
+                                                                       custom=True, 
+                                                                       augmentation_name=augmentation_type, 
+                                                                       augmentation_severity=augmentation_severity, 
+                                                                       augmentation_sign=augmentation_sign, 
+                                                                       dataset_name=DATASET_NAME)
     
     print(transforms_augmentation)
 
-    trainset, testset = load_data(
-        transforms_preprocess=transforms_preprocess,
-        transforms_augmentation=transforms_augmentation,
-        dataset_name=DATASET_NAME
-    )
+    # Load the CIFAR-10 dataset with the specified transformations
+    trainset, testset = load_data(transforms_preprocess=transforms_preprocess, 
+                                  transforms_augmentation=transforms_augmentation, 
+                                  dataset_name=DATASET_NAME)
 
-    trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=batch_size, shuffle=False, worker_init_fn=seed_worker, generator=g
-    )
+    # Create a data loader for the training set
+    trainloader = torch.utils.data.DataLoader(trainset, 
+                                              batch_size=batch_size, 
+                                              shuffle=False, 
+                                              worker_init_fn=seed_worker, 
+                                              generator=g)
+
+    # Display a grid of images with labels and confidence scores
     classes = trainset.dataset.classes
     images, labels, confidences = next(iter(trainloader))
     display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
-
-    # pil = transforms.ToPILImage()
-    # resize = transforms.Resize(256)
-    # im = resize(pil(images[0]))
-    # if augmentation_sign:
-    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.png"
-    # else:
-    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.png"
-    # # filename = f"./final_plots/image_examples/rc_example.png"
-    # im.save(filename)
-    # im.show()
-
-    # fig, ax = plt.subplots()
-    # ax.imshow(images[0].permute(1, 2, 0).numpy())
-    # ax.axis('off')
-
-    # if augmentation_sign:
-    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_neg.svg"
-    # else:
-    #     filename = f"./final_plots/image_examples/{augmentation_type}_{augmentation_severity}_pos.svg"
-
-    # fig.savefig(filename, format='svg', bbox_inches='tight')
-    # plt.show()
-
-
-    # transforms_preprocess, transforms_augmentation = create_transforms(random_cropping=False, aggressive_augmentation=True, custom=True, dataset_name=DATASET_NAME)
-    # train_path = "./data/tiny-imagenet-200/new_train"
-    # custom_trainset = datasets.ImageFolder(root=train_path, transform=transforms_augmentation)
-    # classes = custom_trainset.classes
-    # custom_trainloader = torch.utils.data.DataLoader(custom_trainset, batch_size=128, shuffle=True, num_workers=2, pin_memory=True)
-    # images, labels = next(iter(custom_trainloader))
-    # confidences = np.ones((128,))
-    # # images = images_data[0]
-    # # confidences = images_data[1][1]
-    # # print(f'Image shape: {images.shape}')
-    # display_image_grid(images, labels, confidences, batch_size=batch_size, classes=classes)
-    # # print(f"augmentation_magnitude: {confidences[0]}\tconfidence: {confidences[1]}")
+    print(f"Confidence: {confidences}")
 

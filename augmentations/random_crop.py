@@ -91,16 +91,24 @@ class RandomCrop:
             Optional[tuple]: The cropped image and the computed confidence values.
         """
         confidence_aa = None
-        if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
-            confidence_aa = image[1]
-            image = image[0]
-        elif (
-            isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], list)
-        ):
-            confidence_aa = image[1][1]
+        # if isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], float):
+        #     confidence_aa = image[1]
+        #     image = image[0]
+        # elif (isinstance(image, tuple) and len(image) == 2 and isinstance(image[1], list)):
+        #     confidence_aa = image[1][1]
+        #     image = image[0]
+
+        if isinstance(image, tuple) and len(image) == 2:
+            if isinstance(image[1], float):
+                confidence_aa = image[1]
+            elif isinstance(image[1], list):
+                confidence_aa = image[1][1]
             image = image[0]
 
         to_tensor = transforms.ToTensor()
+        if isinstance(image, tuple):
+            print(image)
+            raise TypeError(f"Expected PIL Image but got {type(image)}")
         image = to_tensor(image)
         dim1, dim2 = image.size(1), image.size(2)
 
@@ -110,9 +118,10 @@ class RandomCrop:
 
         # Create background
         bg = (
-            torch.zeros((3, dim1 * 3, dim2 * 3)) * self.bg_crop * torch.randn((3, 1, 1))
+            torch.zeros((3, dim1 * 3, dim2 * 3)) *
+            self.bg_crop * torch.randn((3, 1, 1))
         )
-        bg[:, dim1 : dim1 * 2, dim2 : dim2 * 2] = image  # Put image at the center
+        bg[:, dim1: dim1 * 2, dim2: dim2 * 2] = image  # Put image at the center
 
         # calculate random offsets.
         ty, tx = self.draw_offset(self.sigma_crop, dim1), self.draw_offset(
@@ -138,6 +147,7 @@ class RandomCrop:
             confidence_rc = (
                 1 - (1 - self.chance) * (1 - visibility) ** self.k
             )  # The non-linear function
+            print(f"Random crop applied: tx={tx}, ty={ty}, visibility={visibility}, confidence={confidence_rc}")
         else:
             confidence_rc = torch.tensor(1.0)
         if confidence_aa is not None:
@@ -149,4 +159,3 @@ class RandomCrop:
             if isinstance(confidence_rc, float):
                 confidence_rc = torch.tensor(confidence_rc)
             return cropped_image, confidence_rc
-        
